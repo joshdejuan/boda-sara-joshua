@@ -1,0 +1,62 @@
+{
+  "intro": "¿Nos acompañas?",
+  "names": "Sara & Joshua",
+  "event": {
+    "date": "2026-11-21",
+    "start": "12:30",
+    "end": "20:30",
+    "ceremony": "13:00"
+  },
+  "venue": {
+    "name": "Finca Gurugú",
+    "place": "Villalbilla (Madrid)",
+    "address": [
+      "Ctra. M-213, Km 5",
+      "Direcc. Anchuelo",
+      "28810 Villalbilla, Madrid"
+    ],
+    "mapsQuery": "Finca Gurugú, Villalbilla, Madrid"
+  },
+  "schedule": {
+    "note": "Todo ocurre en la misma finca, así que no hay que desplazarse entre la ceremonia y el banquete.",
+    "items": [
+      {
+        "time": "12:30",
+        "title": "Recepción"
+      },
+      {
+        "time": "13:00",
+        "title": "Inicio de la ceremonia"
+      },
+      {
+        "time": "13:45",
+        "title": "Fotos con los invitados y banquete tipo cóctel"
+      }
+    ]
+  },
+  "lodging": {
+    "name": "Ibis Budget La Dehesa",
+    "city": "En Alcalá de Henares",
+    "distance": "A 15 min. en coche de la finca",
+    "text": "Os recomendamos este hotel en base a la cercanía de la finca.",
+    "tip": "Si os hacéis socios, a la hora de reservar os harán un pequeño descuento.",
+    "mapsQuery": "Ibis Budget Alcalá de Henares La Dehesa",
+    "bookingUrl": ""
+  },
+  "calendar": {
+    "title": "Boda Sara&Joshua",
+    "location": "Finca Gurugú - INbodas, Calle Villalbilla, 28810 Villalbilla, Madrid, España"
+  },
+  "photos": [
+    {
+      "src": "images/foto-1.jpg",
+      "pos": "50% 42%",
+      "alt": "Sara y Joshua de la mano entre flores en un jardín"
+    },
+    {
+      "src": "images/foto-2.jpg",
+      "pos": "50% 40%",
+      "alt": "Sara y Joshua abrazados bajo los pinos al atardecer"
+    }
+  ]
+}
