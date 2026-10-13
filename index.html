@@ -66,7 +66,7 @@ h2.title { font-weight: 700; font-size: clamp(2.2rem, 5.6vw, 3.5rem); line-heigh
 .glass::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .35s;
   background: radial-gradient(260px circle at var(--mx, 25%) var(--my, 0%), rgba(255, 255, 255, .6), rgba(255, 255, 255, 0) 65%); }
 .glass:hover::after { opacity: 1; }
-.glass.dark { color: #fff; background: linear-gradient(140deg, rgba(255, 255, 255, .24), rgba(255, 255, 255, .08)); border-color: rgba(255, 255, 255, .42);
+.glass.dark { color: #fff; background: linear-gradient(140deg, rgba(59, 34, 16, .46), rgba(59, 34, 16, .3)); border-color: rgba(255, 255, 255, .42);
   box-shadow: inset 0 1.5px 1px rgba(255, 255, 255, .55), inset 0 -2px 6px rgba(255, 255, 255, .12), 0 24px 50px -12px rgba(0, 0, 0, .45); }
 .glass.dark::before { background: linear-gradient(118deg, rgba(255, 255, 255, .32), rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0) 64%, rgba(255, 255, 255, .14)); }
 .panel { padding: clamp(1.4rem, 3.4vw, 2.3rem); }
@@ -96,15 +96,16 @@ h2.title { font-weight: 700; font-size: clamp(2.2rem, 5.6vw, 3.5rem); line-heigh
 .hero { position: relative; isolation: isolate; overflow: hidden; color: #fff; background: #3B2210;
   min-height: clamp(640px, 100svh, 940px); display: grid; align-items: end; padding-block: 96px 128px; }
 .slides { position: absolute; inset: 0; z-index: -3; }
-.slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity 1.5s ease, transform 10s ease-out; }
+.slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(1.1) saturate(1.06); opacity: 0; transform: scale(1.08); transition: opacity 1.5s ease, transform 10s ease-out; }
 .slide.on { opacity: 1; transform: scale(1); }
 .hero::before { content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none;
-  background: linear-gradient(180deg, rgba(30, 14, 4, .45) 0%, rgba(30, 14, 4, .08) 32%, rgba(30, 14, 4, .2) 56%, rgba(30, 14, 4, .78) 100%), linear-gradient(90deg, rgba(30, 14, 4, .45), rgba(30, 14, 4, 0) 62%); }
+  background: linear-gradient(180deg, rgba(30, 14, 4, .12) 0%, rgba(30, 14, 4, 0) 26%, rgba(30, 14, 4, 0) 52%, rgba(30, 14, 4, .5) 100%); }
 #leaves { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
 .hero-inner { display: grid; gap: 1.4rem; justify-items: start; }
 .chip { display: inline-flex; padding: .5rem 1.1rem; border-radius: 999px; font-size: .78rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
-.mono-hero { width: clamp(70px, 9vw, 104px); aspect-ratio: 1226 / 1074; background: #fff; -webkit-mask: url("images/sj.svg") center / contain no-repeat; mask: url("images/sj.svg") center / contain no-repeat; filter: drop-shadow(0 4px 18px rgba(0, 0, 0, .4)); }
-.names { font-weight: 700; font-size: clamp(3.2rem, 10.5vw, 8rem); line-height: .92; letter-spacing: -.045em; text-shadow: 0 4px 34px rgba(0, 0, 0, .4); text-wrap: balance; }
+.mono-badge { width: clamp(66px, 8vw, 84px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; }
+.mono-badge i { display: block; width: 56%; aspect-ratio: 1226 / 1074; background: var(--brown); -webkit-mask: url("images/sj.svg") center / contain no-repeat; mask: url("images/sj.svg") center / contain no-repeat; }
+.names { font-weight: 700; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1; letter-spacing: -.035em; text-shadow: 0 2px 20px rgba(0, 0, 0, .45); text-wrap: balance; }
 .names .amp { color: var(--teal); font-weight: 500; }
 .hero-card { width: 100%; max-width: 540px; padding: 1.3rem 1.5rem 1.5rem; display: grid; gap: 1.1rem; }
 .when { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.25rem, 3vw, 1.6rem); line-height: 1.2; margin: 0; letter-spacing: -.01em; }
@@ -250,7 +251,7 @@ details.grp[open] > summary::after { content: "–"; }
     <canvas id="leaves" aria-hidden="true"></canvas>
     <div class="wrap hero-inner">
       <span class="chip glass dark" id="intro-text">¿Nos acompañas?</span>
-      <div class="mono-hero" role="img" aria-label="SJ"></div>
+      <div class="mono-badge glass" role="img" aria-label="SJ"><i></i></div>
       <h1 class="names" id="names">Sara &amp; Joshua</h1>
       <div class="hero-card glass dark">
         <p class="when"><span style="display:inline;font:inherit;opacity:1;margin:0" id="when-date"></span><span id="when-sub"></span></p>
@@ -259,10 +260,6 @@ details.grp[open] > summary::after { content: "–"; }
           <div><strong id="cd-h">--</strong><span>horas</span></div>
           <div><strong id="cd-m">--</strong><span>min</span></div>
           <div><strong id="cd-s">--</strong><span>seg</span></div>
-        </div>
-        <div class="btns">
-          <a class="btn" href="#fecha">Fecha y lugar</a>
-          <a class="btn line" href="#alojamiento">Alojamiento</a>
         </div>
       </div>
     </div>
