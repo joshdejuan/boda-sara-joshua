@@ -182,7 +182,7 @@ footer a.adm:hover { opacity: 1; }
 .dock a:active { transform: scale(.95); }
 .dock a.dock-logo { padding: .3rem .8rem .3rem .7rem; margin-right: .2rem; border-right: 1px solid rgba(137, 81, 41, .2); border-radius: 999px 0 0 999px; }
 .dock a.dock-logo:hover { background: none; }
-.dock-logo img { display: block; height: 26px; width: auto; }
+.dock-logo img { display: block; height: 26px; width: auto; filter: drop-shadow(0 1px 1.5px rgba(59, 34, 16, .45)); }
 .dock a.on span { max-width: 9rem; opacity: 1; }
 .dock a:hover:not(.on) { background: rgba(255, 255, 255, .45); }
 @media (min-width: 700px) { .dock a { gap: .5rem; padding: .62rem 1.05rem; } .dock a span { max-width: 9rem; opacity: 1; } }
@@ -372,7 +372,7 @@ details.grp[open] > summary::after { content: "–"; }
 </footer>
 
 <nav class="dock glass" aria-label="Navegación">
-  <a href="#inicio" class="dock-logo" aria-label="Sara y Joshua, inicio"><img src="images/sj-brown.png" alt="" width="194" height="170"></a>
+  <a href="#inicio" class="dock-logo" aria-label="Sara y Joshua, inicio"><img src="images/sj.png" alt="" width="194" height="170"></a>
   <a href="#inicio" data-sec="inicio" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg><span>Inicio</span></a>
   <a href="#fecha" data-sec="fecha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span>Fecha</span></a>
   <a href="#programa" data-sec="programa"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5h-2v6l5 3 1-1.7-4-2.3V7z"/></svg><span>Planning</span></a>
