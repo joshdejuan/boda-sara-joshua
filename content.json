@@ -18,7 +18,6 @@
     "mapsQuery": "Finca Gurugú, Villalbilla, Madrid"
   },
   "schedule": {
-    "note": "Todo ocurre en la misma finca, así que no hay que desplazarse entre la ceremonia y el banquete.",
     "items": [
       {
         "time": "12:30",
@@ -58,5 +57,10 @@
       "pos": "50% 40%",
       "alt": "Sara y Joshua abrazados bajo los pinos al atardecer"
     }
-  ]
+  ],
+  "contact": {
+    "text": "Para cualquier duda, escríbenos por WhatsApp.",
+    "sara": "",
+    "joshua": ""
+  }
 }
