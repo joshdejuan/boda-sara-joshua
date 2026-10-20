@@ -246,5 +246,55 @@
         ]
       }
     ]
+  },
+  "planning": {
+    "provisional": true,
+    "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.",
+    "blocks": [
+      {
+        "time": "12:30",
+        "title": "Recepción",
+        "detail": "Llegada de los invitados a la Finca Gurugú.",
+        "menu": []
+      },
+      {
+        "time": "13:00",
+        "title": "Inicio de la ceremonia",
+        "detail": "Ceremonia civil en la finca.",
+        "menu": []
+      },
+      {
+        "time": "13:45",
+        "title": "Fotos con los invitados y cóctel",
+        "detail": "Cóctel frío y caliente mientras nos hacemos fotos con vosotros.",
+        "menu": [
+          "frio",
+          "caliente"
+        ]
+      },
+      {
+        "time": "15:30",
+        "title": "Banquete",
+        "detail": "",
+        "menu": [
+          "banquete",
+          "bodega"
+        ]
+      },
+      {
+        "time": "17:30",
+        "title": "Barra libre y recena",
+        "detail": "",
+        "menu": [
+          "recena"
+        ]
+      },
+      {
+        "time": "20:30",
+        "title": "Fin de la celebración",
+        "detail": "",
+        "menu": []
+      }
+    ]
   }
 }
