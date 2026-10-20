@@ -18,20 +18,8 @@
     "mapsQuery": "Finca Gurugú, Villalbilla, Madrid"
   },
   "schedule": {
-    "items": [
-      {
-        "time": "12:30",
-        "title": "Recepción"
-      },
-      {
-        "time": "13:00",
-        "title": "Inicio de la ceremonia"
-      },
-      {
-        "time": "13:45",
-        "title": "Fotos con los invitados y banquete tipo cóctel"
-      }
-    ]
+    "items": [],
+    "pending": "Estamos terminando de planificar el día. ¡Muy pronto podrás ver aquí todos los horarios!"
   },
   "lodging": {
     "name": "Ibis Budget La Dehesa",
