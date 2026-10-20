@@ -62,5 +62,201 @@
     "text": "Para cualquier duda, escríbenos por WhatsApp.",
     "sara": "+34 638 86 23 50",
     "joshua": "+34 634 95 91 88"
+  },
+  "menu": {
+    "intro": "Esto es lo que vamos a comer y beber. Si tienes alguna alergia o intolerancia, revisa los alérgenos de cada plato o escríbenos.",
+    "allergensPending": true,
+    "sections": [
+      {
+        "id": "frio",
+        "title": "Cóctel frío",
+        "items": [
+          {
+            "name": "Árbol de frutas con quesos variados",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Bombones de queso de cabra rellenos de frambuesa y pistacho",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Brocheta de melón cantalupo con jamón de pato",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Cornetto de crema de queso azul con pera",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Daditos de salmón en guacamole",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Ferrero de foie con coulis de mango",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Jamón ibérico de Guijuelo con picos de Jerez",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Lomo embuchado Duroc con regañás al aceite de oliva",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Matrimonio con explosión de aceituna",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Mini focaccia de sardina ahumada con emulsión de berenjena",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Montadito de escalivada ahumada y mojama de atún",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Pesto de espinacas con lágrimas de bacalao y aceite de oliva",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Tartaleta de mousse de ensaladilla y piparra",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Tortilla rellena de cebolla caramelizada y queso de cabra",
+            "detail": "",
+            "allergens": []
+          }
+        ]
+      },
+      {
+        "id": "caliente",
+        "title": "Cóctel caliente",
+        "items": [
+          {
+            "name": "Albóndigas de ciervo con salsa de ostras",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Bocatín de calamares y alioli",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Brocheta de pulpo a la gallega",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Crujiente de langostinos en panko",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Crujiente de vieira y mojo picón",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Gyoza de camarones al pimentón",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Hogaza de chistorra de Navarra y dátiles",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Mini burger de solomillo a la parrilla con salsa cheddar",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Muslitos de codorniz a la Villeroy crujientes",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Pan bao relleno de rabo de toro en salsa hoisin",
+            "detail": "",
+            "allergens": []
+          },
+          {
+            "name": "Selección de croquetas caseras",
+            "detail": "",
+            "allergens": []
+          }
+        ]
+      },
+      {
+        "id": "banquete",
+        "title": "Banquete",
+        "items": [
+          {
+            "name": "Paletilla de lechal asada a 68 °C y deshuesada, con patatas parisinas y atadillo de verduras",
+            "detail": "Principal",
+            "allergens": []
+          },
+          {
+            "name": "Corvina",
+            "detail": "Opción de pescado",
+            "allergens": []
+          },
+          {
+            "name": "Torrija de pan brioche caramelizada con helado de dulce de leche",
+            "detail": "Postre",
+            "allergens": []
+          }
+        ]
+      },
+      {
+        "id": "recena",
+        "title": "Recena",
+        "items": [
+          {
+            "name": "Pizzas",
+            "detail": "",
+            "allergens": []
+          }
+        ]
+      },
+      {
+        "id": "bodega",
+        "title": "Bodega",
+        "items": [
+          {
+            "name": "Blanco Ingenia Sobremadre",
+            "detail": "D.O. Madrid",
+            "allergens": []
+          },
+          {
+            "name": "Tinto Ingenia Crianza",
+            "detail": "D.O. Madrid",
+            "allergens": []
+          },
+          {
+            "name": "Vidamía espumoso blanco",
+            "detail": "Tierra de Castilla",
+            "allergens": []
+          }
+        ]
+      }
+    ]
   }
 }
