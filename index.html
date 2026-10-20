@@ -118,7 +118,21 @@ h2.title { font-weight: 700; font-size: clamp(2.2rem, 5.6vw, 3.5rem); line-heigh
 .slide.on { opacity: 1; transform: scale(1); }
 .hero::before { content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none;
   background: linear-gradient(180deg, rgba(30, 14, 4, .32) 0%, rgba(30, 14, 4, 0) 30%, rgba(30, 14, 4, 0) 55%, rgba(30, 14, 4, .5) 100%); }
-#leaves { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+/* Light leaks: destellos de luz con los colores de la web */
+.leaks { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; mix-blend-mode: screen; }
+.leaks i { position: absolute; border-radius: 50%; filter: blur(42px); opacity: 0; will-change: transform, opacity; animation: leak 16s ease-in-out infinite; }
+.leaks i:nth-child(1) { width: 75vmax; height: 50vmax; left: -30vmax; top: -18vmax; background: radial-gradient(closest-side, rgba(236, 143, 110, 1), rgba(236, 143, 110, 0)); animation-duration: 14s; }
+.leaks i:nth-child(2) { width: 62vmax; height: 42vmax; right: -26vmax; top: 6%; background: radial-gradient(closest-side, rgba(65, 224, 207, .9), rgba(65, 224, 207, 0)); animation-duration: 18s; animation-delay: -5s; }
+.leaks i:nth-child(3) { width: 58vmax; height: 36vmax; left: 12%; bottom: -24vmax; background: radial-gradient(closest-side, rgba(243, 182, 94, .95), rgba(243, 182, 94, 0)); animation-duration: 16s; animation-delay: -9s; }
+.leaks i:nth-child(4) { width: 130vmax; height: 13vmax; left: -20vmax; top: 34%; border-radius: 50%; rotate: -16deg; filter: blur(32px); background: linear-gradient(90deg, rgba(255, 214, 170, 0), rgba(255, 214, 170, .75) 40%, rgba(236, 143, 110, .6) 60%, rgba(236, 143, 110, 0)); animation-duration: 21s; animation-delay: -3s; }
+.leaks i:nth-child(5) { width: 40vmax; height: 40vmax; right: 8%; bottom: -12vmax; background: radial-gradient(closest-side, rgba(236, 143, 110, .85), rgba(236, 143, 110, 0)); animation-duration: 19s; animation-delay: -12s; }
+@keyframes leak {
+  0% { opacity: 0; transform: translate3d(-5%, 0, 0) scale(1); }
+  30% { opacity: 1; }
+  55% { opacity: .5; }
+  75% { opacity: .85; }
+  100% { opacity: 0; transform: translate3d(7%, 3%, 0) scale(1.18); }
+}
 .hero-inner { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; }
 .brand { position: relative; align-self: center; width: min(300px, 78vw); }
 .hero-bottom { display: grid; gap: .9rem; justify-items: start; }
@@ -222,6 +236,7 @@ html.js .rv:not(.in) { opacity: 0; transform: translateY(24px); }
   html { scroll-behavior: auto; }
   .slide { transition: opacity .3s; transform: none; }
   .hero-branch, .orbs i, .logo-glass { animation: none; }
+  .leaks i { animation: none; opacity: .45; }
   .rv, .btn, .painting img, .dock a, .dock a span { transition: none; }
 }
 
@@ -279,7 +294,7 @@ details.grp[open] > summary::after { content: "–"; }
 <main>
   <section class="hero" id="inicio">
     <div class="slides" id="slides"></div>
-    <canvas id="leaves" aria-hidden="true"></canvas>
+    <div class="leaks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="wrap hero-inner">
       <div class="brand">
         <h1 class="logo-glass"><span class="sr" id="names">Sara &amp; Joshua</span><img src="images/wordmark-glass.webp" alt="" width="1008" height="584"></h1>
@@ -634,40 +649,6 @@ details.grp[open] > summary::after { content: "–"; }
   icsBtn.addEventListener('click', function (e) {
     if (!icsOk) { e.preventDefault(); addrMsg.textContent = 'Aquí todavía no se puede descargar: el botón funcionará cuando la web esté publicada en vuestro dominio.'; }
   });
-
-  /* ---------- Hojas de otoño cayendo ---------- */
-  var cv = $('leaves'), ctx = cv.getContext('2d'), leaves = [], W = 0, H = 0, frame = 0, raf = 0;
-  var cols = ['#EC8F6E', '#F0B35E', '#D9733F', '#F7D9A8', '#EC8F6E'];
-  function rnd(a, b) { return a + Math.random() * (b - a); }
-  function mk(initial) {
-    return { x: rnd(0, W), y: initial ? rnd(-H * .1, H) : rnd(-60, -10), s: rnd(9, 20), r: rnd(0, 6.28), vr: rnd(-.016, .016), vy: rnd(.35, .85), sw: rnd(.5, 1.5), ph: rnd(0, 6.28), c: Math.floor(rnd(0, cols.length)), a: rnd(.45, .9) };
-  }
-  function resize() {
-    var r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var n = Math.round(Math.min(36, Math.max(14, W / 38)));
-    while (leaves.length < n) leaves.push(mk(true));
-    leaves.length = n;
-  }
-  function draw(l) {
-    ctx.save(); ctx.translate(l.x, l.y); ctx.rotate(l.r); ctx.globalAlpha = l.a; ctx.fillStyle = cols[l.c];
-    var s = l.s; ctx.beginPath(); ctx.moveTo(0, -s);
-    ctx.quadraticCurveTo(s * .9, -s * .2, 0, s); ctx.quadraticCurveTo(-s * .9, -s * .2, 0, -s); ctx.fill();
-    ctx.globalAlpha = l.a * .7; ctx.strokeStyle = 'rgba(90,40,10,.55)'; ctx.lineWidth = .8;
-    ctx.beginPath(); ctx.moveTo(0, -s * .85); ctx.lineTo(0, s * 1.3); ctx.stroke(); ctx.restore();
-  }
-  function step() {
-    frame++; ctx.clearRect(0, 0, W, H);
-    for (var i = 0; i < leaves.length; i++) {
-      var l = leaves[i]; l.y += l.vy; l.x += Math.sin(frame * .012 + l.ph) * l.sw * .7; l.r += l.vr;
-      if (l.y > H + 30 || l.x < -40 || l.x > W + 40) leaves[i] = mk(false);
-      draw(l);
-    }
-    raf = document.hidden ? 0 : requestAnimationFrame(step);
-  }
-  resize(); window.addEventListener('resize', resize);
-  if (reduce) { for (var k = 0; k < leaves.length; k++) draw(leaves[k]); }
-  else { raf = requestAnimationFrame(step); document.addEventListener('visibilitychange', function () { if (!document.hidden && !raf) raf = requestAnimationFrame(step); }); }
 
   /* ---------- Carga inicial ---------- */
   render(clone(DEFAULTS));
