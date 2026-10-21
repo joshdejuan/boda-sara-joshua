@@ -284,20 +284,32 @@
           {
             "name": "Paletilla de lechal asada a 68 °C y deshuesada, con patatas parisinas y atadillo de verduras",
             "detail": "Principal",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "soja"
+            ]
           },
           {
             "name": "Corvina con salsa bilbaína a los tres pimientos y patatas asadas",
             "detail": "Opción de pescado",
-            "allergens": []
+            "allergens": [
+              "pescado",
+              "soja",
+              "lacteos"
+            ]
           },
           {
             "name": "Torrija de pan brioche caramelizada con helado de dulce de leche",
             "detail": "Postre",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "lacteos",
+              "frutos_cascara",
+              "sulfitos"
+            ]
           }
         ],
-        "pending": true
+        "pending": false
       },
       {
         "id": "recena",
@@ -331,7 +343,8 @@
             "allergens": []
           }
         ],
-        "pending": true
+        "pending": false,
+        "noAllergens": true
       }
     ],
     "note": "El cóctel no se puede adaptar ni modificar por motivos de alergia. Si tienes una alergia o intolerancia, escríbenos y lo hablamos con el catering."
