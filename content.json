@@ -53,7 +53,7 @@
   },
   "menu": {
     "intro": "Esto es lo que vamos a comer y beber. Si tienes alguna alergia o intolerancia, revisa los alérgenos de cada plato o escríbenos.",
-    "allergensPending": true,
+    "allergensPending": false,
     "sections": [
       {
         "id": "frio",
@@ -62,12 +62,17 @@
           {
             "name": "Árbol de frutas con quesos variados",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "lacteos"
+            ]
           },
           {
             "name": "Bombones de queso de cabra rellenos de frambuesa y pistacho",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "lacteos",
+              "frutos_cascara"
+            ]
           },
           {
             "name": "Brocheta de melón cantalupo con jamón de pato",
@@ -77,59 +82,94 @@
           {
             "name": "Cornetto de crema de queso azul con pera",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "huevo",
+              "lacteos"
+            ]
           },
           {
             "name": "Daditos de salmón en guacamole",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "pescado"
+            ]
           },
           {
             "name": "Ferrero de foie con coulis de mango",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "frutos_cascara"
+            ]
           },
           {
             "name": "Jamón ibérico de Guijuelo con picos de Jerez",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "sulfitos"
+            ]
           },
           {
             "name": "Lomo embuchado Duroc con regañás al aceite de oliva",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "sulfitos"
+            ]
           },
           {
             "name": "Matrimonio con explosión de aceituna",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "pescado"
+            ]
           },
           {
             "name": "Mini focaccia de sardina ahumada con emulsión de berenjena",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "pescado",
+              "lacteos"
+            ]
           },
           {
             "name": "Montadito de escalivada ahumada y mojama de atún",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "pescado"
+            ]
           },
           {
             "name": "Pesto de espinacas con lágrimas de bacalao y aceite de oliva",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "frutos_cascara",
+              "pescado",
+              "lacteos"
+            ]
           },
           {
             "name": "Tartaleta de mousse de ensaladilla y piparra",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "huevo",
+              "lacteos"
+            ]
           },
           {
             "name": "Tortilla rellena de cebolla caramelizada y queso de cabra",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "huevo",
+              "lacteos"
+            ]
           }
-        ]
+        ],
+        "pending": false
       },
       {
         "id": "caliente",
@@ -138,59 +178,104 @@
           {
             "name": "Albóndigas de ciervo con salsa de ostras",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "huevo",
+              "lacteos",
+              "moluscos",
+              "soja"
+            ]
           },
           {
             "name": "Bocatín de calamares y alioli",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "huevo",
+              "moluscos"
+            ]
           },
           {
             "name": "Brocheta de pulpo a la gallega",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "moluscos"
+            ]
           },
           {
             "name": "Crujiente de langostinos en panko",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "crustaceos",
+              "huevo"
+            ]
           },
           {
             "name": "Crujiente de vieira y mojo picón",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "huevo",
+              "moluscos"
+            ]
           },
           {
             "name": "Gyoza de camarones al pimentón",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "crustaceos",
+              "huevo"
+            ]
           },
           {
             "name": "Hogaza de chistorra de Navarra y dátiles",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "sulfitos"
+            ]
           },
           {
             "name": "Mini burger de solomillo a la parrilla con salsa cheddar",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "huevo",
+              "lacteos"
+            ]
           },
           {
             "name": "Muslitos de codorniz a la Villeroy crujientes",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "huevo",
+              "lacteos"
+            ]
           },
           {
             "name": "Pan bao relleno de rabo de toro en salsa hoisin",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "lacteos",
+              "soja",
+              "sesamo"
+            ]
           },
           {
             "name": "Selección de croquetas caseras",
             "detail": "",
-            "allergens": []
+            "allergens": [
+              "gluten",
+              "huevo",
+              "lacteos"
+            ]
           }
-        ]
+        ],
+        "pending": false
       },
       {
         "id": "banquete",
@@ -211,7 +296,8 @@
             "detail": "Postre",
             "allergens": []
           }
-        ]
+        ],
+        "pending": true
       },
       {
         "id": "recena",
@@ -222,7 +308,8 @@
             "detail": "",
             "allergens": []
           }
-        ]
+        ],
+        "pending": true
       },
       {
         "id": "bodega",
@@ -243,9 +330,11 @@
             "detail": "Tierra de Castilla",
             "allergens": []
           }
-        ]
+        ],
+        "pending": true
       }
-    ]
+    ],
+    "note": "El cóctel no se puede adaptar ni modificar por motivos de alergia. Si tienes una alergia o intolerancia, escríbenos y lo hablamos con el catering."
   },
   "planning": {
     "provisional": true,
