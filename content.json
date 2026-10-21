@@ -317,7 +317,7 @@
         "items": [
           {
             "name": "Pizzas",
-            "detail": "Alérgenos habituales, pendientes de confirmar con el catering",
+            "detail": "Alérgenos habituales, pendientes de confirmar",
             "allergens": [
               "gluten",
               "lacteos"
@@ -369,9 +369,15 @@
         "menu": []
       },
       {
+        "time": "13:40",
+        "title": "Fotos con los invitados",
+        "detail": "",
+        "menu": []
+      },
+      {
         "time": "13:45",
-        "title": "Fotos con los invitados y cóctel",
-        "detail": "Cóctel frío y caliente mientras nos hacemos fotos con vosotros.",
+        "title": "Cóctel",
+        "detail": "Cóctel frío y caliente.",
         "menu": [
           "frio",
           "caliente"
@@ -388,7 +394,7 @@
       },
       {
         "time": "17:30",
-        "title": "Barra libre y recena",
+        "title": "Baile y barra libre",
         "detail": "",
         "menu": [
           "recena"
