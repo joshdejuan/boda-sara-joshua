@@ -317,11 +317,14 @@
         "items": [
           {
             "name": "Pizzas",
-            "detail": "",
-            "allergens": []
+            "detail": "Alérgenos habituales, pendientes de confirmar con el catering",
+            "allergens": [
+              "gluten",
+              "lacteos"
+            ]
           }
         ],
-        "pending": true
+        "pending": false
       },
       {
         "id": "bodega",
