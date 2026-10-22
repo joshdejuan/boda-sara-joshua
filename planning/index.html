@@ -345,6 +345,24 @@ details.grp[open] > summary::after { content: "–"; }
 .tb-extra.ask { background: rgba(236, 143, 110, .16); border: 1.5px solid rgba(236, 143, 110, .45); }
 .tb-extra.ask .btns { gap: .5rem; }
 .tb-extra.ask .btn { white-space: nowrap; padding: .65rem 1rem; font-size: .88rem; }
+/* Letra de la canción, en una hoja que sube desde abajo */
+.lyr { position: fixed; inset: 0; z-index: 80; display: grid; align-items: end; justify-items: center; background: rgba(30, 14, 4, .42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: lyr-fade .3s ease both; }
+.lyr[hidden] { display: none !important; }
+@keyframes lyr-fade { from { opacity: 0; } }
+.lyr-sheet { width: min(640px, 100%); max-height: calc(100% - 28px - env(safe-area-inset-top, 0px)); display: flex; flex-direction: column; border-radius: 28px 28px 0 0;
+  background: var(--cream); color: var(--brown-deep); box-shadow: 0 -20px 50px -10px rgba(30, 14, 4, .4); animation: lyr-up .45s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes lyr-up { from { transform: translateY(40px); opacity: 0; } }
+.lyr-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .8rem; align-items: start; padding: 1.3rem max(1.3rem, env(safe-area-inset-right, 0px)) .9rem max(1.3rem, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); }
+.lyr-k { margin: 0 0 .25rem; font-size: .74rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--coral); }
+.lyr-t { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 6vw, 2.1rem); line-height: 1.05; letter-spacing: -.03em; }
+.lyr-x { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: rgba(255, 255, 255, .7); color: var(--brown-deep); font: 700 1.1rem var(--font-body); cursor: pointer; display: grid; place-items: center; }
+.lyr-body { overflow-y: auto; overscroll-behavior: contain; padding: 1.2rem max(1.3rem, env(safe-area-inset-right, 0px)) calc(1.6rem + env(safe-area-inset-bottom, 0px)) max(1.3rem, env(safe-area-inset-left, 0px)); }
+.lyr-text { margin: 0; white-space: pre-wrap; font-family: var(--font-body); font-size: clamp(1.15rem, 4.6vw, 1.35rem); line-height: 1.75; tab-size: 4; }
+.lyr-src { margin: 1.4rem 0 0; font-size: .85rem; color: var(--muted); }
+.lyr-src a { color: inherit; }
+body.lyr-open { overflow: hidden; }
+@media (min-width: 700px) { .lyr { align-items: center; } .lyr-sheet { border-radius: 28px; max-height: min(86vh, 900px); } }
+@media (prefers-reduced-motion: reduce) { .lyr, .lyr-sheet { animation: none; } }
 .tb-extra .btn svg.st { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .tb-group { margin-top: .8rem; }
 .tb-toggle { width: 100%; display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; font: inherit; color: inherit; text-align: left; cursor: pointer; padding: .75rem .8rem .75rem 1rem; border-radius: 16px; background: rgba(255, 255, 255, .55); border: 1px solid rgba(137, 81, 41, .2); transition: background .2s; }
@@ -407,6 +425,16 @@ details.grp[open] > summary::after { content: "–"; }
   <p class="wrap menu-foot">Si tienes una alergia grave, avísanos antes de la boda y lo confirmamos directamente con el catering.</p>
 </main>
 
+<div class="lyr" id="lyr" role="dialog" aria-modal="true" aria-labelledby="lyr-t" hidden>
+  <div class="lyr-sheet">
+    <div class="lyr-head">
+      <div><p class="lyr-k" id="lyr-k"></p><h2 class="lyr-t" id="lyr-t"></h2></div>
+      <button class="lyr-x" type="button" id="lyr-x" aria-label="Cerrar la letra">✕</button>
+    </div>
+    <div class="lyr-body"><p class="lyr-text" id="lyr-text"></p><p class="lyr-src" id="lyr-src"></p></div>
+  </div>
+</div>
+
 <nav class="dock glass" aria-label="Navegación">
   <a href="../" class="dock-logo" aria-label="Sara y Joshua, inicio"><img src="../images/sj.png" alt="" width="194" height="170"></a>
   <a href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg><span>Inicio</span></a>
@@ -467,7 +495,8 @@ details.grp[open] > summary::after { content: "–"; }
     if (b.song && b.song.url) {
       out += '<div class="tb-extra"><p class="tbx-k">Canción</p><p class="tbx-t">' + esc(b.song.label || '') + '</p>' +
         (b.song.note ? '<p class="tbx-n">' + esc(b.song.note) + '</p>' : '') +
-        '<a class="btn line" href="' + esc(b.song.url) + '" target="_blank" rel="noopener">' + NOTE + esc(b.song.button || 'Seguir la letra') + '</a></div>';
+        (hasLyrics() ? '<button class="btn line" type="button" data-lyrics="' + (data.planning.blocks || []).indexOf(b) + '">' + NOTE + esc(b.song.button || 'Seguir la letra') + '</button>'
+          : '<a class="btn line" href="' + esc(b.song.url) + '" target="_blank" rel="noopener">' + NOTE + esc(b.song.button || 'Seguir la letra') + '</a>') + '</div>';
     }
     if (b.ask && b.ask.text) {
       out += '<div class="tb-extra ask"><p class="tbx-k">' + esc(b.ask.label || 'Tu menú') + '</p><p class="tbx-t">' + esc(b.ask.text) + '</p>' +
@@ -476,6 +505,27 @@ details.grp[open] > summary::after { content: "–"; }
     }
     return out;
   }
+  function hasLyrics() { return !!(data.cancion && String(data.cancion.lyrics || '').trim()); }
+  var lyrLast = null;
+  function openLyrics(b) {
+    var m = String(b.song.label || '').match(/^(.*?)\s*·\s*«?(.*?)»?$/);
+    $('lyr-k').textContent = m ? m[1] : 'Canción';
+    $('lyr-t').textContent = m ? m[2] : (b.song.label || '');
+    $('lyr-text').textContent = String(data.cancion.lyrics).replace(/\r/g, '').trim();
+    $('lyr-src').innerHTML = b.song.url ? esc(data.cancion.source || 'Letra') + ' · <a href="' + esc(b.song.url) + '" target="_blank" rel="noopener">abrir en jw.org</a>' : '';
+    lyrLast = document.activeElement;
+    $('lyr').hidden = false; document.body.classList.add('lyr-open');
+    $('lyr').querySelector('.lyr-body').scrollTop = 0;
+    $('lyr-x').focus();
+  }
+  function closeLyrics() {
+    if ($('lyr').hidden) return;
+    $('lyr').hidden = true; document.body.classList.remove('lyr-open');
+    if (lyrLast && lyrLast.focus) lyrLast.focus();
+  }
+  $('lyr-x').addEventListener('click', closeLyrics);
+  $('lyr').addEventListener('click', function (e) { if (e.target === $('lyr')) closeLyrics(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLyrics(); });
   function render() {
     var m = data.menu || { sections: [] };
     var pl = data.planning || { blocks: [] };
@@ -515,6 +565,8 @@ details.grp[open] > summary::after { content: "–"; }
   }
   var openSec = {};
   document.addEventListener('click', function (e) {
+    var ly = e.target.closest && e.target.closest('[data-lyrics]');
+    if (ly) { var bl = (data.planning.blocks || [])[+ly.dataset.lyrics]; if (bl && bl.song) openLyrics(bl); return; }
     var tg = e.target.closest && e.target.closest('.tb-toggle');
     if (tg) { openSec[tg.dataset.sec] = !openSec[tg.dataset.sec]; render(); return; }
     var b = e.target.closest && e.target.closest('.fchip'); if (!b) return;

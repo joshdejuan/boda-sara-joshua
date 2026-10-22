@@ -357,6 +357,10 @@
     "text": "Durante la boda serás nuestro fotógrafo encubierto. Escribe tu nombre y recibirás cinco momentos que capturar sin que nadie se dé cuenta. Tus fotos aparecerán en la pantalla en directo.",
     "button": "Empezar mi misión"
   },
+  "cancion": {
+    "lyrics": "",
+    "source": "Letra de jw.org"
+  },
   "planning": {
     "provisional": true,
     "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.",

@@ -288,6 +288,7 @@ details.grp[open] > summary::after { content: "–"; }
 .fl input, .fl textarea, .row-i input { font: inherit; font-size: .98rem; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--brown-deep); width: 100%; min-width: 0;
   background: rgba(255, 255, 255, .7); border: 1px solid rgba(137, 81, 41, .25); border-radius: 12px; padding: .6rem .75rem; }
 .fl textarea { resize: vertical; min-height: 4.2rem; }
+.fl textarea[data-path="cancion.lyrics"] { min-height: 18rem; line-height: 1.5; }
 .fl input:focus, .fl textarea:focus, .row-i input:focus { outline: 2px solid var(--teal); outline-offset: 1px; border-color: transparent; }
 .row-i { display: grid; grid-template-columns: 5.6rem minmax(0, 1fr) auto; gap: .45rem; align-items: center; }
 .row-i .acts { display: flex; gap: .25rem; }
@@ -811,6 +812,9 @@ details.grp[open] > summary::after { content: "–"; }
     { id: 'lugar', title: 'Lugar', fields: [
       ['venue.name', 'Nombre del lugar', 'text'], ['venue.place', 'Municipio (portada)', 'text'], ['venue.address', 'Dirección (una línea por renglón)', 'lines'], ['venue.mapsQuery', 'Búsqueda en Google Maps', 'text']] },
     { id: 'programa', title: 'Planning', fields: [['schedule.pending', 'Texto mientras no haya horarios', 'area']], special: 'schedule' },
+    { id: 'cancion', title: 'Canción 132 (letra)', fields: [
+      ['', 'Pega aquí la letra tal cual. Cada renglón en su línea; deja una línea en blanco entre estrofas y empieza con espacios los renglones que van sangrados. Mientras esté vacío, el botón «Seguir la letra» del planning abre jw.org.', 'note'],
+      ['cancion.lyrics', 'Letra', 'area']] },
     { id: 'alojamiento', title: 'Alojamiento', fields: [
       ['lodging.name', 'Nombre', 'text'], ['lodging.city', 'Ciudad', 'text'], ['lodging.distance', 'Distancia', 'text'], ['lodging.text', 'Texto', 'area'], ['lodging.tip', 'Consejo (opcional)', 'area'],
       ['lodging.mapsQuery', 'Búsqueda en Google Maps', 'text'], ['lodging.bookingUrl', 'Enlace de reserva (opcional)', 'text']] },
