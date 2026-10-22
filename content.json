@@ -353,7 +353,7 @@
     "note": "El cóctel no se puede adaptar ni modificar por motivos de alergia. Si tienes una alergia o intolerancia, escríbenos y lo hablamos con el catering."
   },
   "mision": {
-    "show": true,
+    "show": false,
     "title": "Misión secreta",
     "text": "Durante la boda serás nuestro fotógrafo encubierto. Escribe tu nombre y recibirás cinco momentos que capturar sin que nadie se dé cuenta. Tus fotos aparecerán en la pantalla en directo.",
     "button": "Empezar mi misión"
