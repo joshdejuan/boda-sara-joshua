@@ -349,17 +349,14 @@
         "pending": false,
         "noAllergens": true
       }
-    ]
+    ],
+    "note": "El cóctel no se puede adaptar ni modificar por motivos de alergia. Si tienes una alergia o intolerancia, escríbenos y lo hablamos con el catering."
   },
   "mision": {
     "show": false,
     "title": "Misión secreta",
     "text": "Durante la boda serás nuestro fotógrafo encubierto. Escribe tu nombre y recibirás cinco momentos que capturar sin que nadie se dé cuenta. Tus fotos aparecerán en la pantalla en directo.",
     "button": "Empezar mi misión"
-  },
-  "cancion": {
-    "lyrics": "",
-    "source": "Letra de jw.org"
   },
   "planning": {
     "provisional": true,
@@ -429,5 +426,9 @@
         "menu": []
       }
     ]
+  },
+  "cancion": {
+    "lyrics": "Hoy eres ya parte de mí; \nhoy yo también soy parte de ti. \nFormamos una familia, \n¡me siento tan feliz! \nDios nos unió, ¡qué bendición! \nJuntos al fin, el día llegó. \nAhora ya somos uno, \nun solo corazón. \nEl amor no fallará jamás, \nsiempre vivirá, \na nuestro Dios honrará. \nLo prometí, lo cumpliré: \ntoda mi vida te cuidaré. \nY serviremos unidos \na nuestro Creador, Jehová",
+    "source": "Letra de jw.org"
   }
 }
