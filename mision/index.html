@@ -98,6 +98,13 @@ input:focus,select:focus{border-color:transparent;outline:2px solid var(--teal-d
 .names{font:800 clamp(52px,15vw,74px)/.92 var(--display);color:var(--ink);letter-spacing:-.045em;margin-top:10px}
 .names span{display:block}
 .names span+span{color:var(--salmon)}
+.wm{margin:10px 0 0;line-height:0}
+.wm img{display:block;width:min(300px,64vw);height:auto}
+.wm-sm{display:block;width:min(140px,40vw);height:auto;margin-top:10px}
+.poster .wm{margin:6px 0 2px}
+.poster .wm img{width:240px;max-width:100%;margin:0 auto}
+.live-wm{margin-top:10px}
+.live-wm img{width:clamp(200px,20vw,320px)}
 .date{font:600 clamp(20px,5.5vw,24px)/1.2 var(--display);color:var(--brown);margin:14px 0 0;letter-spacing:-.01em}
 .place{font:600 13px var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:2px 0 0}
 .intro{font-size:18px;margin:0;max-width:40ch}
@@ -328,6 +335,8 @@ const app = $("#app");
 const PAIR = `${CONFIG.novio1}&${CONFIG.novio2}`;
 const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.4C.9 8 3 4.5 6.6 4.5c2.1 0 3.6 1.1 4.4 2.5.8-1.4 2.3-2.5 4.4-2.5 3.6 0 5.7 3.5 4.2 7.1C19.5 16.4 12 21 12 21z"/></svg>`;
 const BRANCH = () => `<img class="branch" src="../images/eucalipto.webp" alt="">`;
+/* Logo turquesa «Sara + Joshua» */
+const WORDMARK = (tag = "h1", cls = "") => `<${tag} class="wm ${cls}"><img src="../images/wordmark.png" alt="Sara + Joshua" width="720" height="379"></${tag}>`;
 const LOGO = `<img src="../images/sj.png" alt="Sara y Joshua">`;
 const CAM = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>`;
 function base(){ return DEMO ? CONFIG.urlBase : location.origin + location.pathname.replace(/index\.html$/, ""); }
@@ -532,7 +541,7 @@ function viewLocked(){
   app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
     <header class="hero">
       <p class="kicker">Misión secreta ${HEART}</p>
-      <h1 class="names"><span>${esc(CONFIG.novio1)}</span><span>&amp;${esc(CONFIG.novio2)}</span></h1>
+      ${WORDMARK("h1")}
       <p class="date">${esc(CONFIG.fecha)}</p>
       <p class="place">${esc(CONFIG.lugar)}</p>
     </header>
@@ -598,7 +607,7 @@ function viewHome(){
   app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
     <header class="hero">
       <p class="kicker">Tienes una misión secreta ${HEART}</p>
-      <h1 class="names"><span>${esc(CONFIG.novio1)}</span><span>&amp;${esc(CONFIG.novio2)}</span></h1>
+      ${WORDMARK("h1")}
       <p class="date">${esc(CONFIG.fecha)}</p>
       <p class="place">${esc(CONFIG.lugar)}</p>
     </header>
@@ -635,7 +644,7 @@ async function viewMission(){
     <header class="hero">
       <p class="kicker">Misión Nº ${pad(d.card)} ${HEART}</p>
       <h1 class="names" style="font-size:clamp(44px,12vw,60px)"><span>${esc(d.name)}</span></h1>
-      <p class="place">Boda de ${esc(PAIR)}</p>
+      <img class="wm-sm" src="../images/wordmark.png" alt="Boda de Sara + Joshua" width="720" height="379">
     </header>
     <section class="sheet">
       <div class="progress"><div class="track"><div style="width:${total ? done / total * 100 : 0}%"></div></div>
@@ -729,7 +738,7 @@ function score(players, photos){
 async function liveBoard(el, load){
   let d = await load();
   let lastId = d.photos.length ? d.photos[d.photos.length - 1].id : null, bump = null, showId = null, spotKey = null;
-  el.innerHTML = `<div class="live-head"><div><span class="live-dot">En directo</span><h2 class="live-names">${esc(PAIR)}</h2></div>
+  el.innerHTML = `<div class="live-head"><div><span class="live-dot">En directo</span>${WORDMARK("h2", "live-wm")}</div>
     <div class="stats" id="stats"></div><button class="ghost no-print" id="fs">Pantalla completa</button></div>
     <div class="live-grid"><section><div class="spot" id="spot"></div><div class="feed" id="feed"></div></section>
     <aside class="panel-box board"><h3>Clasificación</h3><ol class="rank" id="rank"></ol>
@@ -894,7 +903,7 @@ async function tabPoster(el){
   el.innerHTML = `<div class="section-title"><h2>Cartel para las mesas</h2><div class="tools"><button id="print" ${store.demo ? 'disabled title="Disponible en tu web"' : ""}>Imprimir cartel</button></div></div>
     <article class="poster">${BRANCH()}
       <p class="kicker">Tienes una misión secreta ${HEART}</p>
-      <h2 class="names"><span>${esc(CONFIG.novio1)}</span><span>&amp;${esc(CONFIG.novio2)}</span></h2>
+      ${WORDMARK("h2")}
       <p class="date">${esc(CONFIG.fecha)}</p>
       <p class="lead">Escanea, escribe tu nombre y recibirás cinco momentos secretos que fotografiar durante la boda.</p>
       <div class="qrbox" id="qr"><img class="logo" src="../images/sj.png" alt=""></div>
