@@ -194,12 +194,25 @@ address { font-style: normal; margin-bottom: 1.5rem; color: var(--muted); }
 .tip { border-left: 3px solid var(--coral); padding-left: 1rem; color: var(--muted); max-width: 52ch; margin-bottom: 1.6rem; }
 .tip:empty { display: none; }
 
+/* Misión secreta */
+.mis-steps { list-style: none; margin: 0 0 1.4rem; padding: 0; display: grid; gap: 1.1rem; counter-reset: paso; }
+.mis-steps li { counter-increment: paso; display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); gap: .9rem; align-items: start; }
+.mis-steps li::before { content: counter(paso); font-family: var(--font-display); font-weight: 800; font-size: 2.2rem; line-height: .95; color: var(--coral); letter-spacing: -.04em; font-variant-numeric: lining-nums; }
+.mis-steps strong { display: block; font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; line-height: 1.25; letter-spacing: -.01em; }
+.mis-steps span { display: block; font-size: .95rem; color: var(--muted); margin-top: .15rem; }
+.mis-shot { position: relative; margin: 0 0 1.4rem; display: flex; gap: .55rem; }
+.mis-shot i { width: 2.3rem; height: 2.3rem; border-radius: 12px; border: 1.5px dashed rgba(137, 81, 41, .45); display: grid; place-items: center; }
+.mis-shot i svg { width: 16px; height: 16px; fill: none; stroke: var(--brown); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
+.mis-shot i.on { border: 0; background: linear-gradient(180deg, rgba(150, 245, 234, .98), rgba(65, 224, 207, .92)); box-shadow: inset 0 1.5px 1px rgba(255, 255, 255, .85); }
+.mis-shot i.on svg { stroke: var(--brown-deep); opacity: 1; }
+.mis-resume { font-size: .9rem; font-weight: 600; color: var(--muted); margin: .9rem 0 0; }
 footer { background: var(--brown); color: var(--cream); padding-block: 2.6rem 8.5rem; }
 footer .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
 footer .mono { display: block; height: 46px; width: auto; }
 footer p { margin: 0; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; }
 footer a.adm { font-size: .78rem; letter-spacing: .08em; opacity: .7; text-decoration: none; border-bottom: 1px solid rgba(249, 244, 236, .4); }
 footer a.adm:hover { opacity: 1; }
+footer .adm-links { display: flex; gap: 1.2rem; flex-wrap: wrap; }
 
 /* Menú inferior */
 .dock { position: fixed; z-index: 50; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
@@ -368,6 +381,29 @@ details.grp[open] > summary::after { content: "–"; }
     </div>
   </section>
 
+  <section class="block" id="mision">
+    <div class="wrap two">
+      <div class="rv">
+        <p class="eyebrow">El día de la boda</p>
+        <h2 class="title" id="mis-title">Misión secreta</h2>
+        <p id="mis-text"></p>
+        <div class="btns">
+          <a class="btn" id="mis-go" href="mision/"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span id="mis-btn">Empezar mi misión</span></a>
+          <a class="btn line" id="mis-resume" href="mision/#mision" hidden></a>
+        </div>
+      </div>
+      <div class="glass panel rv" style="--d:120ms">
+        <div class="mis-shot" aria-hidden="true"><i class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></i><i class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></i><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></i><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></i><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></i></div>
+        <ol class="mis-steps">
+          <li><div><strong>Escribe tu nombre</strong><span>Desde el móvil, con el QR de las mesas o desde aquí.</span></div></li>
+          <li><div><strong>Recibe cinco momentos secretos</strong><span>Cada invitado tiene los suyos. Que nadie sospeche.</span></div></li>
+          <li><div><strong>Fotografíalos durante la boda</strong><span>Cada foto sale al momento en la pantalla en directo.</span></div></li>
+        </ol>
+        <p class="tip" style="margin:0">Al final de la noche desvelaremos quién ha sido el mejor fotógrafo encubierto.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="block" id="alojamiento">
     <div class="wrap two">
       <div class="rv">
@@ -415,7 +451,7 @@ details.grp[open] > summary::after { content: "–"; }
   <div class="wrap">
     <img class="mono" src="images/sj.png" alt="SJ" width="52" height="46">
     <p id="foot-text">21 · 11 · 2026 · Finca Gurugú</p>
-    <a class="adm" href="#admin">Administración</a>
+    <span class="adm-links"><a class="adm" href="mision/#admin" id="mis-admin">Panel de la misión</a><a class="adm" href="#admin">Administración</a></span>
   </div>
 </footer>
 
@@ -424,6 +460,7 @@ details.grp[open] > summary::after { content: "–"; }
   <a href="#inicio" data-sec="inicio" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg><span>Inicio</span></a>
   <a href="#fecha" data-sec="fecha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span>Fecha</span></a>
   <a href="#programa" data-sec="programa"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5h-2v6l5 3 1-1.7-4-2.3V7z"/></svg><span>Planning</span></a>
+  <a href="#mision" data-sec="mision"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span>Misión</span></a>
   <a href="#alojamiento" data-sec="alojamiento"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7v11h2v-3h14v3h2v-7a4 4 0 0 0-4-4H11v6H5V7H3zm4.5 3.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg><span>Alojamiento</span></a>
   <a href="#contacto" data-sec="contacto" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg><span>Contacto</span></a>
 </nav>
@@ -446,7 +483,7 @@ details.grp[open] > summary::after { content: "–"; }
 <script>
 (function () {
   'use strict';
-  var DEFAULTS = {"intro": "¿Nos acompañas?", "names": "Sara & Joshua", "event": {"date": "2026-11-21", "start": "12:30", "end": "20:30", "ceremony": "13:00"}, "venue": {"name": "Finca Gurugú", "place": "Villalbilla (Madrid)", "address": ["Ctra. M-213, Km 5", "Direcc. Anchuelo", "28810 Villalbilla, Madrid"], "mapsQuery": "Finca Gurugú, Villalbilla, Madrid"}, "schedule": {"items": [], "pending": ""}, "lodging": {"name": "Ibis Budget La Dehesa", "city": "En Alcalá de Henares", "distance": "A 15 min. en coche de la finca", "text": "Os recomendamos este hotel en base a la cercanía de la finca.", "tip": "Si os hacéis socios, a la hora de reservar os harán un pequeño descuento.", "mapsQuery": "Ibis Budget Alcalá de Henares La Dehesa", "bookingUrl": ""}, "calendar": {"title": "Boda Sara&Joshua", "location": "Finca Gurugú - INbodas, Calle Villalbilla, 28810 Villalbilla, Madrid, España"}, "photos": [{"src": "images/foto-1.jpg", "pos": "50% 42%", "alt": "Sara y Joshua de la mano entre flores en un jardín"}, {"src": "images/foto-2.jpg", "pos": "50% 40%", "alt": "Sara y Joshua abrazados bajo los pinos al atardecer"}], "contact": {"text": "Para cualquier duda, escríbenos por WhatsApp.", "sara": "+34 638 86 23 50", "joshua": "+34 634 95 91 88"}, "menu": {"intro": "Esto es lo que vamos a comer y beber. Si tienes alguna alergia o intolerancia, revisa los alérgenos de cada plato o escríbenos.", "allergensPending": false, "sections": [{"id": "frio", "title": "Cóctel frío", "items": [{"name": "Árbol de frutas con quesos variados", "detail": "", "allergens": ["lacteos"]}, {"name": "Bombones de queso de cabra rellenos de frambuesa y pistacho", "detail": "", "allergens": ["lacteos", "frutos_cascara"]}, {"name": "Brocheta de melón cantalupo con jamón de pato", "detail": "", "allergens": []}, {"name": "Cornetto de crema de queso azul con pera", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Daditos de salmón en guacamole", "detail": "", "allergens": ["pescado"]}, {"name": "Ferrero de foie con coulis de mango", "detail": "", "allergens": ["frutos_cascara"]}, {"name": "Jamón ibérico de Guijuelo con picos de Jerez", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Lomo embuchado Duroc con regañás al aceite de oliva", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Matrimonio con explosión de aceituna", "detail": "", "allergens": ["pescado"]}, {"name": "Mini focaccia de sardina ahumada con emulsión de berenjena", "detail": "", "allergens": ["gluten", "pescado", "lacteos"]}, {"name": "Montadito de escalivada ahumada y mojama de atún", "detail": "", "allergens": ["gluten", "pescado"]}, {"name": "Pesto de espinacas con lágrimas de bacalao y aceite de oliva", "detail": "", "allergens": ["frutos_cascara", "pescado", "lacteos"]}, {"name": "Tartaleta de mousse de ensaladilla y piparra", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Tortilla rellena de cebolla caramelizada y queso de cabra", "detail": "", "allergens": ["huevo", "lacteos"]}], "pending": false}, {"id": "caliente", "title": "Cóctel caliente", "items": [{"name": "Albóndigas de ciervo con salsa de ostras", "detail": "", "allergens": ["gluten", "huevo", "lacteos", "moluscos", "soja"]}, {"name": "Bocatín de calamares y alioli", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Brocheta de pulpo a la gallega", "detail": "", "allergens": ["moluscos"]}, {"name": "Crujiente de langostinos en panko", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Crujiente de vieira y mojo picón", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Gyoza de camarones al pimentón", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Hogaza de chistorra de Navarra y dátiles", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Mini burger de solomillo a la parrilla con salsa cheddar", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Muslitos de codorniz a la Villeroy crujientes", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Pan bao relleno de rabo de toro en salsa hoisin", "detail": "", "allergens": ["gluten", "lacteos", "soja", "sesamo"]}, {"name": "Selección de croquetas caseras", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}], "pending": false}, {"id": "banquete", "title": "Banquete", "items": [{"name": "Paletilla de lechal asada a 68 °C y deshuesada, con patatas parisinas y atadillo de verduras", "detail": "Principal", "allergens": ["gluten", "soja"]}, {"name": "Corvina con salsa bilbaína a los tres pimientos y patatas asadas", "detail": "Opción de pescado", "allergens": ["pescado", "soja", "lacteos"]}, {"name": "Torrija de pan brioche caramelizada con helado de dulce de leche", "detail": "Postre", "allergens": ["gluten", "lacteos", "frutos_cascara", "sulfitos"]}], "pending": false}, {"id": "recena", "title": "Recena", "items": [{"name": "Pizzas", "detail": "Alérgenos habituales, pendientes de confirmar", "allergens": ["gluten", "lacteos"]}], "pending": false}, {"id": "bodega", "title": "Bodega", "items": [{"name": "Blanco Ingenia Sobremadre", "detail": "D.O. Madrid", "allergens": []}, {"name": "Tinto Ingenia Crianza", "detail": "D.O. Madrid", "allergens": []}, {"name": "Vidamía espumoso blanco", "detail": "Tierra de Castilla", "allergens": []}], "pending": false, "noAllergens": true}], "note": "El cóctel no se puede adaptar ni modificar por motivos de alergia. Si tienes una alergia o intolerancia, escríbenos y lo hablamos con el catering."}, "planning": {"provisional": true, "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.", "blocks": [{"time": "12:30", "title": "Recepción", "detail": "Llegada de los invitados a la Finca Gurugú.", "menu": []}, {"time": "13:00", "title": "Inicio de la ceremonia", "detail": "Ceremonia civil en la finca.", "menu": []}, {"time": "13:40", "title": "Fotos con los invitados", "detail": "", "menu": []}, {"time": "13:45", "title": "Cóctel", "detail": "Cóctel frío y caliente.", "menu": ["frio", "caliente"]}, {"time": "15:30", "title": "Banquete", "detail": "", "menu": ["banquete", "bodega"]}, {"time": "17:30", "title": "Baile y barra libre", "detail": "", "menu": ["recena"]}, {"time": "20:30", "title": "Fin de la celebración", "detail": "", "menu": []}]}};
+  var DEFAULTS = {"intro": "¿Nos acompañas?", "names": "Sara & Joshua", "event": {"date": "2026-11-21", "start": "12:30", "end": "20:30", "ceremony": "13:00"}, "venue": {"name": "Finca Gurugú", "place": "Villalbilla (Madrid)", "address": ["Ctra. M-213, Km 5", "Direcc. Anchuelo", "28810 Villalbilla, Madrid"], "mapsQuery": "Finca Gurugú, Villalbilla, Madrid"}, "schedule": {"items": [], "pending": ""}, "lodging": {"name": "Ibis Budget La Dehesa", "city": "En Alcalá de Henares", "distance": "A 15 min. en coche de la finca", "text": "Os recomendamos este hotel en base a la cercanía de la finca.", "tip": "Si os hacéis socios, a la hora de reservar os harán un pequeño descuento.", "mapsQuery": "Ibis Budget Alcalá de Henares La Dehesa", "bookingUrl": ""}, "calendar": {"title": "Boda Sara&Joshua", "location": "Finca Gurugú - INbodas, Calle Villalbilla, 28810 Villalbilla, Madrid, España"}, "photos": [{"src": "images/foto-1.jpg", "pos": "50% 42%", "alt": "Sara y Joshua de la mano entre flores en un jardín"}, {"src": "images/foto-2.jpg", "pos": "50% 40%", "alt": "Sara y Joshua abrazados bajo los pinos al atardecer"}], "contact": {"text": "Para cualquier duda, escríbenos por WhatsApp.", "sara": "+34 638 86 23 50", "joshua": "+34 634 95 91 88"}, "menu": {"intro": "Esto es lo que vamos a comer y beber. Si tienes alguna alergia o intolerancia, revisa los alérgenos de cada plato o escríbenos.", "allergensPending": false, "sections": [{"id": "frio", "title": "Cóctel frío", "items": [{"name": "Árbol de frutas con quesos variados", "detail": "", "allergens": ["lacteos"]}, {"name": "Bombones de queso de cabra rellenos de frambuesa y pistacho", "detail": "", "allergens": ["lacteos", "frutos_cascara"]}, {"name": "Brocheta de melón cantalupo con jamón de pato", "detail": "", "allergens": []}, {"name": "Cornetto de crema de queso azul con pera", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Daditos de salmón en guacamole", "detail": "", "allergens": ["pescado"]}, {"name": "Ferrero de foie con coulis de mango", "detail": "", "allergens": ["frutos_cascara"]}, {"name": "Jamón ibérico de Guijuelo con picos de Jerez", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Lomo embuchado Duroc con regañás al aceite de oliva", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Matrimonio con explosión de aceituna", "detail": "", "allergens": ["pescado"]}, {"name": "Mini focaccia de sardina ahumada con emulsión de berenjena", "detail": "", "allergens": ["gluten", "pescado", "lacteos"]}, {"name": "Montadito de escalivada ahumada y mojama de atún", "detail": "", "allergens": ["gluten", "pescado"]}, {"name": "Pesto de espinacas con lágrimas de bacalao y aceite de oliva", "detail": "", "allergens": ["frutos_cascara", "pescado", "lacteos"]}, {"name": "Tartaleta de mousse de ensaladilla y piparra", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Tortilla rellena de cebolla caramelizada y queso de cabra", "detail": "", "allergens": ["huevo", "lacteos"]}], "pending": false}, {"id": "caliente", "title": "Cóctel caliente", "items": [{"name": "Albóndigas de ciervo con salsa de ostras", "detail": "", "allergens": ["gluten", "huevo", "lacteos", "moluscos", "soja"]}, {"name": "Bocatín de calamares y alioli", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Brocheta de pulpo a la gallega", "detail": "", "allergens": ["moluscos"]}, {"name": "Crujiente de langostinos en panko", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Crujiente de vieira y mojo picón", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Gyoza de camarones al pimentón", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Hogaza de chistorra de Navarra y dátiles", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Mini burger de solomillo a la parrilla con salsa cheddar", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Muslitos de codorniz a la Villeroy crujientes", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Pan bao relleno de rabo de toro en salsa hoisin", "detail": "", "allergens": ["gluten", "lacteos", "soja", "sesamo"]}, {"name": "Selección de croquetas caseras", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}], "pending": false}, {"id": "banquete", "title": "Banquete", "items": [{"name": "Paletilla de lechal asada a 68 °C y deshuesada, con patatas parisinas y atadillo de verduras", "detail": "Principal", "allergens": ["gluten", "soja"]}, {"name": "Corvina con salsa bilbaína a los tres pimientos y patatas asadas", "detail": "Opción de pescado", "allergens": ["pescado", "soja", "lacteos"]}, {"name": "Torrija de pan brioche caramelizada con helado de dulce de leche", "detail": "Postre", "allergens": ["gluten", "lacteos", "frutos_cascara", "sulfitos"]}], "pending": false}, {"id": "recena", "title": "Recena", "items": [{"name": "Pizzas", "detail": "Alérgenos habituales, pendientes de confirmar", "allergens": ["gluten", "lacteos"]}], "pending": false}, {"id": "bodega", "title": "Bodega", "items": [{"name": "Blanco Ingenia Sobremadre", "detail": "D.O. Madrid", "allergens": []}, {"name": "Tinto Ingenia Crianza", "detail": "D.O. Madrid", "allergens": []}, {"name": "Vidamía espumoso blanco", "detail": "Tierra de Castilla", "allergens": []}], "pending": false, "noAllergens": true}], "note": "El cóctel no se puede adaptar ni modificar por motivos de alergia. Si tienes una alergia o intolerancia, escríbenos y lo hablamos con el catering."}, "mision": {"show": false, "title": "Misión secreta", "text": "Durante la boda serás nuestro fotógrafo encubierto. Escribe tu nombre y recibirás cinco momentos que capturar sin que nadie se dé cuenta. Tus fotos aparecerán en la pantalla en directo.", "button": "Empezar mi misión"}, "planning": {"provisional": true, "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.", "blocks": [{"time": "12:30", "title": "Recepción", "detail": "Llegada de los invitados a la Finca Gurugú.", "menu": []}, {"time": "13:00", "title": "Inicio de la ceremonia", "detail": "Ceremonia civil en la finca.", "menu": []}, {"time": "13:40", "title": "Fotos con los invitados", "detail": "", "menu": []}, {"time": "13:45", "title": "Cóctel", "detail": "Cóctel frío y caliente.", "menu": ["frio", "caliente"]}, {"time": "15:30", "title": "Banquete", "detail": "", "menu": ["banquete", "bodega"]}, {"time": "17:30", "title": "Baile y barra libre", "detail": "", "menu": ["recena"]}, {"time": "20:30", "title": "Fin de la celebración", "detail": "", "menu": []}]}};
   var OWNER = 'joshdejuan', REPO = 'boda-sara-joshua', BRANCH = 'main';
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   function $(id) { return document.getElementById(id); }
@@ -535,6 +572,10 @@ details.grp[open] > summary::after { content: "–"; }
     $('contact-btns').innerHTML = people.map(function (p) {
       return '<a class="btn" href="https://wa.me/' + p[1] + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.1 14.9l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0 1 12 4zm-3.1 3.6c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.8 2.9 4.5 3.9 2.2.9 2.7.7 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.6-.3l-1.9-.9c-.3-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.6.1-.3-.1-1.1-.4-2.1-1.3-.8-.7-1.3-1.5-1.4-1.8-.2-.3 0-.4.1-.5l.4-.5.3-.5v-.5l-.9-2c-.2-.5-.4-.4-.6-.4h-.5z"/></svg> WhatsApp ' + esc(p[0]) + '</a>';
     }).join('');
+    var mi = c.mision || {}, misOn = mi.show === true;
+    $('mision').hidden = !misOn;
+    var dm = document.querySelector('.dock a[data-sec="mision"]'); if (dm) dm.hidden = !misOn;
+    setText('mis-title', mi.title || 'Misión secreta'); setText('mis-text', mi.text || ''); setText('mis-btn', mi.button || 'Empezar mi misión');
     document.title = c.names;
     target = madridMs(ev.date, ev.ceremony);
     tick();
@@ -605,7 +646,7 @@ details.grp[open] > summary::after { content: "–"; }
 
   /* ---------- Menú inferior: sección activa ---------- */
   var links = Array.prototype.slice.call(document.querySelectorAll('.dock a[data-sec]'));
-  var secIds = ['inicio', 'fecha', 'programa', 'alojamiento', 'contacto'], forced = null, idleT = null;
+  var secIds = ['inicio', 'fecha', 'programa', 'mision', 'alojamiento', 'contacto'], forced = null, idleT = null;
   function visIds() { return secIds.filter(function (id) { var el = $(id); return el && !el.hidden; }); }
   function activate(id) {
     links.forEach(function (a) {
@@ -662,6 +703,14 @@ details.grp[open] > summary::after { content: "–"; }
     if (!icsOk) { e.preventDefault(); addrMsg.textContent = 'Aquí todavía no se puede descargar: el botón funcionará cuando la web esté publicada en vuestro dominio.'; }
   });
 
+  /* ---------- Misión secreta: enlaces y «seguir como…» ---------- */
+  var LIVE = /github\.io$|sarajoshua\.love$/.test(location.hostname), MIS = LIVE ? 'mision/' : 'mision/index.html';
+  $('mis-go').href = MIS; $('mis-admin').href = MIS + '#admin';
+  try {
+    var yo = JSON.parse(localStorage.getItem('mision-sj') || 'null');
+    if (yo && yo.name) { var rs = $('mis-resume'); rs.textContent = 'Seguir como ' + yo.name + ' · Nº ' + pad2(yo.card); rs.href = MIS + '#mision'; rs.hidden = false; }
+  } catch (e) {}
+
   /* ---------- Carga inicial ---------- */
   render(clone(DEFAULTS));
   var saved = clone(DEFAULTS);
@@ -674,7 +723,7 @@ details.grp[open] > summary::after { content: "–"; }
   /* =====================================================
      Administración (#admin)
      ===================================================== */
-  var A = { open: false, token: '', demo: false, content: null, shas: {}, dirty: false, groups: {}, user: '' };
+  var A = { open: false, token: '', demo: false, content: null, shas: {}, dirty: false, groups: { mision: true }, user: '' };
   var panel = $('admin'), body = $('ad-body'), foot = $('ad-foot'), statusEl = $('ad-status');
   function status(msg, kind) { statusEl.textContent = msg || ''; statusEl.className = 'ad-status' + (kind ? ' ' + kind : ''); }
   function sub() { $('ad-sub').innerHTML = A.demo ? 'Modo demostración · no se guarda nada' : (A.user ? 'Conectado como ' + esc(A.user) : 'Inicia sesión con GitHub') + (A.dirty ? ' · <span class="ad-dirty">cambios sin guardar</span>' : ''); }
@@ -753,6 +802,9 @@ details.grp[open] > summary::after { content: "–"; }
   }
 
   var GROUPS = [
+    { id: 'mision', title: 'Misión secreta (juego)', fields: [
+      ['', 'Mientras esté desactivado, el juego está oculto: la sección no aparece en la web y quien abra la página del juego ve un aviso de que empieza el día de la boda. También se puede activar desde el Panel de la misión.', 'note'],
+      ['mision.show', 'Juego activado', 'check'], ['mision.title', 'Título', 'text'], ['mision.text', 'Texto', 'area'], ['mision.button', 'Texto del botón', 'text']] },
     { id: 'evento', title: 'Evento', fields: [
       ['intro', 'Frase de invitación', 'text'], ['names', 'Nombres', 'text'], ['event.date', 'Fecha', 'date'], ['event.start', 'Hora de inicio', 'time'],
       ['event.end', 'Hora de fin (calendario)', 'time'], ['event.ceremony', 'Hora de la ceremonia (cuenta atrás)', 'time']] },
@@ -769,6 +821,8 @@ details.grp[open] > summary::after { content: "–"; }
   function fieldHtml(f) {
     var path = f[0], label = f[1], type = f[2], v = get(A.content, path);
     if (type === 'lines') return '<label class="fl">' + label + '<textarea data-path="' + path + '" data-kind="lines">' + esc((v || []).join('\n')) + '</textarea></label>';
+    if (type === 'note') return '<p class="hint">' + esc(label) + '</p>';
+    if (type === 'check') return '<label class="hint" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" data-path="' + path + '" data-kind="check"' + (v === true ? ' checked' : '') + '> ' + label + '</label>';
     if (type === 'area') return '<label class="fl">' + label + '<textarea data-path="' + path + '">' + esc(v) + '</textarea></label>';
     return '<label class="fl">' + label + '<input type="' + type + '" data-path="' + path + '" value="' + esc(v) + '"></label>';
   }
@@ -800,7 +854,7 @@ details.grp[open] > summary::after { content: "–"; }
   body.addEventListener('toggle', function (e) { if (e.target.dataset && e.target.dataset.g) A.groups[e.target.dataset.g] = e.target.open; }, true);
   body.addEventListener('input', function (e) {
     var t = e.target;
-    if (t.dataset.path) { set(A.content, t.dataset.path, t.dataset.kind === 'lines' ? t.value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean) : t.value); touch(); }
+    if (t.dataset.path) { set(A.content, t.dataset.path, t.dataset.kind === 'check' ? t.checked : t.dataset.kind === 'lines' ? t.value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean) : t.value); touch(); }
     else if (t.dataset.sched) { A.content.schedule.items[+t.dataset.i][t.dataset.sched] = t.value; touch(); }
     else if (t.dataset.photopos) { A.content.photos[+t.dataset.photopos].pos = '50% ' + t.value + '%'; touch(); }
   });

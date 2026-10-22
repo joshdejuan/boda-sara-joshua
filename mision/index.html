@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}</style>
+<title>Misión secreta · Sara &amp; Joshua</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<meta name="theme-color" content="#895129">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@300..700&display=swap">
+<style>
+/* Layout: la misión secreta dentro de la web de la boda. Mismo papel kraft, focos de color y paneles de cristal que la portada; el invitado ve una sola columna y el panel/pantalla usan el ancho completo. */
+:root{
+  color-scheme:light;
+  --paper:#F3EEE5; --cream:#F9F4EC; --card-solid:#FBF7F0;
+  --ink:#3B2210; --brown:#895129; --muted:#7A5236; --line:rgba(137,81,41,.22);
+  --teal:#41E0CF; --teal-deep:#0F7A6C; --teal-soft:rgba(65,224,207,.24);
+  --salmon:#EC8F6E; --salmon-deep:#B24A1F; --salmon-soft:rgba(236,143,110,.22);
+  --display:"Bricolage Grotesque", "Hanken Grotesk", system-ui, sans-serif;
+  --body:"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--paper);overflow-x:clip}
+body{margin:0;min-height:100vh;color:var(--ink);font:17px/1.55 var(--body);background-color:var(--paper);-webkit-font-smoothing:antialiased;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 64px;overflow-x:clip}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:url("../images/paper.jpg") center/cover no-repeat}
+h1,h2,h3{margin:0;font-family:var(--display);font-weight:700;text-wrap:balance;letter-spacing:-.02em}
+a{color:var(--teal-deep)}
+:focus-visible{outline:2px solid var(--teal-deep);outline-offset:3px;border-radius:4px}
+[hidden]{display:none!important}
+
+/* Focos de color detrás del cristal */
+.orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.orbs i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.45}
+.orbs i:nth-child(1){width:46vmax;height:46vmax;left:-16vmax;top:14vh;background:var(--teal);animation:drift1 26s ease-in-out infinite alternate}
+.orbs i:nth-child(2){width:40vmax;height:40vmax;right:-14vmax;top:50vh;background:var(--salmon);animation:drift2 31s ease-in-out infinite alternate}
+.orbs i:nth-child(3){width:28vmax;height:28vmax;left:36vw;top:-10vh;background:#F3C77A;opacity:.35;animation:drift3 23s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(14vw,-12vh) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-16vw,-16vh) scale(.9)}}
+@keyframes drift3{to{transform:translate(10vw,30vh) scale(1.2)}}
+
+/* Cristal líquido (igual que en la web) */
+.sheet,.panel-box,.resume,.keep,.login form,.demo-bar,.backbar a{
+  background:linear-gradient(140deg,rgba(255,255,255,.52),rgba(255,255,255,.24));
+  -webkit-backdrop-filter:blur(22px) saturate(1.9);backdrop-filter:blur(22px) saturate(1.9);
+  border:1px solid rgba(255,255,255,.62);
+  box-shadow:inset 0 1.5px 1px rgba(255,255,255,.85),inset 0 -2px 6px rgba(255,255,255,.25),0 22px 46px -14px rgba(59,34,16,.26)}
+
+/* Botones */
+button,.btn{font:700 15px/1 var(--body);letter-spacing:.01em;border-radius:999px;padding:13px 20px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;white-space:nowrap;position:relative;
+  color:var(--ink);border:1px solid rgba(255,255,255,.7);background:linear-gradient(180deg,rgba(150,245,234,.98),rgba(65,224,207,.92));
+  box-shadow:inset 0 1.5px 1px rgba(255,255,255,.85),inset 0 -2px 4px rgba(20,130,118,.18),0 10px 22px -8px rgba(65,224,207,.7);
+  transition:transform .2s cubic-bezier(.2,.7,.2,1),box-shadow .2s}
+button:hover,.btn:hover{transform:translateY(-1px)}
+button:active,.btn:active{transform:scale(.97)}
+.ghost{color:var(--brown)!important;background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.26))!important;border-color:rgba(255,255,255,.7)!important;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.85),0 6px 14px -8px rgba(59,34,16,.3)!important}
+.ghost:hover{background:rgba(255,255,255,.85)!important}
+.danger{background:rgba(255,255,255,.4)!important;color:var(--salmon-deep)!important;border-color:rgba(178,74,31,.3)!important;box-shadow:none!important}
+.danger.armed{background:var(--salmon-deep)!important;color:#fff!important}
+.small{padding:9px 14px;font-size:13.5px}
+button:disabled{opacity:.5;cursor:default;transform:none}
+input[type=text],input[type=email],input[type=password],input[type=number],select{font:600 17px var(--body);color:var(--ink);background:rgba(255,255,255,.72);border:1px solid rgba(137,81,41,.25);border-radius:14px;padding:13px 16px;width:100%}
+input:focus,select:focus{border-color:transparent;outline:2px solid var(--teal-deep);outline-offset:1px}
+.label{font:700 12px var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.status{font-size:14.5px;font-weight:600;min-height:22px}
+.status.err{color:var(--salmon-deep)}
+.status.ok{color:var(--teal-deep)}
+
+/* Vuelta a la web */
+.backbar{max-width:1240px;margin:0 auto;padding-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.backbar a{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:999px;text-decoration:none;color:var(--ink);font:700 14px var(--body)}
+.backbar a img{height:22px;width:auto}
+.backbar.guestw{max-width:520px}
+
+/* Vista previa */
+.demo-bar{max-width:1240px;margin:12px auto 0;padding:10px 14px;border-radius:18px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.demo-bar nav{display:flex;gap:6px;flex-wrap:wrap}
+.demo-bar a{font:700 13px var(--body);color:var(--brown);text-decoration:none;padding:6px 12px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line)}
+.demo-bar a[aria-current]{background:var(--teal);color:var(--ink);box-shadow:none}
+
+/* ---------- Invitado ---------- */
+.guest{position:relative;max-width:520px;margin:0 auto;padding-top:30px;display:flex;flex-direction:column;gap:20px}
+.branch{position:absolute;pointer-events:none;user-select:none;z-index:0}
+.guest .branch{width:300px;top:-6px;right:-150px;transform:rotate(-58deg);opacity:.9}
+@media (min-width:760px){.guest .branch{width:560px;top:120px;right:auto;left:-470px;transform:rotate(-84deg)}}
+.guest>*:not(.branch){position:relative;z-index:1}
+.hero{display:flex;flex-direction:column;gap:4px;padding-right:70px}
+.kicker{display:flex;align-items:center;gap:.7rem;font:700 12.5px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--brown);margin:0}
+.kicker::before{content:"";width:30px;height:2px;background:var(--salmon);flex:none}
+.kicker svg{width:15px;height:15px;fill:var(--salmon)}
+.names{font:800 clamp(52px,15vw,74px)/.92 var(--display);color:var(--ink);letter-spacing:-.045em;margin-top:10px}
+.names span{display:block}
+.names span+span{color:var(--salmon)}
+.date{font:600 clamp(20px,5.5vw,24px)/1.2 var(--display);color:var(--brown);margin:14px 0 0;letter-spacing:-.01em}
+.place{font:600 13px var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:2px 0 0}
+.intro{font-size:18px;margin:0;max-width:40ch}
+.sheet{border-radius:26px;padding:22px 20px;display:flex;flex-direction:column;gap:14px}
+.form{display:flex;flex-direction:column;gap:12px}
+.resume{display:grid;grid-template-columns:auto 1fr auto;gap:2px 14px;align-items:center;text-decoration:none;color:var(--ink);border-radius:22px;padding:14px 18px}
+.resume img{grid-row:1/span 2;width:40px;height:auto}
+.resume strong{font:700 21px var(--display);letter-spacing:-.015em}
+.resume small{grid-column:2;color:var(--teal-deep);font-weight:700}
+.resume i{grid-row:1/span 2;grid-column:3;font-style:normal;font-size:22px;color:var(--teal-deep)}
+.progress{display:flex;flex-direction:column;gap:6px}
+.track{height:8px;background:rgba(137,81,41,.14);border-radius:99px;overflow:hidden}
+.track div{height:100%;background:linear-gradient(90deg,var(--teal),#8AF0E4);border-radius:99px;transition:width .6s}
+.retos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.reto{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:center;padding:15px 0;border-top:1px solid var(--line)}
+.reto .n{font:800 24px var(--display);color:var(--salmon);font-variant-numeric:tabular-nums}
+.reto .t{font-weight:700;line-height:1.3}
+.reto.done .n{color:var(--teal-deep)}
+.reto.done .t{color:var(--muted);font-weight:600}
+.reto .side{display:flex;align-items:center;gap:8px}
+.shoot{display:flex;flex-direction:column;align-items:center;gap:4px}
+.shoot label.again{font-size:11.5px}
+.reto .side img{width:54px;height:54px;object-fit:cover;border-radius:14px;border:2px solid #fff;box-shadow:0 0 0 2px var(--teal)}
+label.btn input,label.again input{position:absolute;inset:0;opacity:0;width:1px;height:1px}
+label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:underline;cursor:pointer;position:relative}
+.notice{margin:0;font-size:15px;font-weight:600;color:var(--ink);background:var(--teal-soft);border:1px solid rgba(255,255,255,.6);border-radius:16px;padding:12px 16px;display:flex;gap:10px;align-items:center}
+.notice svg{flex:none;width:22px;height:22px;color:var(--teal-deep)}
+.spot img{animation:fadein .9s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.win{background:var(--teal-soft);border-radius:16px;padding:14px 16px;font-weight:700;color:var(--teal-deep)}
+.keep{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:8px;border-radius:20px;padding:16px 18px}
+.keep .row{display:flex;gap:8px}
+.keep input{font:600 13px var(--body);padding:9px 12px}
+
+/* Juego oculto */
+.lock-t{font:700 26px/1.15 var(--display);color:var(--ink)}
+.lock-n{display:flex;gap:.55rem}
+.lock-n i{width:2.2rem;height:2.2rem;border-radius:12px;border:1.5px dashed rgba(137,81,41,.45)}
+/* Interruptor del juego en el panel */
+.gate{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-bottom:20px}
+.gate .gtxt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 280px}
+.gate strong{display:flex;align-items:center;gap:10px;font:700 19px var(--display);letter-spacing:-.01em}
+.gate strong::before{content:"";width:12px;height:12px;border-radius:50%;flex:none;background:rgba(137,81,41,.35)}
+.gate.on strong::before{background:var(--teal);box-shadow:0 0 0 4px var(--teal-soft)}
+.gate span{font-size:14px;color:var(--muted)}
+.gate .gact{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.gate form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%}
+.gate form input[type=password]{flex:1 1 240px;width:auto;font-size:15px;padding:10px 13px}
+.gate form label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.gate .status{flex-basis:100%;min-height:0}
+.gate .status:empty{display:none}
+
+/* ---------- Panel de los novios ---------- */
+.admin{max-width:1240px;margin:0 auto;padding-top:22px;position:relative}
+.admin.screen{max-width:1500px;padding-top:28px}
+.a-top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between;padding-bottom:16px}
+.a-brand{display:flex;align-items:center;gap:14px}
+.a-brand img{width:48px;height:auto}
+.a-brand h1{font:700 28px/1.1 var(--display);color:var(--ink)}
+.a-brand p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.a-user{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--muted);flex-wrap:wrap}
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:24px;scrollbar-width:none}
+.tabs a{font:700 14px var(--body);color:var(--muted);text-decoration:none;padding:12px 14px;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs a[aria-current]{color:var(--ink);border-color:var(--teal)}
+.panel-box{border-radius:24px;padding:20px}
+.section-title{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.section-title h2{font:700 30px/1.1 var(--display);color:var(--ink)}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.login{max-width:440px;margin:40px auto;display:flex;flex-direction:column;gap:14px;position:relative}
+.login>*:not(.branch){position:relative;z-index:1}
+.login h1{font:800 40px/1 var(--display);color:var(--ink);letter-spacing:-.035em}
+.login form{border-radius:24px;padding:20px}
+.login .branch{width:320px;top:-80px;right:-150px;transform:rotate(-30deg);opacity:.85}
+
+/* Directo */
+.live-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px 34px;margin-bottom:20px}
+.live-dot{display:inline-flex;align-items:center;gap:12px;font:700 16px var(--body);letter-spacing:.22em;text-transform:uppercase;color:var(--salmon-deep)}
+.live-dot::before{content:"";width:13px;height:13px;border-radius:50%;background:var(--salmon);box-shadow:0 0 0 4px var(--salmon-soft);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.live-names{font:800 clamp(40px,5.2vw,68px)/1 var(--display);color:var(--ink);letter-spacing:-.04em;margin-top:6px}
+.stats{display:flex;gap:30px;flex-wrap:wrap}
+.stat b{display:block;font:800 clamp(34px,4vw,54px)/1 var(--display);color:var(--salmon);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.stat span{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.live-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:880px){.live-grid{grid-template-columns:1fr}}
+.spot{position:relative;border-radius:26px;overflow:hidden;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.6);box-shadow:0 22px 46px -14px rgba(59,34,16,.3);aspect-ratio:4/3;max-width:100%}
+.spot img{width:100%;height:100%;object-fit:cover;display:block}
+.spot .cap{position:absolute;inset:auto 0 0 0;padding:60px 22px 18px;background:linear-gradient(transparent,rgba(30,14,4,.78));color:#fff;display:flex;flex-direction:column;gap:2px}
+.spot .cap strong{font:700 clamp(22px,2.5vw,34px)/1.15 var(--display);letter-spacing:-.02em}
+.spot .cap span{font-size:14.5px;opacity:.9;font-weight:600}
+.spot .empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:30px}
+.spot.flash{animation:flash 1s ease-out}
+@keyframes flash{from{box-shadow:0 0 0 8px var(--teal)}to{box-shadow:0 0 0 0 transparent}}
+.feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:12px}
+.feed figure{margin:0;position:relative;aspect-ratio:1;border-radius:16px;overflow:hidden;background:rgba(255,255,255,.4)}
+.feed img{width:100%;height:100%;object-fit:cover;display:block}
+.feed figcaption{position:absolute;inset:auto 0 0 0;font:700 11.5px/1.2 var(--body);color:#fff;padding:18px 8px 7px;background:linear-gradient(transparent,rgba(30,14,4,.75))}
+.board h3{font:700 24px var(--display);color:var(--ink);margin-bottom:6px}
+.rank{list-style:none;margin:0;padding:0}
+.rank li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);transition:background .5s}
+.rank li:last-child{border-bottom:0}
+.rank .pos{font:800 18px var(--display);color:var(--muted);font-variant-numeric:tabular-nums}
+.rank li:first-child .pos{color:var(--salmon)}
+.rank .who{font-weight:700;min-width:0;overflow-wrap:anywhere}
+.rank .who small{display:block;font-weight:600;font-size:12px;color:var(--muted)}
+.rank li.bump{background:var(--teal-soft)}
+.dots{display:flex;gap:4px;align-items:center}
+.dots i{width:10px;height:10px;border-radius:50%;background:rgba(137,81,41,.18)}
+.dots i.on{background:var(--teal)}
+.dots b{font:800 20px var(--display);min-width:24px;text-align:right;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:13px;font-weight:600;padding:5px 11px;border-radius:999px;background:var(--salmon-soft);color:var(--ink)}
+
+/* Invitados */
+.rows{display:flex;flex-direction:column}
+.prow{display:grid;grid-template-columns:52px minmax(160px,1.4fr) 130px 90px 120px auto;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line)}
+.prow.head{font:700 11.5px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding-block:6px 10px}
+.prow .num{font:800 20px var(--display);color:var(--salmon);font-variant-numeric:tabular-nums}
+.prow .name-edit{display:flex;gap:6px}
+.prow .name-edit input{padding:9px 12px;font-size:15px;border-radius:10px}
+.prow .acts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+@media (max-width:860px){
+  .prow{grid-template-columns:44px minmax(0,1fr);row-gap:6px}
+  .prow.head{display:none}
+  .prow>:nth-child(n+3){grid-column:2}
+  .prow .acts{justify-content:flex-start}
+}
+/* Fotos */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.pcard{background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.65);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.pcard img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.pcard .meta{padding:10px 12px;display:flex;flex-direction:column;gap:2px;font-size:13.5px;flex:1}
+.pcard .meta strong{font-size:14.5px}
+.pcard .acts{display:flex;gap:6px;padding:0 12px 12px}
+/* Retos */
+.rlist{display:flex;flex-direction:column;gap:8px}
+.rrow{display:grid;grid-template-columns:36px minmax(0,1fr) auto auto;gap:10px;align-items:center}
+.rrow .n{font:800 20px var(--display);color:var(--salmon);text-align:right;font-variant-numeric:tabular-nums}
+.rrow input{padding:10px 13px;font-size:15.5px;border-radius:11px}
+.rrow .use{font-size:12.5px;color:var(--muted);font-weight:700;white-space:nowrap}
+@media (max-width:620px){.rrow{grid-template-columns:30px minmax(0,1fr) auto}.rrow .use{grid-column:2}}
+.row-inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row-inline input[type=number]{width:90px}
+/* Cartel para las mesas */
+.poster{position:relative;overflow:hidden;max-width:520px;margin:0 auto;background:var(--cream) url("../images/paper.jpg") center/cover;border:1px solid var(--line);border-radius:8px;padding:40px 30px 34px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.poster .kicker::before{display:none}
+.poster .branch{width:360px;top:130px;left:-150px;transform:rotate(-80deg)}
+.poster>*:not(.branch){position:relative;z-index:1}
+.poster .names{font-size:60px;margin:4px 0 0}
+.poster .date{margin-top:4px;font-size:22px}
+.poster p.lead{font-size:17px;margin:8px 0 6px;max-width:30ch}
+.qrbox{background:#FFFDF8;padding:12px;border-radius:16px;width:236px;height:236px;max-width:100%;display:grid;place-items:center;position:relative}
+.qrbox img:not(.logo),.qrbox canvas{width:212px!important;height:212px!important}
+.qrbox .logo{position:absolute;width:46px;height:auto;background:#FFFDF8;border-radius:10px;padding:5px;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2}
+.poster .url{font:700 14px var(--body);color:var(--brown);overflow-wrap:anywhere;margin:0}
+/* Acceso */
+.alist{list-style:none;margin:0 0 16px;padding:0}
+.alist li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-weight:700;overflow-wrap:anywhere}
+
+/* Ganador: un momento a oscuras, con la paleta de la boda */
+.reveal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;overflow:hidden;color:#F9F4EC;background:radial-gradient(120% 90% at 50% 40%,#5A3418 0%,#2A170A 55%,#140A03 100%);animation:rv-in .8s ease both;padding:24px}
+@keyframes rv-in{from{opacity:0}to{opacity:1}}
+.reveal canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.reveal .rv-branch{position:absolute;width:min(46vw,620px);opacity:.3;pointer-events:none}
+.reveal .rv-branch.l{left:-12vw;top:8vh;transform:rotate(-80deg)}
+.reveal .rv-branch.r{right:-12vw;bottom:6vh;transform:rotate(100deg)}
+.rv-stage{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(10px,2vh,22px);max-width:1100px;width:100%}
+.rv-kicker{margin:0;font:700 clamp(13px,1.6vw,18px) var(--body);letter-spacing:.28em;text-transform:uppercase;color:#EC8F6E}
+.rv-title{font:700 clamp(24px,3.6vw,46px)/1.15 var(--display);color:#F9F4EC;opacity:0;animation:rv-up .9s .3s ease forwards}
+@keyframes rv-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.rv-slot{min-height:clamp(110px,20vh,230px);display:grid;place-items:center;width:100%}
+.rv-count{font:800 clamp(110px,22vh,240px)/1 var(--display);color:#41E0CF;animation:rv-pop .9s ease both}
+@keyframes rv-pop{0%{opacity:0;transform:scale(2.2)}35%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.7)}}
+.rv-spin{font:700 clamp(48px,9vw,120px)/1.05 var(--display);color:rgba(249,244,236,.55);filter:blur(1.5px);letter-spacing:-.03em}
+.rv-name{font:800 clamp(64px,12vw,170px)/1 var(--display);letter-spacing:-.045em;color:#41E0CF;text-shadow:0 0 40px rgba(65,224,207,.5),0 0 90px rgba(65,224,207,.22);animation:rv-win 1.2s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes rv-win{0%{opacity:0;transform:scale(.4) rotate(-4deg)}60%{opacity:1;transform:scale(1.08)}100%{transform:scale(1)}}
+.rv-meta{margin:0;font:700 clamp(16px,2.2vw,26px) var(--body);color:#F3C77A;opacity:0}
+.rv-meta.on{animation:rv-up .8s ease forwards}
+.rv-photos{display:flex;gap:clamp(8px,1.2vw,16px);justify-content:center;flex-wrap:wrap}
+.rv-photos img{width:clamp(80px,12vw,170px);aspect-ratio:1;object-fit:cover;border-radius:16px;border:3px solid #F9F4EC;box-shadow:0 10px 30px rgba(0,0,0,.45);opacity:0;animation:rv-card .7s ease forwards}
+.rv-photos img:nth-child(odd){--r:-4deg}.rv-photos img:nth-child(even){--r:3deg}
+@keyframes rv-card{from{opacity:0;transform:translateY(30px) rotate(0)}to{opacity:1;transform:rotate(var(--r))}}
+.rv-podium{display:flex;gap:clamp(16px,3vw,40px);justify-content:center;flex-wrap:wrap;opacity:0;font:700 clamp(14px,1.7vw,20px) var(--body);color:rgba(249,244,236,.82)}
+.rv-podium.on{animation:rv-up .8s ease forwards}
+.rv-podium b{color:#EC8F6E;margin-right:6px}
+.rv-close{position:absolute;z-index:3;top:calc(16px + env(safe-area-inset-top,0px));right:calc(16px + env(safe-area-inset-right,0px));background:rgba(249,244,236,.14)!important;color:#F9F4EC!important;border-color:rgba(249,244,236,.3)!important;box-shadow:none!important}
+.rv-close:hover{background:rgba(249,244,236,.24)!important}
+.win-actions{display:flex;gap:10px;flex-wrap:wrap}
+.win-list{list-style:none;margin:10px 0 0;padding:0}
+.win-list li{display:flex;gap:12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line);font-weight:700}
+.win-list li b{color:var(--salmon);min-width:28px}
+details.peek summary{cursor:pointer;font-weight:700;color:var(--ink)}
+@media print{
+  body{background:#fff;padding:0}
+  body::before,.orbs,.backbar,.demo-bar,.a-top,.tabs,.section-title,.no-print{display:none!important}
+  .poster{border:0;margin-top:10mm}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv-title,.rv-meta,.rv-podium,.rv-photos img{opacity:1!important}}
+</style>
+
+</head>
+<body>
+<div class="orbs" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<div id="app"><p class="muted" style="text-align:center;padding:60px 0">Cargando…</p></div>
+
+<script>
+/* =========================================================
+   CONFIGURACIÓN
+   ========================================================= */
+const CONFIG = {
+  novio1: "Sara",
+  novio2: "Joshua",
+  fecha: "21 de noviembre de 2026",
+  lugar: "Finca Gurugú",
+  supabaseUrl: "https://kgrtklnkhlqotkpkdmfr.supabase.co",
+  supabaseKey: "sb_publishable_93S0dmDPVoOcOHhXzUs-9Q_eXBLpgGb",   // clave pública, segura en el navegador
+  urlBase: "https://www.sarajoshua.love/mision/"
+};
+/* ========================================================= */
+
+const DEMO = !/github\.io$|sarajoshua\.love$/.test(location.hostname);
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2, "0");
+const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+const app = $("#app");
+const PAIR = `${CONFIG.novio1}&${CONFIG.novio2}`;
+const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.4C.9 8 3 4.5 6.6 4.5c2.1 0 3.6 1.1 4.4 2.5.8-1.4 2.3-2.5 4.4-2.5 3.6 0 5.7 3.5 4.2 7.1C19.5 16.4 12 21 12 21z"/></svg>`;
+const BRANCH = () => `<img class="branch" src="../images/eucalipto.webp" alt="">`;
+const LOGO = `<img src="../images/sj.png" alt="Sara y Joshua">`;
+const CAM = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>`;
+function base(){ return DEMO ? CONFIG.urlBase : location.origin + location.pathname.replace(/index\.html$/, ""); }
+/* Enlace de vuelta a la web de la boda (la misión vive en /mision/) */
+const HOME = DEMO ? "../index.html" : "../";
+const backBar = (narrow = true) => `<div class="backbar ${narrow ? "guestw" : ""}"><a href="${HOME}"><img src="../images/sj.png" alt="">← Web de la boda</a></div>`;
+function ago(ts){
+  const s = Math.max(0, (Date.now() - new Date(ts).getTime()) / 1000);
+  if (s < 45) return "ahora mismo";
+  if (s < 3600) return "hace " + Math.round(s / 60) + " min";
+  if (s < 86400) return "hace " + Math.round(s / 3600) + " h";
+  return new Date(ts).toLocaleDateString("es-ES", { day: "numeric", month: "short" });
+}
+function loadScript(src){
+  return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("No se pudo cargar " + src)); document.head.appendChild(s); });
+}
+const KEY = "mision-sj", PKEY = "mision-sj-panel";
+let memMe = null, memPass = null;
+function getPass(){ try { return localStorage.getItem(PKEY) || memPass; } catch { return memPass; } }
+function setPass(v){ memPass = v; try { v ? localStorage.setItem(PKEY, v) : localStorage.removeItem(PKEY); } catch {} }
+function me(){ try { return JSON.parse(localStorage.getItem(KEY) || "null") || memMe; } catch { return memMe; } }
+function remember(v){ memMe = v; try { v ? localStorage.setItem(KEY, JSON.stringify(v)) : localStorage.removeItem(KEY); } catch {} }
+
+async function compress(file, max = 1600){
+  let src;
+  try { src = await createImageBitmap(file); }
+  catch { src = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error("no es una foto")); i.src = URL.createObjectURL(file); }); }
+  const k = Math.min(1, max / Math.max(src.width, src.height));
+  const c = document.createElement("canvas"); c.width = Math.round(src.width * k); c.height = Math.round(src.height * k);
+  c.getContext("2d").drawImage(src, 0, 0, c.width, c.height);
+  return await new Promise(r => c.toBlob(r, "image/jpeg", 0.82));
+}
+function armed(btn, fn){
+  btn.addEventListener("click", async () => {
+    if (!btn.classList.contains("armed")) {
+      btn.classList.add("armed"); btn.dataset.label = btn.textContent; btn.textContent = "Confirmar";
+      setTimeout(() => { if (btn.isConnected && btn.classList.contains("armed") && !btn.disabled) { btn.classList.remove("armed"); btn.textContent = btn.dataset.label; } }, 4000);
+      return;
+    }
+    btn.disabled = true; btn.textContent = "Borrando…";
+    try { await fn(); } catch (e) { console.error(e); btn.disabled = false; btn.classList.remove("armed"); btn.textContent = "No se pudo borrar"; }
+  });
+}
+
+/* =========================================================
+   DATOS · Supabase
+   ========================================================= */
+async function liveStore(){
+  await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js");
+  const sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+  const pub = p => sb.storage.from("fotos").getPublicUrl(p).data.publicUrl;
+  const E = r => { if (r.error) throw r.error; return r.data; };
+  const withUrls = d => ({ ...d, photos: (d.photos || []).map(p => ({ ...p, url: pub(p.path) })) });
+  let cache = null, cacheAt = 0;
+  const admin = async (fn, args = {}) => {
+    const d = E(await sb.rpc(fn, { p_pass: getPass(), ...args }));
+    if (d && d.error === "auth") { setPass(null); const e = new Error("auth"); e.auth = true; throw e; }
+    if (d && d.error) throw new Error(d.error);
+    cache = null;
+    return d;
+  };
+  const data = async () => {
+    if (cache && Date.now() - cacheAt < 1500) return cache;
+    const d = E(await sb.rpc("admin_data", { p_pass: getPass() }));
+    if (d && d.error) { setPass(null); const e = new Error("auth"); e.auth = true; throw e; }
+    cache = withUrls(d); cacheAt = Date.now(); return cache;
+  };
+  const removeFiles = async paths => { if (paths && paths.length) { try { await sb.storage.from("fotos").remove(paths); } catch (e) { console.warn(e); } } };
+  return {
+    async register(name){ return E(await sb.rpc("register", { p_name: name })); },
+    async mine(token){
+      const d = E(await sb.rpc("my_mission", { p_token: token }));
+      if (!d) return null;
+      d.token = token; d.photos = (d.photos || []).map(p => ({ ...p, url: pub(p.path) }));
+      return d;
+    },
+    async addPhoto(m, mission, blob){
+      const path = `${m.id}/${Date.now()}-${uid().slice(0, 6)}.jpg`;
+      E(await sb.storage.from("fotos").upload(path, blob, { contentType: "image/jpeg" }));
+      E(await sb.rpc("add_photo", { p_token: m.token, p_mission: mission, p_path: path }));
+    },
+    async status(){ return E(await sb.rpc("admin_status")); },
+    async setup(pass){ const d = E(await sb.rpc("admin_setup", { p_pass: pass })); if (d.error) throw new Error(d.error); setPass(pass); },
+    async login(pass){ const d = E(await sb.rpc("admin_login", { p_pass: pass })); if (d.ok) { setPass(pass); return true; } return false; },
+    async logout(){ setPass(null); },
+    async players(){ return (await data()).players; },
+    async photos(){ return (await data()).photos; },
+    async config(){ return (await data()).config; },
+    async screenKey(){ return (await data()).screen_key; },
+    async saveConfig(retos, n){ await admin("admin_save_config", { p_retos: retos, p_n: n }); },
+    async renamePlayer(id, name){ await admin("admin_rename", { p_id: id, p_name: name }); },
+    async deletePhoto(ph){ const d = await admin("admin_delete_photo", { p_id: ph.id }); await removeFiles(d.paths); },
+    async deletePlayer(id){ const d = await admin("admin_delete_player", { p_id: id }); await removeFiles(d.paths); },
+    async setPassword(nw){ await admin("admin_set_password", { p_new: nw }); setPass(nw); },
+    async newScreenKey(){ return (await admin("admin_new_screen_key")).screen_key; },
+    async reveal(on){ await admin("admin_reveal", { p_on: !!on }); },
+    async screen(key){ const d = E(await sb.rpc("screen_data", { p_key: key })); return d ? withUrls(d) : null; }
+  };
+}
+
+/* =========================================================
+   DATOS · vista previa en memoria
+   ========================================================= */
+function demoStore(){
+  const cfg = { retos: [
+    "El primer paso hacia el altar","El «sí, quiero» visto desde tu sitio","Alguien secándose una lágrima","El primer beso de casados",
+    "La lluvia de arroz o pétalos","Los anillos en primer plano","Un selfie con los novios","Tres generaciones brindando juntas",
+    "Alguien bailando descalzo","El corte de la tarta","Un camarero en plena acción","La mesa más ruidosa del banquete",
+    "Un abrazo de más de cinco segundos","Algo azul","Los zapatos de uno de los novios","Un niño adueñándose de la pista",
+    "Una corbata donde no debería estar","Foto de grupo con diez personas o más","Alguien emocionado durante un discurso","Tu mejor cara de espía",
+    "Un brindis con alguien que acabas de conocer","El detalle de decoración que más te guste","Los novios riéndose a carcajadas","Alguien que se sabe toda la canción"
+  ], retos_por_persona: 5 };
+  const pick = card => { const M = cfg.retos.length, n = Math.min(cfg.retos_por_persona, M), s = ((card - 1) * n) % M; return Array.from({ length: n }, (_, j) => (s + j) % M); };
+  const fake = seed => {
+    const c = document.createElement("canvas"); c.width = c.height = 480; const g = c.getContext("2d");
+    const pal = [["#9ED9CF","#4E8C84"],["#F2C3AE","#B8694A"],["#E8DCC8","#8E6C4E"],["#BFE3DC","#2F8F84"],["#F5D9C9","#C98663"]][seed % 5];
+    const gr = g.createLinearGradient(0, 0, 480, 480); gr.addColorStop(0, pal[0]); gr.addColorStop(1, pal[1]); g.fillStyle = gr; g.fillRect(0, 0, 480, 480);
+    for (let i = 0; i < 12; i++) { g.fillStyle = `rgba(255,250,240,${.06 + (i % 4) * .05})`; g.beginPath(); g.arc((seed * 71 + i * 97) % 480, (seed * 37 + i * 53) % 480, 16 + (seed * 13 + i * 29) % 58, 0, 7); g.fill(); }
+    g.fillStyle = "rgba(255,255,255,.92)"; g.font = "700 20px Nunito, sans-serif"; g.fillText("foto de ejemplo", 22, 452);
+    return c.toDataURL("image/jpeg", .8);
+  };
+  const players = [], photos = []; let demoReveal = null;
+  const names = ["Lucía","Marcos","Tía Carmen","Pablo","Irene","Abuelo Paco","Nerea","Diego","Alba","Hugo"];
+  const t0 = Date.now() - 70 * 60000; let seed = 1;
+  names.forEach((n, i) => players.push({ id: "p" + i, token: "t" + i, card: i + 1, name: n, missions: pick(i + 1), created_at: new Date(t0 + i * 90000).toISOString() }));
+  [5, 4, 4, 3, 3, 2, 1, 1, 0, 0].forEach((k, i) => players[i].missions.slice(0, k).forEach(m => photos.push({ id: uid(), player_id: players[i].id, card: players[i].card, mission: m, mission_text: cfg.retos[m], url: fake(seed++), created_at: new Date(t0 + ((seed * 131) % 60) * 60000).toISOString() })));
+  photos.sort((a, b) => a.created_at.localeCompare(b.created_at));
+  const emit = () => {};
+  return {
+    demo: true,
+    async register(name){ const card = Math.max(0, ...players.map(p => p.card)) + 1; const p = { id: uid(), token: uid(), card, name, missions: pick(card), created_at: new Date().toISOString() }; players.push(p); emit("players", { new: p }); return { token: p.token, card, name }; },
+    async mine(token){ const p = players.find(x => x.token === token); if (!p) return null; return { id: p.id, token, card: p.card, name: p.name, retos: p.missions.map(i => ({ i, text: cfg.retos[i] })), photos: photos.filter(x => x.player_id === p.id) }; },
+    async addPhoto(m, mission, blob){ const p = players.find(x => x.id === m.id); const ph = { id: uid(), player_id: p.id, card: p.card, mission, mission_text: cfg.retos[mission], url: URL.createObjectURL(blob), created_at: new Date().toISOString() }; photos.push(ph); emit("photos", { new: ph }); },
+    async status(){ return { has_password: true }; },
+    async setup(p){ setPass(p); }, async login(p){ setPass(p || "vista-previa"); return true; }, async logout(){ setPass(null); },
+    async screenKey(){ return "ejemplo"; }, async newScreenKey(){ return "ejemplo"; }, async setPassword(){},
+    async reveal(on){ demoReveal = on ? new Date().toISOString() : null; },
+    async screen(){ return { players: players.map(p => ({ ...p })), photos: photos.slice(), config: { retos: cfg.retos.slice(), retos_por_persona: cfg.retos_por_persona }, reveal_at: demoReveal, now: new Date().toISOString() }; },
+    async players(){ return players.map(p => ({ ...p })); },
+    async photos(){ return photos.slice(); },
+    async config(){ return { retos: cfg.retos.slice(), retos_por_persona: cfg.retos_por_persona }; },
+    async saveConfig(r, n){ cfg.retos = r.slice(); cfg.retos_por_persona = n; },
+    async renamePlayer(id, name){ players.find(p => p.id === id).name = name; },
+    async deletePhoto(ph){ const i = photos.findIndex(x => x.id === ph.id); if (i >= 0) photos.splice(i, 1); },
+    async deletePlayer(id){ for (let i = photos.length - 1; i >= 0; i--) if (photos[i].player_id === id) photos.splice(i, 1); players.splice(players.findIndex(p => p.id === id), 1); },
+    simulate(){
+      const cand = []; players.forEach(p => { const done = new Set(photos.filter(x => x.player_id === p.id).map(x => x.mission)); p.missions.forEach(m => { if (!done.has(m)) cand.push([p, m]); }); });
+      if (!cand.length) return; const [p, m] = cand[Math.floor(Math.random() * cand.length)];
+      const ph = { id: uid(), player_id: p.id, card: p.card, mission: m, mission_text: cfg.retos[m], url: fake(seed++), created_at: new Date().toISOString() };
+      photos.push(ph); emit("photos", { new: ph });
+    }
+  };
+}
+
+/* =========================================================
+   VISTAS · invitados
+   ========================================================= */
+let store, cleanup = () => {};
+
+/* =========================================================
+   JUEGO OCULTO HASTA QUE LOS NOVIOS LO ACTIVEN
+   El estado se guarda en content.json de la web (mision.show),
+   el mismo archivo que edita Administración. Para cambiarlo se usa
+   el token de GitHub de Administración (si ya se guardó en este
+   navegador, no hay que volver a pegarlo).
+   ========================================================= */
+const GH = { owner: "joshdejuan", repo: "boda-sara-joshua", branch: "main" };
+let demoOpen = false, peek = false, gateWanted = null;
+async function gameOpen(){
+  if (DEMO) return demoOpen;
+  try {
+    const r = await fetch("../content.json?v=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return true;                       // si no se puede leer, no bloqueamos la boda
+    const j = await r.json();
+    return !!(j.mision && j.mision.show === true);
+  } catch { return true; }
+}
+function ghToken(){ try { return sessionStorage.getItem("sj_token") || localStorage.getItem("sj_token") || ""; } catch { return ""; } }
+function ghSave(t, keep){ try { (keep ? localStorage : sessionStorage).setItem("sj_token", t); } catch {} }
+function ghForget(){ try { sessionStorage.removeItem("sj_token"); localStorage.removeItem("sj_token"); } catch {} }
+const b64 = str => { const by = new TextEncoder().encode(str); let bin = ""; by.forEach(x => bin += String.fromCharCode(x)); return btoa(bin); };
+const unb64 = t => { const bin = atob(t.replace(/\s/g, "")), a = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return new TextDecoder().decode(a); };
+async function gh(method, path, token, payload){
+  const r = await fetch("https://api.github.com" + path, { method,
+    headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(payload ? { "Content-Type": "application/json" } : {}) },
+    body: payload ? JSON.stringify(payload) : undefined });
+  let j = null; try { j = await r.json(); } catch {}
+  if (!r.ok) { const e = new Error((j && j.message) || "HTTP " + r.status); e.status = r.status; throw e; }
+  return j;
+}
+async function setGameOpen(on, token){
+  if (DEMO) { demoOpen = on; return; }
+  const path = `/repos/${GH.owner}/${GH.repo}/contents/content.json`;
+  const f = await gh("GET", path + "?ref=" + GH.branch, token);
+  const j = JSON.parse(unb64(f.content));
+  j.mision = { ...(j.mision || {}), show: !!on };
+  await gh("PUT", path, token, { message: on ? "Misión secreta: activa el juego" : "Misión secreta: oculta el juego", content: b64(JSON.stringify(j, null, 2) + "\n"), branch: GH.branch, sha: f.sha });
+}
+
+/* Aviso para invitados mientras el juego está oculto */
+function viewLocked(){
+  app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
+    <header class="hero">
+      <p class="kicker">Misión secreta ${HEART}</p>
+      <h1 class="names"><span>${esc(CONFIG.novio1)}</span><span>&amp;${esc(CONFIG.novio2)}</span></h1>
+      <p class="date">${esc(CONFIG.fecha)}</p>
+      <p class="place">${esc(CONFIG.lugar)}</p>
+    </header>
+    <section class="sheet">
+      <div class="lock-n" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <h2 class="lock-t">Todavía es un secreto</h2>
+      <p style="margin:0">El juego empieza el día de la boda. Cuando llegue el momento, esta página se abrirá sola: no hace falta que la recargues.</p>
+      ${store.demo ? `<button class="ghost small" id="peek" type="button" style="align-self:flex-start">Ver el juego igualmente (solo en la vista previa)</button>` : ""}
+    </section>
+  </main>`;
+  const pk = $("#peek"); if (pk) pk.addEventListener("click", () => { peek = true; route(); });
+  const t = setInterval(async () => { if (document.hidden) return; if (await gameOpen()) route(); }, store.demo ? 4000 : 30000);
+  cleanup = () => clearInterval(t);
+}
+
+/* Interruptor en el panel de los novios */
+async function gateBox(el){
+  let open = gateWanted !== null ? gateWanted : await gameOpen();
+  const draw = (msg = "", kind = "", askToken = false) => {
+    el.className = "gate panel-box" + (open ? " on" : "");
+    el.innerHTML = `<div class="gtxt"><strong>${open ? "El juego está abierto" : "El juego está oculto"}</strong>
+        <span>${open ? "Los invitados pueden registrarse y subir fotos. La sección se ve en la web." : "Los invitados ven un aviso de que empieza el día de la boda. La sección no aparece en la web."}</span></div>
+      <div class="gact">${open ? `<button class="ghost small" id="g-off" type="button">Ocultar de nuevo</button>` : `<button id="g-on" type="button">Activar el juego</button>`}</div>
+      ${askToken ? `<form id="g-tok"><input type="password" id="g-token" autocomplete="off" placeholder="Token de GitHub (github_pat_…)" aria-label="Token de GitHub" required>
+        <label><input type="checkbox" id="g-keep" checked> Recordar en este navegador</label>
+        <button class="small" type="submit">${open ? "Ocultar" : "Activar"}</button></form>` : ""}
+      <p class="status ${kind}" id="g-st" aria-live="polite">${esc(msg)}</p>`;
+    const go = async (want, token) => {
+      const st = $("#g-st"); st.className = "status"; st.textContent = want ? "Activando…" : "Ocultando…";
+      el.querySelectorAll("button").forEach(b => b.disabled = true);
+      try {
+        await setGameOpen(want, token);
+        open = want; gateWanted = want;
+        draw(store.demo ? "Hecho (vista previa: solo cambia aquí)." : want ? "Activado. La web tarda uno o dos minutos en actualizarse; las páginas que los invitados tengan abiertas se abren solas." : "Oculto. En uno o dos minutos desaparece de la web.", "ok");
+      } catch (e) {
+        console.error(e);
+        if (e.status === 401 || e.status === 403 || e.status === 404) { ghForget(); draw("El token no es válido o no tiene permiso de escritura en " + GH.repo + ". Pega uno nuevo.", "err", true); }
+        else draw("No se pudo guardar. Comprueba la conexión e inténtalo otra vez.", "err", !ghToken());
+      }
+    };
+    const ask = want => {
+      const t = store.demo ? "vista-previa" : ghToken();
+      if (t) return go(want, t);
+      draw("Pega el token de GitHub de Administración. Solo se pide una vez por navegador.", "", true);
+      $("#g-token").focus();
+    };
+    const on = $("#g-on"), off = $("#g-off");
+    if (on) on.addEventListener("click", () => ask(true));
+    if (off) off.addEventListener("click", () => ask(false));
+    const tf = $("#g-tok");
+    if (tf) tf.addEventListener("submit", e => { e.preventDefault(); const v = $("#g-token").value.trim(); if (!v) return; ghSave(v, $("#g-keep").checked); go(!open, v); });
+  };
+  draw();
+}
+function demoBar(cur){
+  if (!store.demo) return "";
+  const l = (h, t) => `<a href="#${h}" ${cur === h ? 'aria-current="page"' : ""}>${t}</a>`;
+  return `<div class="demo-bar"><span><b>Vista previa</b> con datos de ejemplo</span><nav>${l("inicio", "Invitado: registro")}${l("mision", "Invitado: su misión")}${l("admin", "Panel Admin")}${l("pantalla", "Pantalla en directo")}</nav></div>`;
+}
+
+function viewHome(){
+  const m = me();
+  app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
+    <header class="hero">
+      <p class="kicker">Tienes una misión secreta ${HEART}</p>
+      <h1 class="names"><span>${esc(CONFIG.novio1)}</span><span>&amp;${esc(CONFIG.novio2)}</span></h1>
+      <p class="date">${esc(CONFIG.fecha)}</p>
+      <p class="place">${esc(CONFIG.lugar)}</p>
+    </header>
+    <p class="intro">Durante la boda serás nuestro fotógrafo encubierto. Escribe tu nombre y recibirás cinco momentos que capturar sin que nadie sospeche.</p>
+    <p class="notice">${CAM} Las fotos que subas aparecerán en la pantalla en directo de la boda.</p>
+    ${m ? `<a class="resume" href="#mision">${LOGO}<strong>Seguir como ${esc(m.name)}</strong><small>Tu misión Nº ${pad(m.card)}</small><i>→</i></a>` : ""}
+    <form class="sheet form" id="reg">
+      <label class="label" for="nombre">${m ? "¿Eres otra persona?" : "Tu nombre"}</label>
+      <input id="nombre" type="text" maxlength="40" autocomplete="given-name" placeholder="Por ejemplo, Lucía" required>
+      <button type="submit">Recibir mi misión</button>
+      <div class="status" id="st" aria-live="polite"></div>
+    </form>
+  </main>`;
+  $("#reg").addEventListener("submit", async e => {
+    e.preventDefault();
+    const name = $("#nombre").value.trim(); if (!name) return;
+    const b = e.submitter; if (b) b.disabled = true;
+    $("#st").className = "status"; $("#st").textContent = "Preparando tu misión…";
+    try { const r = await store.register(name); remember({ token: r.token, card: r.card, name: r.name }); location.hash = "mision"; }
+    catch (err) { console.error(err); $("#st").className = "status err"; $("#st").textContent = "No se pudo registrar tu nombre. Comprueba la conexión e inténtalo de nuevo."; if (b) b.disabled = false; }
+  });
+}
+
+async function viewMission(){
+  let m = me();
+  if (!m && store.demo) { const r = await store.register("Invitado de prueba"); remember({ token: r.token, card: r.card, name: r.name }); m = me(); }
+  if (!m) { location.hash = "inicio"; return; }
+  const d = await store.mine(m.token);
+  if (!d) { remember(null); app.innerHTML = demoBar("mision") + `<main class="guest"><div class="sheet"><h1 class="names" style="font-size:40px">Misión no encontrada</h1><p>Puede que los novios la hayan borrado. <a href="#inicio">Regístrate de nuevo</a> para recibir otra.</p></div></main>`; return; }
+  const byM = {}; d.photos.forEach(p => { byM[p.mission] = p; });
+  const done = d.retos.filter(r => byM[r.i]).length, total = d.retos.length;
+  const link = `${base()}#m-${d.token}`;
+  app.innerHTML = demoBar("mision") + backBar() + `<main class="guest">${BRANCH()}
+    <header class="hero">
+      <p class="kicker">Misión Nº ${pad(d.card)} ${HEART}</p>
+      <h1 class="names" style="font-size:clamp(44px,12vw,60px)"><span>${esc(d.name)}</span></h1>
+      <p class="place">Boda de ${esc(PAIR)}</p>
+    </header>
+    <section class="sheet">
+      <div class="progress"><div class="track"><div style="width:${total ? done / total * 100 : 0}%"></div></div>
+        <span class="muted" style="font-size:14px;font-weight:700">${done} de ${total} momentos capturados</span></div>
+      ${total && done === total ? `<div class="win">¡Misión cumplida! Los novios verán todas tus fotos. Puedes seguir añadiendo más.</div>` : ""}
+      <ol class="retos">${d.retos.map((r, k) => { const ph = byM[r.i]; return `<li class="reto ${ph ? "done" : ""}">
+        <span class="n">${k + 1}</span><span class="t">${esc(r.text)}</span>
+        <span class="side">${ph ? `<img src="${esc(ph.url)}" alt="Tu foto"><span class="alt"><label class="again">Cambiar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label></span>`
+          : `<span class="shoot"><label class="btn small">${CAM} Capturar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label><label class="again">o de la galería<input type="file" accept="image/*" data-m="${r.i}"></label></span>`}</span></li>`; }).join("")}</ol>
+      <div class="status" id="st" aria-live="polite"></div>
+      <p class="muted" style="font-size:14px;margin:0">Pulsa Capturar y se abrirá la cámara. La foto se sube sola y aparecerá en la pantalla en directo de la boda.</p>
+    </section>
+    <section class="keep"><span class="label">Tu enlace personal</span>
+      <span>Guárdalo para abrir tu misión en otro móvil.</span>
+      <div class="row"><input type="text" id="mylink" readonly value="${esc(link)}" aria-label="Tu enlace personal"><button class="ghost small" id="copy">Copiar</button></div>
+    </section>
+  </main>`;
+  $("#copy").addEventListener("click", async () => {
+    const i = $("#mylink");
+    try { await navigator.clipboard.writeText(i.value); $("#copy").textContent = "Copiado"; }
+    catch { i.select(); $("#copy").textContent = "Selecciónalo y copia"; }
+  });
+  app.querySelectorAll("input[type=file]").forEach(inp => inp.addEventListener("change", async () => {
+    const f = inp.files[0]; if (!f) return;
+    const st = $("#st"); st.className = "status"; st.textContent = "Subiendo foto…";
+    const li = inp.closest(".reto"); if (li) { li.style.opacity = ".6"; const sd = li.querySelector(".side"); if (sd) sd.innerHTML = '<span class="muted" style="font-size:13px;font-weight:700">Subiendo…</span>'; }
+    app.querySelectorAll("input[type=file]").forEach(x => x.disabled = true);
+    try { const blob = await compress(f); await store.addPhoto({ id: d.id, token: d.token }, +inp.dataset.m, blob); await viewMission(); const s = $("#st"); if (s) { s.className = "status ok"; s.textContent = "Foto guardada."; } }
+    catch (err) { console.error(err); try { await viewMission(); } catch {} const s2 = $("#st"); if (s2) { s2.className = "status err"; s2.textContent = "No se pudo subir la foto. Comprueba la cobertura y prueba otra vez."; } }
+  }));
+}
+
+/* =========================================================
+   VISTAS · panel de los novios
+   ========================================================= */
+let loginNote = "";
+async function viewAdmin(tab){
+  if (store.demo && !getPass()) setPass("vista-previa");
+  if (!getPass()) return viewLogin();
+  const tabs = [["directo", "En directo"], ["invitados", "Invitados"], ["fotos", "Fotos"], ["retos", "Retos"], ["cartel", "Cartel"], ["ganador", "Ganador"], ["acceso", "Contraseña y pantalla"]];
+  tab = tabs.some(t => t[0] === tab) ? tab : "directo";
+  app.innerHTML = demoBar("admin") + backBar(false) + `<main class="admin">
+    <header class="a-top"><div class="a-brand">${LOGO}<div><h1>Panel Admin</h1><p>Misión secreta · ${esc(CONFIG.fecha)}</p></div></div>
+      <div class="a-user"><button class="ghost small" id="out">Cerrar sesión</button></div></header>
+    <div class="gate panel-box" id="gate"><div class="gtxt"><strong>Comprobando el estado del juego…</strong></div></div>
+    <nav class="tabs">${tabs.map(([k, t]) => `<a href="#admin/${k}" ${k === tab ? 'aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
+    <section id="tab"></section></main>`;
+  $("#out").addEventListener("click", async () => { cleanup(); cleanup = () => {}; await store.logout(); viewLogin(); });
+  gateBox($("#gate")).catch(console.error);
+  const el = $("#tab");
+  try { await ({ directo: tabLive, invitados: tabPlayers, fotos: tabPhotos, retos: tabRetos, cartel: tabPoster, ganador: tabWinner, acceso: tabAccess })[tab](el); }
+  catch (e) { if (e.auth) { cleanup(); cleanup = () => {}; loginNote = "La contraseña ha cambiado o ya no es válida. Vuelve a entrar."; return viewLogin(); } throw e; }
+}
+
+async function viewLogin(){
+  let st0 = { has_password: true };
+  try { st0 = await store.status(); } catch {}
+  const setup = !st0.has_password;
+  app.innerHTML = demoBar("admin") + backBar() + `<main class="login">${BRANCH()}
+    <p class="kicker">Solo para ${esc(PAIR)}</p><h1>Panel Admin</h1>
+    <p style="margin:0">${setup ? "Es la primera vez que entráis. Elegid la contraseña del panel: con ella se entra desde cualquier dispositivo." : "Escribe la contraseña del panel."}</p>
+    <form class="form" id="lg">
+      <label class="label" for="pw">${setup ? "Nueva contraseña" : "Contraseña"}</label>
+      <input id="pw" type="password" autocomplete="${setup ? "new-password" : "current-password"}" required minlength="6">
+      ${setup ? `<label class="label" for="pw2">Repítela</label><input id="pw2" type="password" autocomplete="new-password" required minlength="6">` : ""}
+      <button type="submit">${setup ? "Guardar y entrar" : "Entrar"}</button>
+      <div class="status ${loginNote ? "err" : ""}" id="st">${esc(loginNote)}</div></form></main>`;
+  loginNote = "";
+  $("#pw").focus();
+  $("#lg").addEventListener("submit", async e => {
+    e.preventDefault(); const b = e.submitter; const st = $("#st"); const pw = $("#pw").value;
+    if (setup && pw !== $("#pw2").value) { st.className = "status err"; st.textContent = "Las dos contraseñas no coinciden."; return; }
+    if (pw.length < 6) { st.className = "status err"; st.textContent = "Usa al menos 6 caracteres."; return; }
+    if (b) b.disabled = true; st.className = "status"; st.textContent = "Comprobando…";
+    try {
+      if (setup) await store.setup(pw);
+      else if (!(await store.login(pw))) { st.className = "status err"; st.textContent = "Contraseña incorrecta."; if (b) b.disabled = false; return; }
+      const h = location.hash.replace(/^#/, "");
+      viewAdmin(h.split("/")[1]);
+    } catch (err) { console.error(err); st.className = "status err"; st.textContent = "No se pudo entrar. Comprueba la conexión e inténtalo de nuevo."; if (b) b.disabled = false; }
+  });
+}
+
+function score(players, photos){
+  const map = {}; players.forEach(p => map[p.id] = { p, set: new Set(), last: 0, count: 0 });
+  photos.forEach(ph => { const s = map[ph.player_id]; if (!s) return; s.count++; if (s.p.missions.includes(ph.mission)) s.set.add(ph.mission); s.last = Math.max(s.last, new Date(ph.created_at).getTime()); });
+  return map;
+}
+
+/* Tablero en directo, compartido por el panel y la pantalla pública */
+async function liveBoard(el, load){
+  let d = await load();
+  let lastId = d.photos.length ? d.photos[d.photos.length - 1].id : null, bump = null, showId = null, spotKey = null;
+  el.innerHTML = `<div class="live-head"><div><span class="live-dot">En directo</span><h2 class="live-names">${esc(PAIR)}</h2></div>
+    <div class="stats" id="stats"></div><button class="ghost no-print" id="fs">Pantalla completa</button></div>
+    <div class="live-grid"><section><div class="spot" id="spot"></div><div class="feed" id="feed"></div></section>
+    <aside class="panel-box board"><h3>Clasificación</h3><ol class="rank" id="rank"></ol>
+    <div style="margin-top:16px"><p class="label" style="margin:0 0 8px">Aún sin cazar</p><div class="chips" id="pend"></div></div></aside></div>`;
+  const flash = () => { const sp = $("#spot"); if (!sp) return; sp.classList.remove("flash"); void sp.offsetWidth; sp.classList.add("flash"); };
+  const render = () => {
+    if (!$("#stats")) return;
+    const { players, photos, config: cfg } = d;
+    const sc = score(players, photos), byId = Object.fromEntries(players.map(p => [p.id, p]));
+    const list = Object.values(sc).sort((a, b) => b.set.size - a.set.size || a.last - b.last).slice(0, 10);
+    const n = Math.max(1, ...players.map(p => p.missions.length));
+    $("#stats").innerHTML = `<div class="stat"><b>${players.length}</b><span>participantes</span></div><div class="stat"><b>${photos.length}</b><span>fotos</span></div><div class="stat"><b>${Object.values(sc).reduce((a, s) => a + s.set.size, 0)}</b><span>retos cumplidos</span></div>`;
+    $("#rank").innerHTML = list.length ? list.map((s, i) => `<li class="${bump === s.p.id ? "bump" : ""}"><span class="pos">${i + 1}</span><span class="who">${esc(s.p.name)}<small>Misión Nº ${pad(s.p.card)}</small></span>
+      <span class="dots">${Array.from({ length: n }, (_, k) => `<i class="${k < s.set.size ? "on" : ""}"></i>`).join("")}<b>${s.set.size}</b></span></li>`).join("")
+      : `<li><span></span><span class="muted">Todavía nadie se ha registrado.</span><span></span></li>`;
+    const caught = new Set(photos.map(p => p.mission));
+    const pend = cfg.retos.map((t, i) => [t, i]).filter(([, i]) => !caught.has(i));
+    $("#pend").innerHTML = pend.length ? pend.slice(0, 12).map(([t]) => `<span>${esc(t)}</span>`).join("") + (pend.length > 12 ? `<span>y ${pend.length - 12} más</span>` : "") : `<span>¡Todos cazados!</span>`;
+    const rec = photos.slice().reverse(), top = (showId && photos.find(p => p.id === showId)) || rec[0];
+    const key = top ? top.id + "|" + ago(top.created_at) : "vacio";
+    if (key !== spotKey) { spotKey = key; $("#spot").innerHTML = top ? `<img src="${esc(top.url)}" alt=""><div class="cap"><strong>${esc(top.mission_text || cfg.retos[top.mission] || "")}</strong><span>${esc(byId[top.player_id]?.name || "")} · ${ago(top.created_at)}</span></div>`
+      : `<div class="empty">Las fotos aparecerán aquí en cuanto alguien cumpla un reto.</div>`; }
+    $("#feed").innerHTML = rec.slice(1, 13).map(ph => `<figure><img src="${esc(ph.url)}" alt="" loading="lazy"><figcaption>${esc(byId[ph.player_id]?.name || "")}</figcaption></figure>`).join("");
+  };
+  render();
+  let alive = true, busy = false, lastNewAt = Date.now(), cycle = [];
+  const rotate = () => {
+    if (!alive || document.hidden || d.photos.length < 2 || Date.now() - lastNewAt < 25000) return;
+    if (!cycle.length) cycle = d.photos.map(p => p.id).filter(id => id !== showId).sort(() => Math.random() - .5);
+    showId = cycle.shift(); render();
+  };
+  const rot = setInterval(rotate, 9000);
+  const tick = async () => {
+    if (!alive || busy || document.hidden) return; busy = true;
+    try {
+      if (store.demo) store.simulate();
+      const nd = await load(); if (!alive) return;
+      const newest = nd.photos.length ? nd.photos[nd.photos.length - 1] : null;
+      const isNew = newest && newest.id !== lastId;
+      if (isNew) { lastId = newest.id; bump = newest.player_id; showId = null; lastNewAt = Date.now(); cycle = []; }
+      d = nd; render(); if (isNew) flash();
+    } catch (e) { if (e.auth) { alive = false; loginNote = "Vuelve a entrar."; viewLogin(); } }
+    finally { busy = false; }
+  };
+  const poll = setInterval(tick, store.demo ? 7000 : 6000);
+  $("#fs").addEventListener("click", async () => { try { document.fullscreenElement ? await document.exitFullscreen() : await document.documentElement.requestFullscreen(); } catch {} });
+  let lock = null; try { lock = await navigator.wakeLock?.request("screen"); } catch {}
+  cleanup = () => { alive = false; clearInterval(poll); clearInterval(rot); try { lock?.release(); } catch {} };
+}
+
+async function tabLive(el){
+  await liveBoard(el, async () => { const [players, photos, config] = await Promise.all([store.players(), store.photos(), store.config()]); return { players, photos, config }; });
+}
+
+async function viewScreen(key){
+  const first = await store.screen(key);
+  if (!first) { app.innerHTML = `<main class="login">${BRANCH()}<h1>Enlace no válido</h1><p>Este enlace de pantalla ya no funciona. Pide a los novios el nuevo.</p></main>`; return; }
+  app.innerHTML = demoBar("pantalla") + `<main class="admin screen"><section id="tab"></section></main>`;
+  let firstUsed = false, seen = first.reveal_at && (new Date(first.now) - new Date(first.reveal_at) > 60000) ? first.reveal_at : null;
+  const watch = d => {
+    if (d.reveal_at && d.reveal_at !== seen) { seen = d.reveal_at; playReveal(d); }
+    else if (!d.reveal_at && revealOpen) { seen = null; revealOpen.close(); }
+    return d;
+  };
+  await liveBoard($("#tab"), async () => { if (!firstUsed) { firstUsed = true; return watch(first); } const d = await store.screen(key); if (!d) throw new Error("clave"); return watch(d); });
+}
+
+async function tabPlayers(el){
+  const [players, photos] = await Promise.all([store.players(), store.photos()]);
+  const sc = score(players, photos);
+  el.innerHTML = `<div class="section-title"><h2>Invitados registrados</h2><span class="muted">${players.length} en total · puedes corregir nombres o borrar registros</span></div>
+    <div class="panel-box"><div class="rows">
+      <div class="prow head"><span>Nº</span><span>Nombre</span><span>Retos</span><span>Fotos</span><span>Registro</span><span></span></div>
+      ${players.length ? players.map(p => { const s = sc[p.id]; return `<div class="prow" data-id="${esc(p.id)}">
+        <span class="num">${pad(p.card)}</span>
+        <span class="name-edit"><input type="text" id="n-${esc(p.id)}" value="${esc(p.name)}" maxlength="40" aria-label="Nombre"><button class="ghost small save" hidden>Guardar</button></span>
+        <span class="dots">${p.missions.map((_, k) => `<i class="${k < s.set.size ? "on" : ""}"></i>`).join("")}<span class="muted" style="font-size:13px;font-weight:700;margin-left:6px">${s.set.size}/${p.missions.length}</span></span>
+        <span>${s.count} ${s.count === 1 ? "foto" : "fotos"}</span>
+        <span class="muted" style="font-size:13.5px">${ago(p.created_at)}</span>
+        <span class="acts"><a class="ghost btn small" href="#admin/fotos?p=${encodeURIComponent(p.id)}">Ver fotos</a><button class="danger small del">Borrar</button></span></div>`; }).join("")
+      : `<p class="muted" style="padding:10px 4px">Todavía nadie se ha registrado.</p>`}
+    </div></div>`;
+  el.querySelectorAll(".prow[data-id]").forEach(row => {
+    const id = row.dataset.id, inp = row.querySelector("input"), save = row.querySelector(".save"), orig = inp.value;
+    inp.addEventListener("input", () => { save.hidden = inp.value.trim() === orig || !inp.value.trim(); save.textContent = "Guardar"; });
+    save.addEventListener("click", async () => { save.disabled = true; try { await store.renamePlayer(id, inp.value.trim()); save.textContent = "Guardado"; setTimeout(() => tabPlayers(el), 700); } catch { save.textContent = "Error"; save.disabled = false; } });
+    armed(row.querySelector(".del"), async () => { await store.deletePlayer(id); row.remove(); });
+  });
+}
+
+async function tabPhotos(el){
+  const q = new URLSearchParams(location.hash.split("?")[1] || "");
+  const [players, photos] = await Promise.all([store.players(), store.photos()]);
+  const byId = Object.fromEntries(players.map(p => [p.id, p]));
+  let filter = q.get("p") || "";
+  el.innerHTML = `<div class="section-title"><h2>Todas las fotos</h2><div class="tools">
+      <select id="flt" aria-label="Filtrar por invitado" style="width:auto;padding:10px 14px;font-size:14.5px"><option value="">Todos los invitados</option>${players.map(p => `<option value="${esc(p.id)}" ${p.id === filter ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
+      <button id="zip" ${store.demo ? 'disabled title="Disponible en tu web"' : ""}>Descargar todas (ZIP)</button></div></div>
+    <div class="status" id="st"></div><div class="pgrid" id="grid"></div>`;
+  const draw = () => {
+    const list = photos.filter(p => !filter || p.player_id === filter).slice().reverse();
+    $("#grid").innerHTML = list.length ? list.map(p => `<article class="pcard" data-id="${esc(p.id)}"><img src="${esc(p.url)}" alt="" loading="lazy">
+      <div class="meta"><strong>${esc(byId[p.player_id]?.name || "Invitado borrado")}</strong><span>${esc(p.mission_text || "")}</span><span class="muted">${ago(p.created_at)}</span></div>
+      <div class="acts"><a class="ghost btn small" href="${esc(p.url)}" target="_blank" rel="noopener">Abrir</a><button class="danger small del">Borrar</button></div></article>`).join("")
+      : `<p class="muted">No hay fotos todavía.</p>`;
+    $("#grid").querySelectorAll(".pcard").forEach(card => { const ph = photos.find(p => p.id === card.dataset.id); armed(card.querySelector(".del"), async () => { await store.deletePhoto(ph); photos.splice(photos.indexOf(ph), 1); card.remove(); }); });
+  };
+  draw();
+  $("#flt").addEventListener("change", e => { filter = e.target.value; draw(); });
+  $("#zip").addEventListener("click", async () => {
+    const st = $("#st");
+    try {
+      st.className = "status"; st.textContent = "Preparando el ZIP…";
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
+      const zip = new JSZip(), safe = s => String(s || "").replace(/[^\p{L}\p{N} ]/gu, "").trim().slice(0, 40);
+      for (let i = 0; i < photos.length; i++) {
+        const p = photos[i]; st.textContent = `Descargando foto ${i + 1} de ${photos.length}…`;
+        zip.file(`${pad(i + 1)} - ${safe(byId[p.player_id]?.name)} - ${safe(p.mission_text)}.jpg`, await (await fetch(p.url)).blob());
+      }
+      const a = document.createElement("a"); a.href = URL.createObjectURL(await zip.generateAsync({ type: "blob" })); a.download = "fotos-sara-joshua.zip"; a.click();
+      st.className = "status ok"; st.textContent = `Listo: ${photos.length} fotos.`;
+    } catch (e) { console.error(e); st.className = "status err"; st.textContent = "No se pudo crear el ZIP. Inténtalo de nuevo con buena conexión."; }
+  });
+}
+
+async function tabRetos(el){
+  const [cfg, players] = await Promise.all([store.config(), store.players()]);
+  const draft = cfg.retos.slice();
+  const use = i => players.filter(p => p.missions.includes(i)).length;
+  const locked = players.length > 0;
+  el.innerHTML = `<div class="section-title"><h2>Retos</h2><span class="muted">${draft.length} retos · cada invitado recibe unos distintos al registrarse</span></div>
+    <div class="panel-box" style="display:flex;flex-direction:column;gap:18px">
+      <div class="row-inline"><label class="label" for="nper">Retos por invitado</label><input type="number" id="nper" min="1" max="10" value="${cfg.retos_por_persona}"><span class="muted" style="font-size:13.5px">Se aplica a quien se registre a partir de ahora.</span></div>
+      <div class="rlist" id="rl"></div>
+      <div class="row-inline"><input type="text" id="newr" maxlength="90" placeholder="Nuevo reto, por ejemplo: Alguien bailando con la abuela" style="flex:1;min-width:220px"><button class="ghost" id="add">Añadir</button></div>
+      ${locked ? `<p class="muted" style="margin:0;font-size:14px">Como ya hay invitados registrados, los retos existentes no se pueden quitar: solo corregir su texto. Los nuevos sí. Para empezar de cero, borra antes a los invitados.</p>` : ""}
+      <div class="row-inline"><button id="save">Guardar cambios</button><span class="status" id="st"></span></div></div>`;
+  const draw = () => {
+    $("#rl").innerHTML = draft.map((t, i) => `<div class="rrow"><span class="n">${i + 1}</span><input type="text" value="${esc(t)}" data-i="${i}" maxlength="90" aria-label="Reto ${i + 1}">
+      <span class="use">${i < cfg.retos.length ? `en ${use(i)} ${use(i) === 1 ? "misión" : "misiones"}` : "nuevo"}</span>
+      ${locked && i < cfg.retos.length ? "<span></span>" : `<button class="danger small rm" data-i="${i}" aria-label="Quitar reto ${i + 1}">Quitar</button>`}</div>`).join("");
+    $("#rl").querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => { draft[+inp.dataset.i] = inp.value; }));
+    $("#rl").querySelectorAll(".rm").forEach(b => b.addEventListener("click", () => { draft.splice(+b.dataset.i, 1); draw(); }));
+  };
+  draw();
+  const addIt = () => { const v = $("#newr").value.trim(); if (!v) return; draft.push(v); $("#newr").value = ""; draw(); };
+  $("#add").addEventListener("click", addIt);
+  $("#newr").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addIt(); } });
+  $("#save").addEventListener("click", async () => {
+    const st = $("#st"), n = Math.max(1, Math.min(10, +$("#nper").value || 5));
+    if (locked && draft.slice(0, cfg.retos.length).some(t => !t.trim())) { st.className = "status err"; st.textContent = "Hay retos vacíos. Escribe algo en ellos antes de guardar."; return; }
+    const clean = draft.map(t => t.trim()).filter(Boolean);
+    if (clean.length < n) { st.className = "status err"; st.textContent = `Necesitas al menos ${n} retos.`; return; }
+    $("#save").disabled = true; st.className = "status"; st.textContent = "Guardando…";
+    try { await store.saveConfig(clean, n); st.className = "status ok"; st.textContent = "Guardado."; setTimeout(() => tabRetos(el), 800); }
+    catch (e) { console.error(e); st.className = "status err"; st.textContent = "No se pudo guardar. Inténtalo otra vez."; $("#save").disabled = false; }
+  });
+}
+
+async function tabPoster(el){
+  const url = base();
+  el.innerHTML = `<div class="section-title"><h2>Cartel para las mesas</h2><div class="tools"><button id="print" ${store.demo ? 'disabled title="Disponible en tu web"' : ""}>Imprimir cartel</button></div></div>
+    <article class="poster">${BRANCH()}
+      <p class="kicker">Tienes una misión secreta ${HEART}</p>
+      <h2 class="names"><span>${esc(CONFIG.novio1)}</span><span>&amp;${esc(CONFIG.novio2)}</span></h2>
+      <p class="date">${esc(CONFIG.fecha)}</p>
+      <p class="lead">Escanea, escribe tu nombre y recibirás cinco momentos secretos que fotografiar durante la boda.</p>
+      <div class="qrbox" id="qr"><img class="logo" src="../images/sj.png" alt=""></div>
+      <p class="url">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</p></article>
+    <p class="muted no-print" style="text-align:center;margin-top:16px;font-size:14px">Imprime unas cuantas copias para las mesas y la entrada. El mismo enlace se puede mandar por WhatsApp.</p>`;
+  try {
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js");
+    new QRCode($("#qr"), { text: url, width: 424, height: 424, colorDark: "#6F3E1E", colorLight: "#FFFDF8", correctLevel: QRCode.CorrectLevel.H });
+  } catch {}
+  $("#print").addEventListener("click", () => window.print());
+}
+
+async function tabAccess(el){
+  const key = await store.screenKey();
+  const screenUrl = `${base()}#pantalla-${key}`;
+  el.innerHTML = `<div class="section-title"><h2>Contraseña y pantalla</h2></div>
+    <div style="display:grid;gap:18px;max-width:720px">
+    <div class="panel-box" style="display:flex;flex-direction:column;gap:12px">
+      <h3 style="font:800 20px var(--body);color:var(--brown)">Pantalla en directo</h3>
+      <p style="margin:0">Abre este enlace en el ordenador del proyector o en la tele. Muestra las fotos y la clasificación sin pedir contraseña. No lo compartáis con los invitados.</p>
+      <div class="row-inline"><input type="text" id="sl" readonly value="${esc(screenUrl)}" aria-label="Enlace de la pantalla" style="flex:1;min-width:240px;font-size:14px"><button class="ghost small" id="cp">Copiar</button><a class="btn small" href="${esc(screenUrl)}" target="_blank" rel="noopener">Abrir</a></div>
+      <div class="row-inline"><button class="danger small" id="nk">Cambiar el enlace</button><span class="muted" style="font-size:13.5px">El enlace anterior dejará de funcionar.</span></div>
+    </div>
+    <form class="panel-box" id="pf" style="display:flex;flex-direction:column;gap:12px">
+      <h3 style="font:800 20px var(--body);color:var(--brown)">Cambiar la contraseña</h3>
+      <label class="label" for="np">Nueva contraseña</label><input type="password" id="np" autocomplete="new-password" minlength="6" required>
+      <label class="label" for="np2">Repítela</label><input type="password" id="np2" autocomplete="new-password" minlength="6" required>
+      <div class="row-inline"><button type="submit">Guardar contraseña</button><span class="status" id="pst"></span></div>
+    </form></div>`;
+  $("#cp").addEventListener("click", async () => { const i = $("#sl"); try { await navigator.clipboard.writeText(i.value); $("#cp").textContent = "Copiado"; } catch { i.select(); $("#cp").textContent = "Selecciónalo y copia"; } });
+  armed($("#nk"), async () => { await store.newScreenKey(); await tabAccess(el); });
+  $("#pf").addEventListener("submit", async e => {
+    e.preventDefault(); const st = $("#pst"), a = $("#np").value, b = $("#np2").value;
+    if (a !== b) { st.className = "status err"; st.textContent = "No coinciden."; return; }
+    if (a.length < 6) { st.className = "status err"; st.textContent = "Usa al menos 6 caracteres."; return; }
+    try { await store.setPassword(a); st.className = "status ok"; st.textContent = "Contraseña cambiada."; $("#pf").reset(); }
+    catch (err) { st.className = "status err"; st.textContent = "No se pudo cambiar. Inténtalo otra vez."; }
+  });
+}
+
+/* =========================================================
+   GANADOR · momento sorpresa
+   ========================================================= */
+function ranking(d){
+  const sc = score(d.players, d.photos);
+  return Object.values(sc).filter(s => s.set.size > 0).sort((a, b) => b.set.size - a.set.size || a.last - b.last);
+}
+const wait = ms => new Promise(r => setTimeout(r, ms));
+let revealOpen = null;
+
+function sound(){
+  let ctx = null;
+  try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return { roll(){}, crash(){}, stop(){} }; }
+  const noise = (dur, gain, freq) => {
+    try {
+      const len = Math.floor(ctx.sampleRate * dur), buf = ctx.createBuffer(1, len, ctx.sampleRate), ch = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const f = ctx.createBiquadFilter(); f.type = freq > 3000 ? "highpass" : "bandpass"; f.frequency.value = freq;
+      const g = ctx.createGain(); g.gain.value = gain;
+      src.connect(f).connect(g).connect(ctx.destination); src.start();
+    } catch {}
+  };
+  let timer = null;
+  return {
+    roll(ms){ const end = Date.now() + ms; let v = .12; timer = setInterval(() => { if (Date.now() > end) return clearInterval(timer); v = Math.min(.5, v + .01); noise(.08, v, 180); }, 55); },
+    crash(){ clearInterval(timer); noise(2.2, .5, 5000); noise(.5, .9, 90); },
+    stop(){ clearInterval(timer); try { ctx.close(); } catch {} }
+  };
+}
+
+function confetti(canvas){
+  const g = canvas.getContext("2d"), cols = ["#23C4B3", "#3FD8C8", "#EC8F6E", "#E3B893", "#F6EFE6", "#F2A185"];
+  let W, H, parts = [], raf = null, until = 0;
+  const size = () => { W = canvas.width = canvas.clientWidth * devicePixelRatio; H = canvas.height = canvas.clientHeight * devicePixelRatio; };
+  size(); addEventListener("resize", size);
+  const burst = (x, y, n, spread, up) => { for (let i = 0; i < n; i++) { const a = -Math.PI / 2 + (Math.random() - .5) * spread; const v = (up || 14) * (0.5 + Math.random()) * devicePixelRatio; parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, w: (6 + Math.random() * 8) * devicePixelRatio, h: (8 + Math.random() * 12) * devicePixelRatio, r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: cols[i % cols.length], leaf: Math.random() < .25 }); } };
+  const step = () => {
+    g.clearRect(0, 0, W, H);
+    if (Date.now() < until && Math.random() < .5) { const x = Math.random() * W; parts.push({ x, y: -20, vx: (Math.random() - .5) * 2, vy: 2 + Math.random() * 3, w: 8 * devicePixelRatio, h: 12 * devicePixelRatio, r: 0, vr: (Math.random() - .5) * .2, c: cols[Math.floor(Math.random() * cols.length)], leaf: Math.random() < .3 }); }
+    parts = parts.filter(p => p.y < H + 60);
+    for (const p of parts) {
+      p.vy += .22 * devicePixelRatio; p.vx *= .99; p.vy *= .99; p.x += p.vx + Math.sin(p.y / 40) * .6; p.y += p.vy; p.r += p.vr;
+      g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c;
+      if (p.leaf) { g.beginPath(); g.ellipse(0, 0, p.w * .7, p.h * .45, 0, 0, 7); g.fill(); } else g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * .5);
+      g.restore();
+    }
+    raf = requestAnimationFrame(step);
+  };
+  step();
+  return {
+    fire(){ burst(W * .1, H, 140, 1.1, 22); burst(W * .9, H, 140, 1.1, 22); burst(W / 2, H * .45, 120, 6.3, 12); until = Date.now() + 7000; },
+    stop(){ cancelAnimationFrame(raf); removeEventListener("resize", size); }
+  };
+}
+
+async function playReveal(d, opts = {}){
+  if (revealOpen) revealOpen.close();
+  const rank = ranking(d), winner = rank[0];
+  const el = document.createElement("div");
+  el.className = "reveal"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Ganador de la misión secreta");
+  el.innerHTML = `<canvas></canvas><img class="rv-branch l" src="../images/eucalipto.webp" alt=""><img class="rv-branch r" src="../images/eucalipto.webp" alt="">
+    <div class="rv-stage"><p class="rv-kicker">Misión secreta · ${esc(PAIR)}</p>
+      <h2 class="rv-title">${winner ? "Y el mejor fotógrafo encubierto es…" : "Todavía nadie ha cumplido ningún reto"}</h2>
+      <div class="rv-slot" aria-live="polite"></div><p class="rv-meta"></p><div class="rv-photos"></div><div class="rv-podium"></div></div>
+    <button class="rv-close" type="button">Cerrar</button>`;
+  document.body.appendChild(el);
+  let alive = true;
+  const fx = confetti(el.querySelector("canvas")), snd = opts.sound ? sound() : null;
+  const close = () => { if (!alive) return; alive = false; fx.stop(); snd?.stop(); el.style.transition = "opacity .5s"; el.style.opacity = "0"; setTimeout(() => el.remove(), 500); revealOpen = null; };
+  revealOpen = { close };
+  el.querySelector(".rv-close").addEventListener("click", () => { close(); opts.onClose?.(); });
+  if (!winner) return;
+  const slot = el.querySelector(".rv-slot");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  await wait(1800);
+  if (!reduce) {
+    for (const n of ["3", "2", "1"]) { if (!alive) return; slot.innerHTML = `<span class="rv-count">${n}</span>`; await wait(950); }
+    const names = d.players.map(p => p.name).filter(Boolean);
+    snd?.roll(3600);
+    let delay = 55; const start = Date.now();
+    while (alive && Date.now() - start < 3600) { slot.innerHTML = `<span class="rv-spin">${esc(names[Math.floor(Math.random() * names.length)])}</span>`; await wait(delay); delay = Math.min(420, delay * 1.09); }
+  }
+  if (!alive) return;
+  snd?.crash();
+  slot.innerHTML = `<span class="rv-name">${esc(winner.p.name)}</span>`;
+  fx.fire();
+  const meta = el.querySelector(".rv-meta");
+  meta.textContent = `${winner.set.size} de ${winner.p.missions.length} retos cumplidos · ${winner.count} ${winner.count === 1 ? "foto" : "fotos"}`;
+  await wait(900); meta.classList.add("on");
+  const pics = d.photos.filter(p => p.player_id === winner.p.id).slice(-5);
+  el.querySelector(".rv-photos").innerHTML = pics.map((p, i) => `<img src="${esc(p.url)}" alt="" style="animation-delay:${i * .25}s">`).join("");
+  await wait(1500 + pics.length * 250);
+  const pod = rank.slice(1, 3);
+  if (pod.length) { const po = el.querySelector(".rv-podium"); po.innerHTML = pod.map((s, i) => `<span><b>${i + 2}º</b>${esc(s.p.name)} · ${s.set.size} retos</span>`).join(""); po.classList.add("on"); }
+}
+
+async function tabWinner(el){
+  const d = await (async () => { const [players, photos, config] = await Promise.all([store.players(), store.photos(), store.config()]); return { players, photos, config }; })();
+  const rank = ranking(d);
+  el.innerHTML = `<div class="section-title"><h2>Desvelar al ganador</h2></div>
+    <div style="display:grid;gap:18px;max-width:760px">
+    <div class="panel-box" style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0">Lanza el momento sorpresa: cuenta atrás, nombres girando como una ruleta y el ganador con confeti y sus fotos. Gana quien más retos haya cumplido; si hay empate, quien los terminó antes.</p>
+      <div class="win-actions">
+        <button id="rv-screen">Desvelar en la pantalla en directo</button>
+        <button class="ghost" id="rv-here">Desvelar en este dispositivo</button>
+        <button class="ghost small" id="rv-off">Quitar de la pantalla</button>
+      </div>
+      <p class="muted" style="margin:0;font-size:14px">"En la pantalla en directo" aparece en unos segundos en el ordenador del proyector que tenga abierto el enlace de la pantalla. "En este dispositivo" lo reproduce aquí mismo, con sonido de redoble.</p>
+      <div class="status" id="rv-st"></div>
+    </div>
+    <details class="panel-box peek"><summary>Ver el podio antes (sin sorpresa)</summary>
+      ${rank.length ? `<ol class="win-list">${rank.slice(0, 5).map((s, i) => `<li><b>${i + 1}º</b><span>${esc(s.p.name)}</span><span class="muted" style="margin-left:auto">${s.set.size}/${s.p.missions.length} retos · ${s.count} fotos</span></li>`).join("")}</ol>` : `<p class="muted">Todavía nadie ha cumplido ningún reto.</p>`}
+    </details></div>`;
+  const st = $("#rv-st");
+  $("#rv-here").addEventListener("click", () => playReveal(d, { sound: true }));
+  $("#rv-screen").addEventListener("click", async () => {
+    st.className = "status"; st.textContent = "Enviando a la pantalla…";
+    try { await store.reveal(true); st.className = "status ok"; st.textContent = "¡En marcha! La pantalla lo mostrará en unos segundos."; }
+    catch (e) { st.className = "status err"; st.textContent = "No se pudo enviar. Inténtalo otra vez."; }
+  });
+  $("#rv-off").addEventListener("click", async () => {
+    try { await store.reveal(false); st.className = "status ok"; st.textContent = "Quitado de la pantalla."; }
+    catch { st.className = "status err"; st.textContent = "No se pudo quitar. Inténtalo otra vez."; }
+  });
+}
+
+/* =========================================================
+   RUTAS
+   ========================================================= */
+async function route(){
+  cleanup(); cleanup = () => {};
+  if (revealOpen) revealOpen.close();
+  const tok = location.hash.match(/^#m-([0-9a-z-]{8,})$/i);
+  if (tok) {
+    const d = await store.mine(tok[1]).catch(() => null);
+    if (d) remember({ token: tok[1], card: d.card, name: d.name });
+    history.replaceState(null, "", location.pathname + "#mision");
+  }
+  window.scrollTo(0, 0);
+  try {
+    const path = location.hash.replace(/^#/, "").split("?")[0];
+    const forGuests = !(path === "admin" || path.startsWith("admin/") || path.startsWith("pantalla"));
+    if (forGuests && !peek && !(await gameOpen())) return viewLocked();
+    if (path === "mision") await viewMission();
+    else if (path === "admin" || path.startsWith("admin/")) await viewAdmin(path.split("/")[1]);
+    else if (path === "pantalla" && store.demo) await viewScreen("ejemplo");
+    else if (path.startsWith("pantalla-")) await viewScreen(path.slice(9));
+    else viewHome();
+  } catch (e) {
+    console.error(e);
+    app.innerHTML = `<main class="guest"><div class="sheet"><h1 class="names" style="font-size:40px">Algo ha fallado</h1><p>No hay conexión. Recarga la página en unos segundos.</p></div></main>`;
+  }
+}
+
+(async () => {
+  try { store = DEMO ? demoStore() : await liveStore(); }
+  catch (e) { app.innerHTML = `<main class="guest"><div class="sheet"><h1 class="names" style="font-size:40px">Sin conexión</h1><p>Comprueba la cobertura y recarga la página.</p></div></main>`; return; }
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>
