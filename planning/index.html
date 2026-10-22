@@ -342,6 +342,9 @@ details.grp[open] > summary::after { content: "–"; }
 .tbx-t { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; line-height: 1.3; letter-spacing: -.01em; color: var(--brown-deep); max-width: 40ch; }
 .tbx-n { margin: 0; font-size: .93rem; color: var(--muted); max-width: 46ch; }
 .tb-extra .btn { margin-top: .2rem; }
+.tb-extra.ask { background: rgba(236, 143, 110, .16); border: 1.5px solid rgba(236, 143, 110, .45); }
+.tb-extra.ask .btns { gap: .5rem; }
+.tb-extra.ask .btn { white-space: nowrap; padding: .65rem 1rem; font-size: .88rem; }
 .tb-extra .btn svg.st { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .tb-group { margin-top: .8rem; }
 .tb-toggle { width: 100%; display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; font: inherit; color: inherit; text-align: left; cursor: pointer; padding: .75rem .8rem .75rem 1rem; border-radius: 16px; background: rgba(255, 255, 255, .55); border: 1px solid rgba(137, 81, 41, .2); transition: background .2s; }
@@ -427,11 +430,11 @@ details.grp[open] > summary::after { content: "–"; }
   var selected = {};
   var data = DEFAULTS;
 
-  function waButtons(ct) {
+  function waButtons(ct, msg) {
     return [['Sara', ct.sara], ['Joshua', ct.joshua]].map(function (p) {
       var d = String(p[1] || '').replace(/\D/g, ''); if (d.length === 9 && /^[6789]/.test(d)) d = '34' + d; return [p[0], d];
     }).filter(function (p) { return p[1].length >= 8; }).map(function (p) {
-      return '<a class="btn" href="https://wa.me/' + p[1] + '" target="_blank" rel="noopener">WhatsApp ' + esc(p[0]) + '</a>';
+      return '<a class="btn" href="https://wa.me/' + p[1] + (msg ? '?text=' + encodeURIComponent(msg) : '') + '" target="_blank" rel="noopener">WhatsApp ' + esc(p[0]) + '</a>';
     }).join('');
   }
 
@@ -465,6 +468,11 @@ details.grp[open] > summary::after { content: "–"; }
       out += '<div class="tb-extra"><p class="tbx-k">Canción</p><p class="tbx-t">' + esc(b.song.label || '') + '</p>' +
         (b.song.note ? '<p class="tbx-n">' + esc(b.song.note) + '</p>' : '') +
         '<a class="btn line" href="' + esc(b.song.url) + '" target="_blank" rel="noopener">' + NOTE + esc(b.song.button || 'Seguir la letra') + '</a></div>';
+    }
+    if (b.ask && b.ask.text) {
+      out += '<div class="tb-extra ask"><p class="tbx-k">' + esc(b.ask.label || 'Tu menú') + '</p><p class="tbx-t">' + esc(b.ask.text) + '</p>' +
+        (b.ask.note ? '<p class="tbx-n">' + esc(b.ask.note) + '</p>' : '') +
+        '<div class="btns">' + waButtons(data.contact || {}, b.ask.message) + '</div></div>';
     }
     return out;
   }
