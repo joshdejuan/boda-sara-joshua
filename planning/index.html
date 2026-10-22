@@ -333,6 +333,16 @@ details.grp[open] > summary::after { content: "–"; }
 .tb-card { padding: 1.1rem 1.3rem; border-radius: 22px; }
 .tb-title { font-weight: 700; font-size: 1.3rem; letter-spacing: -.015em; line-height: 1.2; }
 .tb-detail { margin: .35rem 0 0; color: var(--muted); font-size: .95rem; }
+/* Extras dentro de un momento del día: misión secreta y canción */
+.tb-extra { margin-top: .9rem; padding: .95rem 1rem 1rem; border-radius: 18px; display: grid; gap: .55rem; justify-items: start;
+  background: rgba(255, 255, 255, .42); border: 1px solid rgba(255, 255, 255, .7); }
+.tb-extra.mis { background: linear-gradient(140deg, rgba(150, 245, 234, .5), rgba(255, 255, 255, .35)); }
+.tbx-k { margin: 0; display: flex; align-items: center; gap: .6rem; font-size: .74rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--brown); }
+.tbx-k::before { content: ""; width: 22px; height: 2px; background: var(--coral); flex: none; }
+.tbx-t { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; line-height: 1.3; letter-spacing: -.01em; color: var(--brown-deep); max-width: 40ch; }
+.tbx-n { margin: 0; font-size: .93rem; color: var(--muted); max-width: 46ch; }
+.tb-extra .btn { margin-top: .2rem; }
+.tb-extra .btn svg.st { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .tb-group { margin-top: .8rem; }
 .tb-toggle { width: 100%; display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; font: inherit; color: inherit; text-align: left; cursor: pointer; padding: .75rem .8rem .75rem 1rem; border-radius: 16px; background: rgba(255, 255, 255, .55); border: 1px solid rgba(137, 81, 41, .2); transition: background .2s; }
 .tb-toggle:hover { background: rgba(255, 255, 255, .85); }
@@ -404,7 +414,7 @@ details.grp[open] > summary::after { content: "–"; }
 <script>
 (function () {
   'use strict';
-  var DEFAULTS = {"menu": {"intro": "Esto es lo que vamos a comer y beber. Si tienes alguna alergia o intolerancia, revisa los alérgenos de cada plato o escríbenos.", "allergensPending": false, "sections": [{"id": "frio", "title": "Cóctel frío", "items": [{"name": "Árbol de frutas con quesos variados", "detail": "", "allergens": ["lacteos"]}, {"name": "Bombones de queso de cabra rellenos de frambuesa y pistacho", "detail": "", "allergens": ["lacteos", "frutos_cascara"]}, {"name": "Brocheta de melón cantalupo con jamón de pato", "detail": "", "allergens": []}, {"name": "Cornetto de crema de queso azul con pera", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Daditos de salmón en guacamole", "detail": "", "allergens": ["pescado"]}, {"name": "Ferrero de foie con coulis de mango", "detail": "", "allergens": ["frutos_cascara"]}, {"name": "Jamón ibérico de Guijuelo con picos de Jerez", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Lomo embuchado Duroc con regañás al aceite de oliva", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Matrimonio con explosión de aceituna", "detail": "", "allergens": ["pescado"]}, {"name": "Mini focaccia de sardina ahumada con emulsión de berenjena", "detail": "", "allergens": ["gluten", "pescado", "lacteos"]}, {"name": "Montadito de escalivada ahumada y mojama de atún", "detail": "", "allergens": ["gluten", "pescado"]}, {"name": "Pesto de espinacas con lágrimas de bacalao y aceite de oliva", "detail": "", "allergens": ["frutos_cascara", "pescado", "lacteos"]}, {"name": "Tartaleta de mousse de ensaladilla y piparra", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Tortilla rellena de cebolla caramelizada y queso de cabra", "detail": "", "allergens": ["huevo", "lacteos"]}], "pending": false}, {"id": "caliente", "title": "Cóctel caliente", "items": [{"name": "Albóndigas de ciervo con salsa de ostras", "detail": "", "allergens": ["gluten", "huevo", "lacteos", "moluscos", "soja"]}, {"name": "Bocatín de calamares y alioli", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Brocheta de pulpo a la gallega", "detail": "", "allergens": ["moluscos"]}, {"name": "Crujiente de langostinos en panko", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Crujiente de vieira y mojo picón", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Gyoza de camarones al pimentón", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Hogaza de chistorra de Navarra y dátiles", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Mini burger de solomillo a la parrilla con salsa cheddar", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Muslitos de codorniz a la Villeroy crujientes", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Pan bao relleno de rabo de toro en salsa hoisin", "detail": "", "allergens": ["gluten", "lacteos", "soja", "sesamo"]}, {"name": "Selección de croquetas caseras", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}], "pending": false}, {"id": "banquete", "title": "Banquete", "items": [{"name": "Paletilla de lechal asada a 68 °C y deshuesada, con patatas parisinas y atadillo de verduras", "detail": "Principal", "allergens": ["gluten", "soja"]}, {"name": "Corvina con salsa bilbaína a los tres pimientos y patatas asadas", "detail": "Opción de pescado", "allergens": ["pescado", "soja", "lacteos"]}, {"name": "Torrija de pan brioche caramelizada con helado de dulce de leche", "detail": "Postre", "allergens": ["gluten", "lacteos", "frutos_cascara", "sulfitos"]}], "pending": false}, {"id": "recena", "title": "Recena", "items": [{"name": "Pizzas", "detail": "Alérgenos habituales, pendientes de confirmar", "allergens": ["gluten", "lacteos"]}], "pending": false}, {"id": "bodega", "title": "Bodega", "items": [{"name": "Blanco Ingenia Sobremadre", "detail": "D.O. Madrid", "allergens": []}, {"name": "Tinto Ingenia Crianza", "detail": "D.O. Madrid", "allergens": []}, {"name": "Vidamía espumoso blanco", "detail": "Tierra de Castilla", "allergens": []}], "pending": false, "noAllergens": true}]}, "contact": {"text": "Para cualquier duda, escríbenos por WhatsApp.", "sara": "+34 638 86 23 50", "joshua": "+34 634 95 91 88"}, "planning": {"provisional": true, "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.", "blocks": [{"time": "12:30", "title": "Recepción", "detail": "Llegada de los invitados a la Finca Gurugú.", "menu": []}, {"time": "13:00", "title": "Inicio de la ceremonia", "detail": "Ceremonia civil en la finca.", "menu": []}, {"time": "13:40", "title": "Fotos con los invitados", "detail": "", "menu": []}, {"time": "13:45", "title": "Cóctel", "detail": "Cóctel frío y caliente.", "menu": ["frio", "caliente"]}, {"time": "15:30", "title": "Banquete", "detail": "", "menu": ["banquete", "bodega"]}, {"time": "17:30", "title": "Baile y barra libre", "detail": "", "menu": ["recena"]}, {"time": "20:30", "title": "Fin de la celebración", "detail": "", "menu": []}]}};
+  var DEFAULTS = {"menu": {"intro": "Esto es lo que vamos a comer y beber. Si tienes alguna alergia o intolerancia, revisa los alérgenos de cada plato o escríbenos.", "allergensPending": false, "sections": [{"id": "frio", "title": "Cóctel frío", "items": [{"name": "Árbol de frutas con quesos variados", "detail": "", "allergens": ["lacteos"]}, {"name": "Bombones de queso de cabra rellenos de frambuesa y pistacho", "detail": "", "allergens": ["lacteos", "frutos_cascara"]}, {"name": "Brocheta de melón cantalupo con jamón de pato", "detail": "", "allergens": []}, {"name": "Cornetto de crema de queso azul con pera", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Daditos de salmón en guacamole", "detail": "", "allergens": ["pescado"]}, {"name": "Ferrero de foie con coulis de mango", "detail": "", "allergens": ["frutos_cascara"]}, {"name": "Jamón ibérico de Guijuelo con picos de Jerez", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Lomo embuchado Duroc con regañás al aceite de oliva", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Matrimonio con explosión de aceituna", "detail": "", "allergens": ["pescado"]}, {"name": "Mini focaccia de sardina ahumada con emulsión de berenjena", "detail": "", "allergens": ["gluten", "pescado", "lacteos"]}, {"name": "Montadito de escalivada ahumada y mojama de atún", "detail": "", "allergens": ["gluten", "pescado"]}, {"name": "Pesto de espinacas con lágrimas de bacalao y aceite de oliva", "detail": "", "allergens": ["frutos_cascara", "pescado", "lacteos"]}, {"name": "Tartaleta de mousse de ensaladilla y piparra", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Tortilla rellena de cebolla caramelizada y queso de cabra", "detail": "", "allergens": ["huevo", "lacteos"]}], "pending": false}, {"id": "caliente", "title": "Cóctel caliente", "items": [{"name": "Albóndigas de ciervo con salsa de ostras", "detail": "", "allergens": ["gluten", "huevo", "lacteos", "moluscos", "soja"]}, {"name": "Bocatín de calamares y alioli", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Brocheta de pulpo a la gallega", "detail": "", "allergens": ["moluscos"]}, {"name": "Crujiente de langostinos en panko", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Crujiente de vieira y mojo picón", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Gyoza de camarones al pimentón", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Hogaza de chistorra de Navarra y dátiles", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Mini burger de solomillo a la parrilla con salsa cheddar", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Muslitos de codorniz a la Villeroy crujientes", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Pan bao relleno de rabo de toro en salsa hoisin", "detail": "", "allergens": ["gluten", "lacteos", "soja", "sesamo"]}, {"name": "Selección de croquetas caseras", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}], "pending": false}, {"id": "banquete", "title": "Banquete", "items": [{"name": "Paletilla de lechal asada a 68 °C y deshuesada, con patatas parisinas y atadillo de verduras", "detail": "Principal", "allergens": ["gluten", "soja"]}, {"name": "Corvina con salsa bilbaína a los tres pimientos y patatas asadas", "detail": "Opción de pescado", "allergens": ["pescado", "soja", "lacteos"]}, {"name": "Torrija de pan brioche caramelizada con helado de dulce de leche", "detail": "Postre", "allergens": ["gluten", "lacteos", "frutos_cascara", "sulfitos"]}], "pending": false}, {"id": "recena", "title": "Recena", "items": [{"name": "Pizzas", "detail": "Alérgenos habituales, pendientes de confirmar", "allergens": ["gluten", "lacteos"]}], "pending": false}, {"id": "bodega", "title": "Bodega", "items": [{"name": "Blanco Ingenia Sobremadre", "detail": "D.O. Madrid", "allergens": []}, {"name": "Tinto Ingenia Crianza", "detail": "D.O. Madrid", "allergens": []}, {"name": "Vidamía espumoso blanco", "detail": "Tierra de Castilla", "allergens": []}], "pending": false, "noAllergens": true}]}, "contact": {"text": "Para cualquier duda, escríbenos por WhatsApp.", "sara": "+34 638 86 23 50", "joshua": "+34 634 95 91 88"}, "planning": {"provisional": true, "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.", "blocks": [{"time": "12:30", "title": "Recepción", "detail": "Llegada de los invitados a la Finca Gurugú.", "menu": [], "mision": true}, {"time": "13:00", "title": "Inicio de la ceremonia", "detail": "Ceremonia civil en la finca.", "menu": [], "song": {"label": "Canción 132 · «Ahora ya somos uno»", "note": "Al final de la ceremonia la cantaremos todos juntos.", "button": "Seguir la letra", "url": "https://www.jw.org/finder?wtlocale=S&docid=1102016932&srcid=share"}}, {"time": "13:40", "title": "Fotos con los invitados", "detail": "", "menu": []}, {"time": "13:45", "title": "Cóctel", "detail": "Cóctel frío y caliente.", "menu": ["frio", "caliente"]}, {"time": "15:30", "title": "Banquete", "detail": "", "menu": ["banquete", "bodega"]}, {"time": "17:30", "title": "Baile y barra libre", "detail": "", "menu": ["recena"]}, {"time": "20:30", "title": "Fin de la celebración", "detail": "", "menu": []}]}};
   var ALLERGENS = [
     ['gluten', 'Gluten'], ['crustaceos', 'Crustáceos'], ['huevo', 'Huevo'], ['pescado', 'Pescado'],
     ['cacahuete', 'Cacahuete'], ['soja', 'Soja'], ['lacteos', 'Lácteos'], ['frutos_cascara', 'Frutos de cáscara'],
@@ -438,6 +448,26 @@ details.grp[open] > summary::after { content: "–"; }
         : (any ? '<div class="al-chips"><span class="al none">Sin alérgenos declarados</span></div>' : '')) + '</li>';
   }
 
+  /* Misión secreta (solo cuando los novios activan el juego) y canción de la ceremonia */
+  var CAM = '<svg class="st" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+  var NOTE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.6A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>';
+  function extrasHtml(b) {
+    var out = '';
+    var mi = data.mision || {};
+    if (b.mision && mi.show === true) {
+      var yo = null; try { yo = JSON.parse(localStorage.getItem('mision-sj') || 'null'); } catch (e) {}
+      out += '<div class="tb-extra mis"><p class="tbx-k">' + esc(mi.title || 'Misión secreta') + '</p>' +
+        '<p class="tbx-t">' + (yo && yo.name ? 'Tu misión Nº ' + esc(('0' + yo.card).slice(-2)) + ' te espera, ' + esc(yo.name) + '.' : 'Durante la boda serás nuestro fotógrafo encubierto.') + '</p>' +
+        '<p class="tbx-n">Escribe tu nombre, recibe cinco momentos secretos que fotografiar y tus fotos saldrán en la pantalla en directo.</p>' +
+        '<a class="btn" href="../mision/' + (yo && yo.name ? '#mision' : '') + '">' + CAM + (yo && yo.name ? 'Seguir con mi misión' : esc(mi.button || 'Empezar mi misión')) + '</a></div>';
+    }
+    if (b.song && b.song.url) {
+      out += '<div class="tb-extra"><p class="tbx-k">Canción</p><p class="tbx-t">' + esc(b.song.label || '') + '</p>' +
+        (b.song.note ? '<p class="tbx-n">' + esc(b.song.note) + '</p>' : '') +
+        '<a class="btn line" href="' + esc(b.song.url) + '" target="_blank" rel="noopener">' + NOTE + esc(b.song.button || 'Seguir la letra') + '</a></div>';
+    }
+    return out;
+  }
   function render() {
     var m = data.menu || { sections: [] };
     var pl = data.planning || { blocks: [] };
@@ -457,7 +487,7 @@ details.grp[open] > summary::after { content: "–"; }
       var groups = (b.menu || []).map(function (id) { return secs[id]; }).filter(Boolean);
         var bi = (pl.blocks || []).indexOf(b);
       return '<li class="tb"><div class="tb-time"><time>' + esc(b.time) + '</time></div><span class="tb-dot"></span>' +
-        '<div class="tb-card glass"><h2 class="tb-title">' + esc(b.title) + '</h2>' + (b.detail ? '<p class="tb-detail">' + esc(b.detail) + '</p>' : '') + (bi === firstMenu ? '<div class="tb-slot" id="tb-slot"></div>' : '') +
+        '<div class="tb-card glass"><h2 class="tb-title">' + esc(b.title) + '</h2>' + (b.detail ? '<p class="tb-detail">' + esc(b.detail) + '</p>' : '') + extrasHtml(b) + (bi === firstMenu ? '<div class="tb-slot" id="tb-slot"></div>' : '') +
         groups.map(function (s) {
           var op = !!openSec[s.id];
           var hits = (s.pending || s.noAllergens) ? 0 : s.items.filter(function (it) { return sel.some(function (k) { return (it.allergens || []).indexOf(k) >= 0; }); }).length;
@@ -484,11 +514,21 @@ details.grp[open] > summary::after { content: "–"; }
   });
 
   render();
-  try {
-    fetch('../content.json?v=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
-      if (j && (j.menu || j.planning)) { data = j; render(); }
-    }).catch(function () {});
-  } catch (e) {}
+  /* Carga el contenido y lo vuelve a mirar cada minuto: así, cuando los novios
+     activan la misión secreta, aparece sin que nadie tenga que recargar. */
+  var lastSig = '';
+  function load() {
+    try {
+      fetch('../content.json?v=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : null; }).then(function (t) {
+        if (!t || t === lastSig) return;
+        var j = JSON.parse(t);
+        if (j && (j.menu || j.planning)) { lastSig = t; data = j; render(); }
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  load();
+  setInterval(function () { if (!document.hidden) load(); }, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
 
   document.addEventListener('pointermove', function (e) {
     var el = e.target.closest ? e.target.closest('.glass') : null; if (!el) return;

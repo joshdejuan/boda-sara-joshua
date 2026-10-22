@@ -366,13 +366,20 @@
         "time": "12:30",
         "title": "Recepción",
         "detail": "Llegada de los invitados a la Finca Gurugú.",
-        "menu": []
+        "menu": [],
+        "mision": true
       },
       {
         "time": "13:00",
         "title": "Inicio de la ceremonia",
         "detail": "Ceremonia civil en la finca.",
-        "menu": []
+        "menu": [],
+        "song": {
+          "label": "Canción 132 · «Ahora ya somos uno»",
+          "note": "Al final de la ceremonia la cantaremos todos juntos.",
+          "button": "Seguir la letra",
+          "url": "https://www.jw.org/finder?wtlocale=S&docid=1102016932&srcid=share"
+        }
       },
       {
         "time": "13:40",
