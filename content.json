@@ -367,7 +367,8 @@
         "title": "Recepción",
         "detail": "Llegada de los invitados a la Finca Gurugú.",
         "menu": [],
-        "mision": true
+        "mision": true,
+        "anchor": "recepcion"
       },
       {
         "time": "13:00",
@@ -379,13 +380,15 @@
           "note": "Al final de la ceremonia la cantaremos todos juntos.",
           "button": "Seguir la letra",
           "url": "https://www.jw.org/finder?srcid=jwlshare&wtlocale=S&prefer=lang&docid=1102016932"
-        }
+        },
+        "anchor": "ceremonia"
       },
       {
         "time": "13:40",
         "title": "Fotos con los invitados",
         "detail": "",
-        "menu": []
+        "menu": [],
+        "anchor": "fotos"
       },
       {
         "time": "13:45",
@@ -394,7 +397,8 @@
         "menu": [
           "frio",
           "caliente"
-        ]
+        ],
+        "anchor": "coctel"
       },
       {
         "time": "15:30",
@@ -409,7 +413,8 @@
           "text": "¿Prefieres carne o pescado?",
           "note": "Escríbenos por WhatsApp y dinos qué eliges para el banquete.",
           "message": "¡Hola! Para el banquete de la boda prefiero: "
-        }
+        },
+        "anchor": "banquete"
       },
       {
         "time": "17:30",
@@ -417,13 +422,15 @@
         "detail": "",
         "menu": [
           "recena"
-        ]
+        ],
+        "anchor": "baile"
       },
       {
         "time": "20:30",
         "title": "Fin de la celebración",
         "detail": "",
-        "menu": []
+        "menu": [],
+        "anchor": "fin"
       }
     ]
   },

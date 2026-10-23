@@ -332,6 +332,18 @@ details.grp[open] > summary::after { content: "–"; }
 .tb-dot { justify-self: center; margin-top: 1.4rem; width: 13px; height: 13px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 5px rgba(255, 255, 255, .6), 0 0 0 6.5px var(--brown); position: relative; z-index: 1; }
 .tb-card { padding: 1.1rem 1.3rem; border-radius: 22px; }
 .tb-title { font-weight: 700; font-size: 1.3rem; letter-spacing: -.015em; line-height: 1.2; }
+/* Enlaces a cada momento (#recepcion, #ceremonia…) */
+.tb, #filter-wrap { scroll-margin-top: calc(18px + env(safe-area-inset-top, 0px)); }
+.tb-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .6rem; align-items: start; }
+.tb-link { width: 34px; height: 34px; margin: -.2rem -.35rem 0 0; border-radius: 50%; border: 1px solid transparent; background: none; color: var(--muted); cursor: pointer; display: grid; place-items: center; transition: background .2s, color .2s, border-color .2s; }
+.tb-link svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tb-link:hover { background: rgba(255, 255, 255, .6); border-color: rgba(255, 255, 255, .8); color: var(--brown-deep); }
+.tb-link.ok { background: var(--teal); color: var(--brown-deep); border-color: rgba(255, 255, 255, .8); }
+.tb-card.target { animation: tb-target 2.2s ease-out; }
+@keyframes tb-target { 0%, 35% { box-shadow: 0 0 0 3px var(--teal), 0 24px 50px -12px rgba(59, 34, 16, .28); } 100% { } }
+.toast { position: fixed; z-index: 90; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); transform: translateX(-50%); padding: .6rem 1.1rem; border-radius: 999px; background: var(--brown-deep); color: var(--cream); font-size: .9rem; font-weight: 700; box-shadow: 0 12px 26px -10px rgba(30, 14, 4, .5); pointer-events: none; opacity: 0; transition: opacity .25s, transform .25s; }
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+@media (prefers-reduced-motion: reduce) { .tb-card.target { animation: none; } .toast { transition: none; } }
 .tb-detail { margin: .35rem 0 0; color: var(--muted); font-size: .95rem; }
 /* Extras dentro de un momento del día: misión secreta y canción */
 .tb-extra { margin-top: .9rem; padding: .95rem 1rem 1rem; border-radius: 18px; display: grid; gap: .55rem; justify-items: start;
@@ -425,6 +437,8 @@ body.lyr-open { overflow: hidden; }
   <p class="wrap menu-foot">Si tienes una alergia grave, avísanos antes de la boda y lo confirmamos directamente con el catering.</p>
 </main>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <div class="lyr" id="lyr" role="dialog" aria-modal="true" aria-labelledby="lyr-t" hidden>
   <div class="lyr-sheet">
     <div class="lyr-head">
@@ -445,7 +459,7 @@ body.lyr-open { overflow: hidden; }
 <script>
 (function () {
   'use strict';
-  var DEFAULTS = {"menu": {"intro": "Esto es lo que vamos a comer y beber. Si tienes alguna alergia o intolerancia, revisa los alérgenos de cada plato o escríbenos.", "allergensPending": false, "sections": [{"id": "frio", "title": "Cóctel frío", "items": [{"name": "Árbol de frutas con quesos variados", "detail": "", "allergens": ["lacteos"]}, {"name": "Bombones de queso de cabra rellenos de frambuesa y pistacho", "detail": "", "allergens": ["lacteos", "frutos_cascara"]}, {"name": "Brocheta de melón cantalupo con jamón de pato", "detail": "", "allergens": []}, {"name": "Cornetto de crema de queso azul con pera", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Daditos de salmón en guacamole", "detail": "", "allergens": ["pescado"]}, {"name": "Ferrero de foie con coulis de mango", "detail": "", "allergens": ["frutos_cascara"]}, {"name": "Jamón ibérico de Guijuelo con picos de Jerez", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Lomo embuchado Duroc con regañás al aceite de oliva", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Matrimonio con explosión de aceituna", "detail": "", "allergens": ["pescado"]}, {"name": "Mini focaccia de sardina ahumada con emulsión de berenjena", "detail": "", "allergens": ["gluten", "pescado", "lacteos"]}, {"name": "Montadito de escalivada ahumada y mojama de atún", "detail": "", "allergens": ["gluten", "pescado"]}, {"name": "Pesto de espinacas con lágrimas de bacalao y aceite de oliva", "detail": "", "allergens": ["frutos_cascara", "pescado", "lacteos"]}, {"name": "Tartaleta de mousse de ensaladilla y piparra", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Tortilla rellena de cebolla caramelizada y queso de cabra", "detail": "", "allergens": ["huevo", "lacteos"]}], "pending": false}, {"id": "caliente", "title": "Cóctel caliente", "items": [{"name": "Albóndigas de ciervo con salsa de ostras", "detail": "", "allergens": ["gluten", "huevo", "lacteos", "moluscos", "soja"]}, {"name": "Bocatín de calamares y alioli", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Brocheta de pulpo a la gallega", "detail": "", "allergens": ["moluscos"]}, {"name": "Crujiente de langostinos en panko", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Crujiente de vieira y mojo picón", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Gyoza de camarones al pimentón", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Hogaza de chistorra de Navarra y dátiles", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Mini burger de solomillo a la parrilla con salsa cheddar", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Muslitos de codorniz a la Villeroy crujientes", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Pan bao relleno de rabo de toro en salsa hoisin", "detail": "", "allergens": ["gluten", "lacteos", "soja", "sesamo"]}, {"name": "Selección de croquetas caseras", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}], "pending": false}, {"id": "banquete", "title": "Banquete", "items": [{"name": "Paletilla de lechal asada a 68 °C y deshuesada, con patatas parisinas y atadillo de verduras", "detail": "Principal", "allergens": ["gluten", "soja"]}, {"name": "Corvina con salsa bilbaína a los tres pimientos y patatas asadas", "detail": "Opción de pescado", "allergens": ["pescado", "soja", "lacteos"]}, {"name": "Torrija de pan brioche caramelizada con helado de dulce de leche", "detail": "Postre", "allergens": ["gluten", "lacteos", "frutos_cascara", "sulfitos"]}], "pending": false}, {"id": "recena", "title": "Recena", "items": [{"name": "Pizzas", "detail": "Alérgenos habituales, pendientes de confirmar", "allergens": ["gluten", "lacteos"]}], "pending": false}, {"id": "bodega", "title": "Bodega", "items": [{"name": "Blanco Ingenia Sobremadre", "detail": "D.O. Madrid", "allergens": []}, {"name": "Tinto Ingenia Crianza", "detail": "D.O. Madrid", "allergens": []}, {"name": "Vidamía espumoso blanco", "detail": "Tierra de Castilla", "allergens": []}], "pending": false, "noAllergens": true}]}, "contact": {"text": "Para cualquier duda, escríbenos por WhatsApp.", "sara": "+34 638 86 23 50", "joshua": "+34 634 95 91 88"}, "planning": {"provisional": true, "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.", "blocks": [{"time": "12:30", "title": "Recepción", "detail": "Llegada de los invitados a la Finca Gurugú.", "menu": [], "mision": true}, {"time": "13:00", "title": "Inicio de la ceremonia", "detail": "Ceremonia civil en la finca.", "menu": [], "song": {"label": "Canción 132 · «Ahora ya somos uno»", "note": "Al final de la ceremonia la cantaremos todos juntos.", "button": "Seguir la letra", "url": "https://www.jw.org/finder?srcid=jwlshare&wtlocale=S&prefer=lang&docid=1102016932"}}, {"time": "13:40", "title": "Fotos con los invitados", "detail": "", "menu": []}, {"time": "13:45", "title": "Cóctel", "detail": "Cóctel frío y caliente.", "menu": ["frio", "caliente"]}, {"time": "15:30", "title": "Banquete", "detail": "", "menu": ["banquete", "bodega"]}, {"time": "17:30", "title": "Baile y barra libre", "detail": "", "menu": ["recena"]}, {"time": "20:30", "title": "Fin de la celebración", "detail": "", "menu": []}]}};
+  var DEFAULTS = {"menu": {"intro": "Esto es lo que vamos a comer y beber. Si tienes alguna alergia o intolerancia, revisa los alérgenos de cada plato o escríbenos.", "allergensPending": false, "sections": [{"id": "frio", "title": "Cóctel frío", "items": [{"name": "Árbol de frutas con quesos variados", "detail": "", "allergens": ["lacteos"]}, {"name": "Bombones de queso de cabra rellenos de frambuesa y pistacho", "detail": "", "allergens": ["lacteos", "frutos_cascara"]}, {"name": "Brocheta de melón cantalupo con jamón de pato", "detail": "", "allergens": []}, {"name": "Cornetto de crema de queso azul con pera", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Daditos de salmón en guacamole", "detail": "", "allergens": ["pescado"]}, {"name": "Ferrero de foie con coulis de mango", "detail": "", "allergens": ["frutos_cascara"]}, {"name": "Jamón ibérico de Guijuelo con picos de Jerez", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Lomo embuchado Duroc con regañás al aceite de oliva", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Matrimonio con explosión de aceituna", "detail": "", "allergens": ["pescado"]}, {"name": "Mini focaccia de sardina ahumada con emulsión de berenjena", "detail": "", "allergens": ["gluten", "pescado", "lacteos"]}, {"name": "Montadito de escalivada ahumada y mojama de atún", "detail": "", "allergens": ["gluten", "pescado"]}, {"name": "Pesto de espinacas con lágrimas de bacalao y aceite de oliva", "detail": "", "allergens": ["frutos_cascara", "pescado", "lacteos"]}, {"name": "Tartaleta de mousse de ensaladilla y piparra", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Tortilla rellena de cebolla caramelizada y queso de cabra", "detail": "", "allergens": ["huevo", "lacteos"]}], "pending": false}, {"id": "caliente", "title": "Cóctel caliente", "items": [{"name": "Albóndigas de ciervo con salsa de ostras", "detail": "", "allergens": ["gluten", "huevo", "lacteos", "moluscos", "soja"]}, {"name": "Bocatín de calamares y alioli", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Brocheta de pulpo a la gallega", "detail": "", "allergens": ["moluscos"]}, {"name": "Crujiente de langostinos en panko", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Crujiente de vieira y mojo picón", "detail": "", "allergens": ["gluten", "huevo", "moluscos"]}, {"name": "Gyoza de camarones al pimentón", "detail": "", "allergens": ["gluten", "crustaceos", "huevo"]}, {"name": "Hogaza de chistorra de Navarra y dátiles", "detail": "", "allergens": ["gluten", "sulfitos"]}, {"name": "Mini burger de solomillo a la parrilla con salsa cheddar", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Muslitos de codorniz a la Villeroy crujientes", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}, {"name": "Pan bao relleno de rabo de toro en salsa hoisin", "detail": "", "allergens": ["gluten", "lacteos", "soja", "sesamo"]}, {"name": "Selección de croquetas caseras", "detail": "", "allergens": ["gluten", "huevo", "lacteos"]}], "pending": false}, {"id": "banquete", "title": "Banquete", "items": [{"name": "Paletilla de lechal asada a 68 °C y deshuesada, con patatas parisinas y atadillo de verduras", "detail": "Principal", "allergens": ["gluten", "soja"]}, {"name": "Corvina con salsa bilbaína a los tres pimientos y patatas asadas", "detail": "Opción de pescado", "allergens": ["pescado", "soja", "lacteos"]}, {"name": "Torrija de pan brioche caramelizada con helado de dulce de leche", "detail": "Postre", "allergens": ["gluten", "lacteos", "frutos_cascara", "sulfitos"]}], "pending": false}, {"id": "recena", "title": "Recena", "items": [{"name": "Pizzas", "detail": "Alérgenos habituales, pendientes de confirmar", "allergens": ["gluten", "lacteos"]}], "pending": false}, {"id": "bodega", "title": "Bodega", "items": [{"name": "Blanco Ingenia Sobremadre", "detail": "D.O. Madrid", "allergens": []}, {"name": "Tinto Ingenia Crianza", "detail": "D.O. Madrid", "allergens": []}, {"name": "Vidamía espumoso blanco", "detail": "Tierra de Castilla", "allergens": []}], "pending": false, "noAllergens": true}]}, "contact": {"text": "Para cualquier duda, escríbenos por WhatsApp.", "sara": "+34 638 86 23 50", "joshua": "+34 634 95 91 88"}, "planning": {"provisional": true, "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.", "blocks": [{"time": "12:30", "title": "Recepción", "detail": "Llegada de los invitados a la Finca Gurugú.", "menu": [], "mision": true, "anchor": "recepcion"}, {"time": "13:00", "title": "Inicio de la ceremonia", "detail": "Ceremonia civil en la finca.", "menu": [], "song": {"label": "Canción 132 · «Ahora ya somos uno»", "note": "Al final de la ceremonia la cantaremos todos juntos.", "button": "Seguir la letra", "url": "https://www.jw.org/finder?srcid=jwlshare&wtlocale=S&prefer=lang&docid=1102016932"}, "anchor": "ceremonia"}, {"time": "13:40", "title": "Fotos con los invitados", "detail": "", "menu": [], "anchor": "fotos"}, {"time": "13:45", "title": "Cóctel", "detail": "Cóctel frío y caliente.", "menu": ["frio", "caliente"], "anchor": "coctel"}, {"time": "15:30", "title": "Banquete", "detail": "", "menu": ["banquete", "bodega"], "anchor": "banquete"}, {"time": "17:30", "title": "Baile y barra libre", "detail": "", "menu": ["recena"], "anchor": "baile"}, {"time": "20:30", "title": "Fin de la celebración", "detail": "", "menu": [], "anchor": "fin"}]}};
   var ALLERGENS = [
     ['gluten', 'Gluten'], ['crustaceos', 'Crustáceos'], ['huevo', 'Huevo'], ['pescado', 'Pescado'],
     ['cacahuete', 'Cacahuete'], ['soja', 'Soja'], ['lacteos', 'Lácteos'], ['frutos_cascara', 'Frutos de cáscara'],
@@ -526,6 +540,54 @@ body.lyr-open { overflow: hidden; }
   $('lyr-x').addEventListener('click', closeLyrics);
   $('lyr').addEventListener('click', function (e) { if (e.target === $('lyr')) closeLyrics(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLyrics(); });
+  /* ---------- Anclajes: #recepcion, #ceremonia, #coctel… ---------- */
+  var LINK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5a4 4 0 0 0 5.7.3l2.8-2.8a4 4 0 0 0-5.7-5.7L11.3 6.8"/><path d="M14 10.5a4 4 0 0 0-5.7-.3l-2.8 2.8a4 4 0 0 0 5.7 5.7l1.5-1.5"/></svg>';
+  function slug(t) { return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function anchorOf(b) { return b.anchor || slug(b.title); }
+  var toastT = null;
+  function toast(msg) {
+    var t = $('toast'); t.textContent = msg; t.classList.add('on');
+    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, 2200);
+  }
+  function linkTo(id) { return location.origin + location.pathname + '#' + id; }
+  function copyLink(id, btn) {
+    var url = linkTo(id);
+    function done() { toast('Enlace copiado'); if (btn) { btn.classList.add('ok'); setTimeout(function () { btn.classList.remove('ok'); }, 1600); } }
+    function fallback() {
+      var f = document.createElement('textarea'); f.value = url; f.setAttribute('readonly', ''); f.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(f); f.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(f);
+      if (ok) done(); else window.prompt('Copia este enlace:', url);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, fallback); else fallback();
+    if (history.replaceState) history.replaceState(null, '', '#' + id);
+  }
+  /* Va al apartado del enlace. Como el planning se dibuja con JavaScript,
+     el navegador no sabe saltar solo: lo hacemos al cargar y al cambiar el #. */
+  function goToHash(smooth) {
+    var id = decodeURIComponent(location.hash.replace(/^#/, ''));
+    if (!id) return;
+    if (id === 'cancion' || id === 'letra') {
+      var bl = (data.planning.blocks || []).filter(function (b) { return b.song; })[0];
+      if (bl) { var li = $(anchorOf(bl)); if (li) li.scrollIntoView({ block: 'start' }); if (hasLyrics()) openLyrics(bl); }
+      return;
+    }
+    if (id === 'alergias') { var fw = $('filter-wrap'); if (fw && !fw.hidden) fw.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' }); return; }
+    var sec = id.replace(/^menu-/, '');
+    if (id.indexOf('menu-') === 0) {
+      var blk = (data.planning.blocks || []).filter(function (b) { return (b.menu || []).indexOf(sec) >= 0; })[0];
+      if (!blk) return;
+      openSec[sec] = true; render();
+      var tg = document.querySelector('.tb-toggle[data-sec="' + sec + '"]');
+      if (tg) tg.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+      return;
+    }
+    var el = $(id); if (!el || !el.classList.contains('tb')) return;
+    el.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+    var card = el.querySelector('.tb-card'); if (card) { card.classList.remove('target'); void card.offsetWidth; card.classList.add('target'); }
+  }
+  window.addEventListener('hashchange', function () { goToHash(true); });
   function render() {
     var m = data.menu || { sections: [] };
     var pl = data.planning || { blocks: [] };
@@ -544,8 +606,10 @@ body.lyr-open { overflow: hidden; }
     $('tline').innerHTML = (pl.blocks || []).map(function (b) {
       var groups = (b.menu || []).map(function (id) { return secs[id]; }).filter(Boolean);
         var bi = (pl.blocks || []).indexOf(b);
-      return '<li class="tb"><div class="tb-time"><time>' + esc(b.time) + '</time></div><span class="tb-dot"></span>' +
-        '<div class="tb-card glass"><h2 class="tb-title">' + esc(b.title) + '</h2>' + (b.detail ? '<p class="tb-detail">' + esc(b.detail) + '</p>' : '') + extrasHtml(b) + (bi === firstMenu ? '<div class="tb-slot" id="tb-slot"></div>' : '') +
+      var aid = anchorOf(b);
+      return '<li class="tb" id="' + esc(aid) + '"><div class="tb-time"><time>' + esc(b.time) + '</time></div><span class="tb-dot"></span>' +
+        '<div class="tb-card glass"><div class="tb-head"><h2 class="tb-title">' + esc(b.title) + '</h2>' +
+          '<button type="button" class="tb-link" data-anchor="' + esc(aid) + '" aria-label="Copiar el enlace a «' + esc(b.title) + '»" title="Copiar enlace">' + LINK + '</button></div>' + (b.detail ? '<p class="tb-detail">' + esc(b.detail) + '</p>' : '') + extrasHtml(b) + (bi === firstMenu ? '<div class="tb-slot" id="tb-slot"></div>' : '') +
         groups.map(function (s) {
           var op = !!openSec[s.id];
           var hits = (s.pending || s.noAllergens) ? 0 : s.items.filter(function (it) { return sel.some(function (k) { return (it.allergens || []).indexOf(k) >= 0; }); }).length;
@@ -565,6 +629,8 @@ body.lyr-open { overflow: hidden; }
   }
   var openSec = {};
   document.addEventListener('click', function (e) {
+    var lk = e.target.closest && e.target.closest('.tb-link');
+    if (lk) { copyLink(lk.dataset.anchor, lk); return; }
     var ly = e.target.closest && e.target.closest('[data-lyrics]');
     if (ly) { var bl = (data.planning.blocks || [])[+ly.dataset.lyrics]; if (bl && bl.song) openLyrics(bl); return; }
     var tg = e.target.closest && e.target.closest('.tb-toggle');
@@ -582,10 +648,11 @@ body.lyr-open { overflow: hidden; }
       fetch('../content.json?v=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : null; }).then(function (t) {
         if (!t || t === lastSig) return;
         var j = JSON.parse(t);
-        if (j && (j.menu || j.planning)) { lastSig = t; data = j; render(); }
+        if (j && (j.menu || j.planning)) { var first = !lastSig; lastSig = t; data = j; render(); if (first) goToHash(false); }
       }).catch(function () {});
     } catch (e) {}
   }
+  goToHash(false);
   load();
   setInterval(function () { if (!document.hidden) load(); }, 60000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
