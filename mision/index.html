@@ -353,7 +353,11 @@ const CONFIG = {
 };
 /* ========================================================= */
 
-const DEMO = !/github\.io$|sarajoshua\.love$/.test(location.hostname);
+/* Modo prueba (?prueba): el juego funciona con datos de ejemplo, aunque esté oculto,
+   y no toca la base de datos real. Se mantiene en esta pestaña hasta pulsar «Salir». */
+(function(){ try { const q = new URLSearchParams(location.search); if (q.has("prueba")) { if (q.get("prueba") === "0") sessionStorage.removeItem("sj-prueba"); else sessionStorage.setItem("sj-prueba", "1"); } } catch {} })();
+const PRUEBA = (() => { try { return sessionStorage.getItem("sj-prueba") === "1"; } catch { return false; } })();
+const DEMO = PRUEBA || !/github\.io$|sarajoshua\.love$/.test(location.hostname);
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const pad = n => String(n).padStart(2, "0");
@@ -382,7 +386,7 @@ function ago(ts){
 function loadScript(src){
   return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("No se pudo cargar " + src)); document.head.appendChild(s); });
 }
-const KEY = "mision-sj", PKEY = "mision-sj-panel";
+const KEY = PRUEBA ? "mision-sj-prueba" : "mision-sj", PKEY = PRUEBA ? "mision-sj-panel-prueba" : "mision-sj-panel";
 let memMe = null, memPass = null;
 function getPass(){ try { return localStorage.getItem(PKEY) || memPass; } catch { return memPass; } }
 function setPass(v){ memPass = v; try { v ? localStorage.setItem(PKEY, v) : localStorage.removeItem(PKEY); } catch {} }
@@ -546,6 +550,7 @@ const RETOS_PROPUESTOS = ["Ceremonia · El novio esperando antes de que llegue l
 const GH = { owner: "joshdejuan", repo: "boda-sara-joshua", branch: "main" };
 let demoOpen = false, peek = false, gateWanted = null;
 async function gameOpen(){
+  if (PRUEBA) return true;
   if (DEMO) return demoOpen;
   try {
     const r = await fetch("../content.json?v=" + Date.now(), { cache: "no-store" });
@@ -605,7 +610,7 @@ async function gateBox(el){
     el.className = "gate panel-box" + (open ? " on" : "");
     el.innerHTML = `<div class="gtxt"><strong>${open ? "El juego está abierto" : "El juego está oculto"}</strong>
         <span>${open ? "Los invitados pueden registrarse y subir fotos. La sección se ve en la web." : "Los invitados ven un aviso de que empieza el día de la boda. La sección no aparece en la web."}</span></div>
-      <div class="gact">${open ? `<button class="ghost small" id="g-off" type="button">Ocultar de nuevo</button>` : `<button id="g-on" type="button">Activar el juego</button>`}</div>
+      <div class="gact">${open ? `<button class="ghost small" id="g-off" type="button">Ocultar de nuevo</button>` : `<button id="g-on" type="button">Activar el juego</button>`}${PRUEBA ? "" : `<a class="btn ghost small" href="../?prueba" target="_blank" rel="noopener">Probar sin activar</a>`}</div>
       ${askToken ? `<form id="g-tok"><input type="password" id="g-token" autocomplete="off" placeholder="Token de GitHub (github_pat_…)" aria-label="Token de GitHub" required>
         <label><input type="checkbox" id="g-keep" checked> Recordar en este navegador</label>
         <button class="small" type="submit">${open ? "Ocultar" : "Activar"}</button></form>` : ""}
@@ -640,7 +645,7 @@ async function gateBox(el){
 function demoBar(cur){
   if (!store.demo) return "";
   const l = (h, t) => `<a href="#${h}" ${cur === h ? 'aria-current="page"' : ""}>${t}</a>`;
-  return `<div class="demo-bar"><span><b>Vista previa</b> con datos de ejemplo</span><nav>${l("inicio", "Invitado: registro")}${l("mision", "Invitado: su misión")}${l("admin", "Panel Admin")}${l("pantalla", "Pantalla en directo")}</nav></div>`;
+  return `<div class="demo-bar"><span>${PRUEBA ? `<b>Modo prueba</b> · datos de ejemplo, no se guarda nada · <a href="?prueba=0#inicio" style="box-shadow:none;padding:0;text-decoration:underline">Salir</a>` : `<b>Vista previa</b> con datos de ejemplo`}</span><nav>${l("inicio", "Invitado: registro")}${l("mision", "Invitado: su misión")}${l("admin", "Panel Admin")}${l("pantalla", "Pantalla en directo")}</nav></div>`;
 }
 
 function viewHome(){
