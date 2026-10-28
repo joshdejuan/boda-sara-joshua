@@ -368,7 +368,7 @@
     "note": ""
   },
   "mision": {
-    "show": false,
+    "show": true,
     "title": "Misión secreta",
     "text": "Es un juego para toda la boda: serás nuestro fotógrafo encubierto. Escribe tu nombre y recibirás diez momentos que capturar durante la ceremonia, el cóctel y el banquete, sin que nadie se dé cuenta. Tus fotos aparecerán en la pantalla en directo.",
     "button": "Empezar mi misión"
