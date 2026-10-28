@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Misión secreta">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5BE8D8"/>
+      <stop offset="1" stop-color="#22C3B1"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#g)"/>
+  <path fill="#FFFFFF" fill-rule="evenodd" d="M50.5 30h27a6 6 0 0 1 5.2 3l4.4 7.6H96a10 10 0 0 1 10 10V88a10 10 0 0 1-10 10H32a10 10 0 0 1-10-10V50.6a10 10 0 0 1 10-10h8.9l4.4-7.6a6 6 0 0 1 5.2-3zM64 50a19 19 0 1 0 0 38 19 19 0 1 0 0-38zm0 9a10 10 0 1 1 0 20 10 10 0 1 1 0-20z"/>
+  <circle cx="93" cy="52" r="3.6" fill="#22C3B1"/>
+</svg>

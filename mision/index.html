@@ -6,9 +6,9 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}</style>
 <title>Misión secreta · Sara &amp; Joshua</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="icon" href="../favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png">
-<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="../images/mision-logo.svg">
+<link rel="icon" type="image/png" sizes="64x64" href="../images/mision-favicon.png">
+<link rel="apple-touch-icon" href="../images/mision-apple-touch.png">
 <meta name="theme-color" content="#895129">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -165,7 +165,9 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .admin.screen{max-width:1500px;padding-top:28px}
 .a-top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between;padding-bottom:16px}
 .a-brand{display:flex;align-items:center;gap:14px}
-.a-brand img{width:48px;height:auto}
+.a-brand img{width:48px;height:auto;border-radius:12px;box-shadow:0 6px 14px -6px rgba(15,122,108,.6)}
+.game-logo{display:block;width:60px;height:60px;border-radius:15px;margin-bottom:12px;box-shadow:0 10px 22px -10px rgba(15,122,108,.7)}
+.resume img{border-radius:10px}
 .a-brand h1{font:700 28px/1.1 var(--display);color:var(--ink)}
 .a-brand p{margin:2px 0 0;font-size:13px;color:var(--muted)}
 .a-user{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--muted);flex-wrap:wrap}
@@ -262,7 +264,7 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .poster p.lead{font-size:17px;margin:8px 0 6px;max-width:30ch}
 .qrbox{background:#FFFDF8;padding:12px;border-radius:16px;width:236px;height:236px;max-width:100%;display:grid;place-items:center;position:relative}
 .qrbox img:not(.logo),.qrbox canvas{width:212px!important;height:212px!important}
-.qrbox .logo{position:absolute;width:46px;height:auto;background:#FFFDF8;border-radius:10px;padding:5px;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2}
+.qrbox .logo{position:absolute;width:48px;height:auto;background:#FFFDF8;border-radius:14px;padding:4px;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2}
 .poster .url{font:700 14px var(--body);color:var(--brown);overflow-wrap:anywhere;margin:0}
 /* Acceso */
 .alist{list-style:none;margin:0 0 16px;padding:0}
@@ -360,7 +362,8 @@ const HEART = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-
 const BRANCH = () => `<img class="branch" src="../images/eucalipto.webp" alt="">`;
 /* Logo turquesa «Sara + Joshua» */
 const WORDMARK = (tag = "h1", cls = "") => `<${tag} class="wm ${cls}"><img src="../images/wordmark.png" alt="Sara + Joshua" width="720" height="379"></${tag}>`;
-const LOGO = `<img src="../images/sj.png" alt="Sara y Joshua">`;
+const LOGO = `<img src="../images/mision-logo.svg" alt="Misión secreta">`;
+const GAMELOGO = `<img class="game-logo" src="../images/mision-logo.svg" alt="" width="64" height="64">`;
 const CAM = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>`;
 function base(){ return DEMO ? CONFIG.urlBase : location.origin + location.pathname.replace(/index\.html$/, ""); }
 /* Enlace de vuelta a la web de la boda (la misión vive en /mision/) */
@@ -574,7 +577,7 @@ async function setGameOpen(on, token){
 function viewLocked(){
   app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
     <header class="hero">
-      <p class="kicker">Misión secreta ${HEART}</p>
+      ${GAMELOGO}<p class="kicker">Misión secreta ${HEART}</p>
       ${WORDMARK("h1")}
       <p class="date">${esc(CONFIG.fecha)}</p>
       <p class="place">${esc(CONFIG.lugar)}</p>
@@ -640,7 +643,7 @@ function viewHome(){
   const m = me();
   app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
     <header class="hero">
-      <p class="kicker">Tienes una misión secreta ${HEART}</p>
+      ${GAMELOGO}<p class="kicker">Tienes una misión secreta ${HEART}</p>
       ${WORDMARK("h1")}
       <p class="date">${esc(CONFIG.fecha)}</p>
       <p class="place">${esc(CONFIG.lugar)}</p>
@@ -676,7 +679,7 @@ async function viewMission(){
   const link = `${base()}#m-${d.token}`;
   app.innerHTML = demoBar("mision") + backBar() + `<main class="guest">${BRANCH()}
     <header class="hero">
-      <p class="kicker">Misión Nº ${pad(d.card)} ${HEART}</p>
+      ${GAMELOGO}<p class="kicker">Misión Nº ${pad(d.card)} ${HEART}</p>
       <h1 class="names" style="font-size:clamp(44px,12vw,60px)"><span>${esc(d.name)}</span></h1>
       <img class="wm-sm" src="../images/wordmark.png" alt="Boda de Sara + Joshua" width="720" height="379">
     </header>
@@ -947,11 +950,11 @@ async function tabPoster(el){
   const url = base();
   el.innerHTML = `<div class="section-title"><h2>Cartel para las mesas</h2><div class="tools"><button id="print" ${store.demo ? 'disabled title="Disponible en tu web"' : ""}>Imprimir cartel</button></div></div>
     <article class="poster">${BRANCH()}
-      <p class="kicker">Tienes una misión secreta ${HEART}</p>
+      ${GAMELOGO}<p class="kicker">Tienes una misión secreta ${HEART}</p>
       ${WORDMARK("h2")}
       <p class="date">${esc(CONFIG.fecha)}</p>
       <p class="lead">Escanea, escribe tu nombre y recibirás diez momentos secretos que fotografiar durante la boda.</p>
-      <div class="qrbox" id="qr"><img class="logo" src="../images/sj.png" alt=""></div>
+      <div class="qrbox" id="qr"><img class="logo" src="../images/mision-logo.svg" alt=""></div>
       <p class="url">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</p></article>
     <p class="muted no-print" style="text-align:center;margin-top:16px;font-size:14px">Imprime unas cuantas copias para las mesas y la entrada. El mismo enlace se puede mandar por WhatsApp.</p>`;
   try {

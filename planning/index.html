@@ -354,6 +354,8 @@ details.grp[open] > summary::after { content: "–"; }
 .tbx-t { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; line-height: 1.3; letter-spacing: -.01em; color: var(--brown-deep); max-width: 40ch; }
 .tbx-n { margin: 0; font-size: .93rem; color: var(--muted); max-width: 46ch; }
 .tb-extra .btn { margin-top: .2rem; }
+.tbx-k.tbx-logo::before { display: none; }
+.tbx-logo img { width: 34px; height: 34px; border-radius: 9px; flex: none; box-shadow: 0 6px 12px -6px rgba(15, 122, 108, .7); }
 .tb-extra.ask { background: rgba(236, 143, 110, .16); border: 1.5px solid rgba(236, 143, 110, .45); }
 .tb-extra.ask .btns { gap: .5rem; }
 .tb-extra.ask .btn { white-space: nowrap; padding: .65rem 1rem; font-size: .88rem; }
@@ -501,7 +503,7 @@ body.lyr-open { overflow: hidden; }
     var mi = data.mision || {};
     if (b.mision && mi.show === true) {
       var yo = null; try { yo = JSON.parse(localStorage.getItem('mision-sj') || 'null'); } catch (e) {}
-      out += '<div class="tb-extra mis"><p class="tbx-k">' + esc(mi.title || 'Misión secreta') + '</p>' +
+      out += '<div class="tb-extra mis"><p class="tbx-k tbx-logo"><img src="../images/mision-logo.svg" alt="" width="34" height="34">' + esc(mi.title || 'Misión secreta') + '</p>' +
         '<p class="tbx-t">' + (yo && yo.name ? 'Tu misión Nº ' + esc(('0' + yo.card).slice(-2)) + ' te espera, ' + esc(yo.name) + '.' : 'Durante la boda serás nuestro fotógrafo encubierto.') + '</p>' +
         '<p class="tbx-n">Escribe tu nombre, recibe diez momentos secretos que fotografiar y tus fotos saldrán en la pantalla en directo.</p>' +
         '<a class="btn" href="../mision/' + (yo && yo.name ? '#mision' : '') + '">' + CAM + (yo && yo.name ? 'Seguir con mi misión' : esc(mi.button || 'Empezar mi misión')) + '</a></div>';
