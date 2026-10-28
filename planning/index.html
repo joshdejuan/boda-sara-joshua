@@ -505,7 +505,7 @@ body.lyr-open { overflow: hidden; }
       var yo = null; try { yo = JSON.parse(localStorage.getItem('mision-sj') || 'null'); } catch (e) {}
       out += '<div class="tb-extra mis"><p class="tbx-k tbx-logo"><img src="../images/mision-logo.svg" alt="" width="34" height="34">Juego · ' + esc(mi.title || 'Misión secreta') + '</p>' +
         '<p class="tbx-t">' + (yo && yo.name ? 'Tu misión Nº ' + esc(('0' + yo.card).slice(-2)) + ' te espera, ' + esc(yo.name) + '.' : 'Un juego para toda la boda: serás nuestro fotógrafo encubierto.') + '</p>' +
-        '<p class="tbx-n">Escribe tu nombre, recibe diez momentos secretos que fotografiar y tus fotos saldrán en la pantalla en directo.</p>' +
+        '<p class="tbx-n">Escribe tu nombre, recibe diez momentos secretos que fotografiar y tus fotos saldrán en la pantalla en directo. <strong>Habrá un premio para el primero que complete todos sus retos.</strong></p>' +
         '<a class="btn" href="../mision/' + (yo && yo.name ? '#mision' : '') + '">' + CAM + (yo && yo.name ? 'Seguir con mi misión' : esc(mi.button || 'Empezar mi misión')) + '</a></div>';
     }
     if (b.song && b.song.url) {
