@@ -577,7 +577,7 @@ async function setGameOpen(on, token){
 function viewLocked(){
   app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
     <header class="hero">
-      ${GAMELOGO}<p class="kicker">Misión secreta ${HEART}</p>
+      ${GAMELOGO}<p class="kicker">Juego · Misión secreta ${HEART}</p>
       ${WORDMARK("h1")}
       <p class="date">${esc(CONFIG.fecha)}</p>
       <p class="place">${esc(CONFIG.lugar)}</p>
@@ -643,12 +643,12 @@ function viewHome(){
   const m = me();
   app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
     <header class="hero">
-      ${GAMELOGO}<p class="kicker">Tienes una misión secreta ${HEART}</p>
+      ${GAMELOGO}<p class="kicker">Juego · Tienes una misión secreta ${HEART}</p>
       ${WORDMARK("h1")}
       <p class="date">${esc(CONFIG.fecha)}</p>
       <p class="place">${esc(CONFIG.lugar)}</p>
     </header>
-    <p class="intro">Durante la boda serás nuestro fotógrafo encubierto. Escribe tu nombre y recibirás diez momentos que capturar durante la ceremonia, el cóctel y el banquete, sin que nadie sospeche.</p>
+    <p class="intro">Es un juego para toda la boda: serás nuestro fotógrafo encubierto. Escribe tu nombre y recibirás diez momentos que capturar durante la ceremonia, el cóctel y el banquete, sin que nadie sospeche.</p>
     <p class="notice">${CAM} Las fotos que subas aparecerán en la pantalla en directo de la boda.</p>
     ${m ? `<a class="resume" href="#mision">${LOGO}<strong>Seguir como ${esc(m.name)}</strong><small>Tu misión Nº ${pad(m.card)}</small><i>→</i></a>` : ""}
     <form class="sheet form" id="reg">
@@ -726,7 +726,7 @@ async function viewAdmin(tab){
   const tabs = [["directo", "En directo"], ["invitados", "Invitados"], ["fotos", "Fotos"], ["retos", "Retos"], ["cartel", "Cartel"], ["ganador", "Ganador"], ["acceso", "Contraseña y pantalla"]];
   tab = tabs.some(t => t[0] === tab) ? tab : "directo";
   app.innerHTML = demoBar("admin") + backBar(false) + `<main class="admin">
-    <header class="a-top"><div class="a-brand">${LOGO}<div><h1>Panel Admin</h1><p>Misión secreta · ${esc(CONFIG.fecha)}</p></div></div>
+    <header class="a-top"><div class="a-brand">${LOGO}<div><h1>Panel Admin</h1><p>Juego de la misión secreta · ${esc(CONFIG.fecha)}</p></div></div>
       <div class="a-user"><button class="ghost small" id="out">Cerrar sesión</button></div></header>
     <div class="gate panel-box" id="gate"><div class="gtxt"><strong>Comprobando el estado del juego…</strong></div></div>
     <nav class="tabs">${tabs.map(([k, t]) => `<a href="#admin/${k}" ${k === tab ? 'aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
@@ -950,10 +950,10 @@ async function tabPoster(el){
   const url = base();
   el.innerHTML = `<div class="section-title"><h2>Cartel para las mesas</h2><div class="tools"><button id="print" ${store.demo ? 'disabled title="Disponible en tu web"' : ""}>Imprimir cartel</button></div></div>
     <article class="poster">${BRANCH()}
-      ${GAMELOGO}<p class="kicker">Tienes una misión secreta ${HEART}</p>
+      ${GAMELOGO}<p class="kicker">Juego · Tienes una misión secreta ${HEART}</p>
       ${WORDMARK("h2")}
       <p class="date">${esc(CONFIG.fecha)}</p>
-      <p class="lead">Escanea, escribe tu nombre y recibirás diez momentos secretos que fotografiar durante la boda.</p>
+      <p class="lead">Es un juego para toda la boda: escanea, escribe tu nombre y recibirás diez momentos secretos que fotografiar.</p>
       <div class="qrbox" id="qr"><img class="logo" src="../images/mision-logo.svg" alt=""></div>
       <p class="url">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</p></article>
     <p class="muted no-print" style="text-align:center;margin-top:16px;font-size:14px">Imprime unas cuantas copias para las mesas y la entrada. El mismo enlace se puede mandar por WhatsApp.</p>`;
