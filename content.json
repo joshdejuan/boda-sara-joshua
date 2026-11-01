@@ -62,7 +62,7 @@
     }
   ],
   "contact": {
-    "text": "Para cualquier duda, escríbenos por WhatsApp. Y no olvides decirnos si prefieres carne o pescado para el banquete.",
+    "text": "Para cualquier duda, escríbenos por WhatsApp.",
     "sara": "+34 638 86 23 50",
     "joshua": "+34 634 95 91 88"
   },
@@ -423,12 +423,6 @@
           "banquete",
           "bodega"
         ],
-        "ask": {
-          "label": "Carne o pescado",
-          "text": "¿Prefieres carne o pescado?",
-          "note": "Escríbenos por WhatsApp y dinos qué eliges para el banquete.",
-          "message": "¡Hola! Para el banquete de la boda prefiero: "
-        },
         "anchor": "banquete"
       },
       {
