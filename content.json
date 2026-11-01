@@ -374,7 +374,7 @@
     "button": "Empezar mi misión"
   },
   "planning": {
-    "provisional": true,
+    "provisional": false,
     "note": "Horario provisional, a falta de confirmar. Lo iremos actualizando.",
     "blocks": [
       {
