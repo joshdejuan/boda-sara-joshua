@@ -434,7 +434,7 @@
       {
         "time": "17:30",
         "title": "Baile y barra libre",
-        "detail": "La barra libre termina a las 21:30.",
+        "detail": "",
         "menu": [
           "recena"
         ],
@@ -443,7 +443,7 @@
       {
         "time": "21:30",
         "title": "Fin de la celebración",
-        "detail": "Fin de la barra libre.",
+        "detail": "",
         "menu": [],
         "anchor": "fin"
       }
