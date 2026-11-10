@@ -137,7 +137,6 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .notice svg{flex:none;width:22px;height:22px;color:var(--teal-deep)}
 .notice.prize{background:var(--salmon-soft)}
 .notice.prize svg{color:var(--salmon-deep)}
-.spot img{animation:fadein .9s ease}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 .win{background:var(--teal-soft);border-radius:16px;padding:14px 16px;font-weight:700;color:var(--teal-deep)}
 .keep{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:8px;border-radius:20px;padding:16px 18px}
@@ -204,6 +203,23 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .spot .cap span{font-size:14.5px;opacity:.9;font-weight:600}
 .spot .empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:30px}
 .spot.flash{animation:flash 1s ease-out}
+/* Foto en grande: capa nueva encima de la anterior; fondo desenfocado de la misma foto para que las verticales no queden con bandas */
+.spot .shot{position:absolute;inset:0;overflow:hidden}
+.spot .shot img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.spot .shot .bg{object-fit:cover;transform:scale(1.25);filter:blur(28px) saturate(1.25) brightness(.9)}
+.spot .shot .fg{object-fit:contain;animation:kenburns 14s ease-out both}
+.spot .shot.in{animation:shotin 1.3s cubic-bezier(.2,.75,.2,1) both}
+.spot .shot.out{animation:shotout 1.3s ease both}
+.spot .cap{z-index:2}
+.spot .cap.in{animation:capin .9s .45s cubic-bezier(.2,.75,.2,1) both}
+.spot .cap.out{animation:capout .5s ease both}
+.spot .sweep{position:absolute;inset:-20%;z-index:3;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(236,143,110,.38) 46%,rgba(255,240,215,.55) 50%,rgba(65,224,207,.32) 55%,transparent 66%);mix-blend-mode:screen;animation:sweep 1.5s ease-in-out both}
+@keyframes shotin{from{opacity:0;transform:scale(1.08);filter:blur(14px)}to{opacity:1;transform:none;filter:none}}
+@keyframes shotout{from{opacity:1;transform:none}to{opacity:0;transform:scale(.96)}}
+@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.06)}}
+@keyframes capin{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes capout{to{opacity:0;transform:translateY(12px)}}
+@keyframes sweep{from{transform:translateX(-70%)}to{transform:translateX(70%)}}
 @keyframes flash{from{box-shadow:0 0 0 8px var(--teal)}to{box-shadow:0 0 0 0 transparent}}
 .feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:12px}
 .feed figure{margin:0;position:relative;aspect-ratio:1;border-radius:16px;overflow:hidden;background:rgba(255,255,255,.4)}
@@ -224,6 +240,48 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .dots i.on{background:var(--teal)}
 .dots b{font:800 20px var(--display);min-width:24px;text-align:right;color:var(--ink)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
+/* Pantalla en directo (proyector 16:9): todo cabe sin scroll, cabecera fina y la foto manda */
+@media (min-width:900px) and (min-aspect-ratio:5/4){
+  body:has(main.screen){padding:0;height:100vh;height:100dvh;overflow:hidden}
+  body:has(main.screen) #app{height:100%;display:flex;flex-direction:column}
+  body:has(main.screen) .demo-bar{flex:none}
+  .admin.screen{flex:1;min-height:0;max-width:none;width:100%;margin:0;padding:1.8vh 1.8vw 2.2vh;display:flex;flex-direction:column}
+  .screen #tab{flex:1;min-height:0;display:flex;flex-direction:column}
+  .screen .live-head{flex:none;flex-wrap:nowrap;align-items:center;gap:2vw;margin-bottom:1.6vh}
+  .screen .live-head>div:first-child{display:flex;align-items:center;gap:1.4vw}
+  .screen .live-wm{margin:0}
+  .screen .live-wm img{width:auto;height:clamp(44px,7.4vh,80px)}
+  .screen .live-dot{font-size:clamp(12px,1.5vh,16px)}
+  .screen .stats{margin-left:auto;gap:2.4vw;flex-wrap:nowrap}
+  .screen .stat{display:flex;align-items:baseline;gap:.5vw}
+  .screen .stat b{font-size:clamp(24px,4vh,44px);display:inline}
+  .screen .stat span{font-size:clamp(10px,1.1vh,12px)}
+  .screen #fs{flex:none;padding:8px 14px;font-size:13px}
+  .screen .live-grid{flex:1;min-height:0;grid-template-columns:minmax(0,1fr) clamp(300px,23vw,440px);gap:1.4vw;align-items:stretch}
+  .screen .live-grid>section{display:flex;flex-direction:column;min-height:0}
+  .screen .spot{flex:1;min-height:0;aspect-ratio:auto;border-radius:28px;background:#2a1a0e}
+  .screen .spot .cap{padding:12vh 2.2vw 3vh}
+  .screen .spot .cap strong{font-size:clamp(26px,3.6vh,46px)}
+  .screen .spot .cap span{font-size:clamp(14px,1.8vh,20px)}
+  .screen .spot .empty{color:rgba(255,255,255,.75);font:600 clamp(20px,2.6vh,30px)/1.3 var(--display)}
+  .screen .feed{flex:none;display:flex;gap:.7vw;margin-top:1.4vh;height:10.5vh;overflow:hidden}
+  .screen .feed figure{flex:none;height:100%;aspect-ratio:1;border-radius:14px;animation:feedin .6s ease both}
+  .screen .feed figcaption{font-size:clamp(10px,1.2vh,13px)}
+  .screen .board{display:flex;flex-direction:column;min-height:0;overflow:hidden;padding:2vh 1.3vw}
+  .screen .board h3{font-size:clamp(20px,2.6vh,28px)}
+  .screen .rank li{padding:.95vh 0}
+  .screen .rank .who{font-size:clamp(15px,1.8vh,19px);line-height:1.2}
+  .screen .rank .who small{font-size:clamp(11px,1.2vh,13px)}
+  .screen .board>div{min-height:0;overflow:hidden;flex:1}
+  .screen .rank{flex:none}
+  .screen .rank li{grid-template-columns:clamp(24px,1.8vw,32px) minmax(0,1fr) auto;gap:.7vw}
+  .screen .rank .who,.screen .rank .who small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+  .screen .dots{max-width:min(150px,8.6vw);gap:3px}
+  .screen .dots i{width:clamp(6px,.85vh,9px);height:clamp(6px,.85vh,9px)}
+  .screen .dots b{font-size:clamp(16px,2vh,22px);margin-left:6px}
+  .screen .board>div{-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+}
+@keyframes feedin{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
 .chips span{font-size:13px;font-weight:600;padding:5px 11px;border-radius:999px;background:var(--salmon-soft);color:var(--ink)}
 
 /* Invitados */
@@ -790,13 +848,26 @@ function score(players, photos){
 /* Tablero en directo, compartido por el panel y la pantalla pública */
 async function liveBoard(el, load){
   let d = await load();
-  let lastId = d.photos.length ? d.photos[d.photos.length - 1].id : null, bump = null, showId = null, spotKey = null;
+  let lastId = d.photos.length ? d.photos[d.photos.length - 1].id : null, bump = null, showId = null, spotKey = null, spotId = null, spotTok = 0, feedKey = null;
   el.innerHTML = `<div class="live-head"><div><span class="live-dot">En directo</span>${WORDMARK("h2", "live-wm")}</div>
     <div class="stats" id="stats"></div><button class="ghost no-print" id="fs">Pantalla completa</button></div>
     <div class="live-grid"><section><div class="spot" id="spot"></div><div class="feed" id="feed"></div></section>
     <aside class="panel-box board"><h3>Clasificación</h3><ol class="rank" id="rank"></ol>
     <div style="margin-top:16px"><p class="label" style="margin:0 0 8px">Aún sin cazar</p><div class="chips" id="pend"></div></div></aside></div>`;
   const flash = () => { const sp = $("#spot"); if (!sp) return; sp.classList.remove("flash"); void sp.offsetWidth; sp.classList.add("flash"); };
+  /* Cambio de foto con animación: se precarga la nueva y entra por encima de la anterior */
+  const showShot = (url, cap) => {
+    const tok = ++spotTok, im = new Image();
+    const go = () => {
+      const sp = $("#spot"); if (!sp || tok !== spotTok) return;
+      sp.querySelector(".empty")?.remove();
+      sp.querySelectorAll(".shot:not(.out), .cap:not(.out)").forEach(o => { o.classList.remove("in"); o.classList.add("out"); setTimeout(() => o.remove(), 1400); });
+      sp.querySelectorAll(".sweep").forEach(o => o.remove());
+      sp.insertAdjacentHTML("beforeend", `<div class="shot in"><img class="bg" src="${esc(url)}" alt=""><img class="fg" src="${esc(url)}" alt=""></div><div class="cap in">${cap}</div><i class="sweep"></i>`);
+      const sw = sp.lastElementChild; setTimeout(() => sw.remove(), 1600);
+    };
+    im.onload = im.onerror = go; im.src = url;
+  };
   const render = () => {
     if (!$("#stats")) return;
     const { players, photos, config: cfg } = d;
@@ -812,9 +883,16 @@ async function liveBoard(el, load){
     $("#pend").innerHTML = pend.length ? pend.slice(0, 12).map(([t]) => `<span>${esc(plain(t))}</span>`).join("") + (pend.length > 12 ? `<span>y ${pend.length - 12} más</span>` : "") : `<span>¡Todos cazados!</span>`;
     const rec = photos.slice().reverse(), top = (showId && photos.find(p => p.id === showId)) || rec[0];
     const key = top ? top.id + "|" + ago(top.created_at) : "vacio";
-    if (key !== spotKey) { spotKey = key; $("#spot").innerHTML = top ? `<img src="${esc(top.url)}" alt=""><div class="cap"><strong>${esc(top.mission_text || cfg.retos[top.mission] || "")}</strong><span>${esc(byId[top.player_id]?.name || "")} · ${ago(top.created_at)}</span></div>`
-      : `<div class="empty">Las fotos aparecerán aquí en cuanto alguien cumpla un reto.</div>`; }
-    $("#feed").innerHTML = rec.slice(1, 13).map(ph => `<figure><img src="${esc(ph.url)}" alt="" loading="lazy"><figcaption>${esc(byId[ph.player_id]?.name || "")}</figcaption></figure>`).join("");
+    if (key !== spotKey) {
+      spotKey = key;
+      if (!top) { spotId = null; spotTok++; $("#spot").innerHTML = `<div class="empty">Las fotos aparecerán aquí en cuanto alguien cumpla un reto.</div>`; }
+      else {
+        const cap = `<strong>${esc(top.mission_text || cfg.retos[top.mission] || "")}</strong><span>${esc(byId[top.player_id]?.name || "")} · ${ago(top.created_at)}</span>`;
+        if (top.id !== spotId) { spotId = top.id; showShot(top.url, cap); }
+        else { const c = $("#spot").querySelector(".cap:not(.out)"); if (c) c.innerHTML = cap; }
+      }
+    }
+    const fk = rec.slice(1, 13).map(p => p.id + (byId[p.player_id]?.name || "")).join(","); if (fk !== feedKey) feedKey = fk, $("#feed").innerHTML = rec.slice(1, 13).map(ph => `<figure><img src="${esc(ph.url)}" alt="" loading="lazy"><figcaption>${esc(byId[ph.player_id]?.name || "")}</figcaption></figure>`).join("");
   };
   render();
   let alive = true, busy = false, lastNewAt = Date.now(), cycle = [];
