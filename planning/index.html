@@ -334,6 +334,14 @@ details.grp[open] > summary::after { content: "–"; }
 .tb-time time { display: block; text-align: right; font-family: var(--font-display); font-weight: 700; font-size: var(--tf); line-height: 1; letter-spacing: -.02em; padding-top: calc(var(--cy) - var(--tf) / 2); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tb-dot { justify-self: center; margin-top: calc(var(--cy) - 7px); width: 14px; height: 14px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 5px var(--paper), 0 0 0 6.5px var(--brown); position: relative; z-index: 1; }
 .tb-card { padding: 1.1rem 1.3rem; border-radius: 22px; }
+/* Cómo llegar: primer punto del planning, antes de la recepción */
+.tb-go .tb-time { display: flex; justify-content: flex-end; }
+.tb-go .tb-time svg { width: calc(var(--tf) * 1.15); height: calc(var(--tf) * 1.15); margin-top: calc(var(--cy) - var(--tf) * .6); fill: var(--coral); }
+.tb-go .tb-dot { background: var(--coral); }
+.tb-go .tb-card { display: grid; gap: .2rem; }
+.go-addr { margin: .15rem 0 0; color: var(--muted); font-size: .95rem; line-height: 1.45; }
+.tb-go .btns { margin-top: .8rem; gap: .55rem; }
+.tb-go .btn { padding: .7rem 1.1rem; font-size: .9rem; white-space: nowrap; }
 .tb-title { font-weight: 700; font-size: 1.3rem; letter-spacing: -.015em; line-height: 1.2; }
 /* Enlaces a cada momento (#recepcion, #ceremonia…) */
 .tb, #filter-wrap { scroll-margin-top: calc(18px + env(safe-area-inset-top, 0px)); }
@@ -494,6 +502,21 @@ body.lyr-open { overflow: hidden; }
     }).join('');
   }
 
+  /* Botón con la ubicación de la finca, para abrirlo antes de salir de casa */
+  var PIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>';
+  var VENUE = { name: 'Finca Gurugú', address: ['Ctra. M-213, Km 5', 'Direcc. Anchuelo', '28810 Villalbilla, Madrid'], mapsQuery: 'Finca Gurugú, Villalbilla, Madrid' };
+  function goHtml() {
+    var v = data.venue || VENUE, q = v.mapsQuery || v.name || VENUE.mapsQuery;
+    var addr = (v.address || []).join(' · ');
+    return '<li class="tb tb-go" id="como-llegar"><div class="tb-time">' + PIN + '</div><span class="tb-dot"></span>' +
+      '<div class="tb-card glass"><div class="tb-head"><h2 class="tb-title">Cómo llegar</h2>' +
+      '<button type="button" class="tb-link" data-anchor="como-llegar" aria-label="Copiar el enlace a «Cómo llegar»" title="Copiar enlace">' + LINK + '</button></div>' +
+      '<p class="tb-detail">Ábrelo antes de salir de casa para llegar a ' + esc(v.name || VENUE.name) + '.</p>' +
+      (addr ? '<p class="go-addr">' + esc(addr) + '</p>' : '') +
+      '<div class="btns"><a class="btn" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q) + '" target="_blank" rel="noopener">' + PIN + 'Google Maps</a>' +
+      '<a class="btn line" href="https://waze.com/ul?q=' + encodeURIComponent(q) + '&navigate=yes" target="_blank" rel="noopener">Waze</a></div></div></li>';
+  }
+
   function dishHtml(it, sel, any, cnt, pend) {
     if (pend === 'none') return '<li class="dish"><div class="dish-main">' + (it.detail ? '<span class="dish-detail">' + esc(it.detail) + '</span>' : '') + '<span class="dish-name">' + esc(it.name) + '</span></div></li>';
     if (pend) return '<li class="dish"><div class="dish-main">' + (it.detail ? '<span class="dish-detail">' + esc(it.detail) + '</span>' : '') + '<span class="dish-name">' + esc(it.name) + '</span></div><div class="al-chips"><span class="al tbd">Alérgenos por confirmar</span></div></li>';
@@ -618,7 +641,7 @@ body.lyr-open { overflow: hidden; }
     var cnt = { safe: 0, risky: 0 };
     var holder = $('holder'); holder.appendChild($('pending-wrap')); holder.appendChild($('filter-wrap'));
     var firstMenu = -1; (pl.blocks || []).some(function (b, i) { if ((b.menu || []).length) { firstMenu = i; return true; } });
-    $('tline').innerHTML = (pl.blocks || []).map(function (b) {
+    $('tline').innerHTML = goHtml() + (pl.blocks || []).map(function (b) {
       var groups = (b.menu || []).map(function (id) { return secs[id]; }).filter(Boolean);
         var bi = (pl.blocks || []).indexOf(b);
       var aid = anchorOf(b);
