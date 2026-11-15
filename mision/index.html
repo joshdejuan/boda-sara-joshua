@@ -601,9 +601,10 @@ let store, cleanup = () => {};
    3 de cóctel y 4 de banquete, así cada bloque de 10 retos que recibe
    un invitado tiene de los tres momentos.
    ========================================================= */
-const PHASES = [["ceremonia", "Ceremonia"], ["coctel", "Cóctel"], ["banquete", "Banquete"], ["baile", "Baile"]];
+/* Sin momento "Baile": el premio se entrega antes de que empiece */
+const PHASES = [["ceremonia", "Ceremonia"], ["coctel", "Cóctel"], ["banquete", "Banquete"]];
 function phaseOf(t){
-  const m = String(t || "").match(/^\s*(ceremonia|c[óo]ctel|banquete|baile)\s*[·:\-–—]\s*/i);
+  const m = String(t || "").match(/^\s*(ceremonia|c[óo]ctel|banquete)\s*[·:\-–—]\s*/i);
   if (!m) return { key: "", label: "", text: String(t || "") };
   const key = m[1].toLowerCase().replace("ó", "o");
   return { key, label: PHASES.find(p => p[0] === key)[1], text: String(t).slice(m[0].length) };
