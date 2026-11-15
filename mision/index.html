@@ -311,7 +311,16 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .rrow .n{font:800 20px var(--display);color:var(--salmon);text-align:right;font-variant-numeric:tabular-nums}
 .rrow input{padding:10px 13px;font-size:15.5px;border-radius:11px}
 .rrow .use{font-size:12.5px;color:var(--muted);font-weight:700;white-space:nowrap}
-@media (max-width:620px){.rrow{grid-template-columns:30px minmax(0,1fr) auto}.rrow .use{grid-column:2}}
+.rrow{grid-template-columns:36px minmax(0,1fr) auto auto auto}
+.rrow select{width:auto;padding:9px 30px 9px 11px;font-size:13.5px;border-radius:11px}
+.rgroup{display:flex;flex-direction:column;gap:8px;padding:16px 0 4px;border-top:1px solid rgba(137,81,41,.14)}
+.rgroup:first-child{border-top:0;padding-top:0}
+.rgroup h3{margin:0 0 2px;display:flex;align-items:center;gap:.6rem;font:700 13px var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--brown)}
+.rgroup h3::before{content:"";width:22px;height:2px;background:var(--salmon)}
+.rgroup h3 span{letter-spacing:0;text-transform:none;font-weight:600;color:var(--muted);font-size:13px}
+.rgroup .radd{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center}
+.rgroup .radd input{padding:10px 13px;font-size:15px;border-radius:11px}
+@media (max-width:620px){.rrow{grid-template-columns:30px minmax(0,1fr) auto}.rrow select{grid-column:2;justify-self:start}.rrow .use{grid-column:2}.rgroup .radd{grid-template-columns:30px minmax(0,1fr) auto}}
 .row-inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .row-inline input[type=number]{width:90px}
 /* Cartel para las mesas */
@@ -598,6 +607,14 @@ function phaseOf(t){
   return { key, label: PHASES.find(p => p[0] === key)[1], text: String(t).slice(m[0].length) };
 }
 const plain = t => phaseOf(t).text;
+const withPhase = (key, txt) => { const l = (PHASES.find(p => p[0] === key) || [])[1]; return l ? `${l} · ${txt}` : txt; };
+/* Reparte los retos para que cada invitado, que recibe un tramo seguido de la lista, tenga de todos los momentos */
+function spreadByPhase(list){
+  const groups = {}; list.forEach(t => (groups[phaseOf(t).key] = groups[phaseOf(t).key] || []).push(t));
+  const order = [...PHASES.map(p => p[0]), ""];
+  return Object.entries(groups).flatMap(([k, arr]) => arr.map((t, i) => ({ t, pos: (i + .5) / arr.length, o: order.indexOf(k) })))
+    .sort((a, b) => a.pos - b.pos || a.o - b.o).map(x => x.t);
+}
 const phaseRank = t => { const k = phaseOf(t).key; const i = PHASES.findIndex(p => p[0] === k); return i < 0 ? 9 : i; };
 const RETOS_PROPUESTOS = ["Ceremonia · El novio esperando antes de que llegue la novia", "Ceremonia · Alguien secándose una lágrima", "Ceremonia · Los anillos en primer plano", "Cóctel · Un brindis con alguien que acabas de conocer", "Cóctel · Tres generaciones de una familia en la misma foto", "Cóctel · Un camarero en plena acción, bandeja en mano", "Banquete · La mesa más ruidosa del salón", "Banquete · Toda tu mesa brindando a la vez", "Banquete · Alguien emocionado durante un discurso", "Banquete · Los novios riéndose a carcajadas", "Ceremonia · El primer beso de casados", "Ceremonia · La cara de los padres durante los votos", "Ceremonia · Dos invitados conjuntados sin querer", "Cóctel · Alguien de la familia de Sara abrazado a alguien de la de Joshua", "Cóctel · Una bandeja del cóctel recién vaciada", "Cóctel · Foto de grupo con diez personas o más", "Banquete · Una mesa entera poniendo la misma cara", "Banquete · El primer plato recién servido, antes de que nadie lo toque", "Banquete · Alguien de otra mesa de visita en la tuya", "Banquete · Un invitado de más de 70 y otro de menos de 10, juntos", "Ceremonia · La salida de los novios ya casados", "Ceremonia · El detalle de decoración que más te guste", "Ceremonia · Alguien cantando la canción 132 con el corazón", "Cóctel · Un selfie con los novios", "Cóctel · Alguien con una copa en cada mano", "Cóctel · Los zapatos más llamativos de la boda", "Banquete · Los novios en su mesa, sin que miren a cámara", "Banquete · Toda tu mesa detrás del cartel con su nombre", "Banquete · Alguien contando una anécdota con las manos", "Banquete · El postre antes de que desaparezca", "Ceremonia · Un niño que no se está quieto", "Ceremonia · Los novios mirándose, sin que te vean", "Ceremonia · La firma de los novios o de los testigos", "Cóctel · Alguien comiendo a escondidas", "Cóctel · La corbata, pajarita o tocado más original", "Cóctel · Fotografía a otro invitado mientras hace una foto", "Banquete · Un camarero sonriendo a cámara", "Banquete · Un brindis por los novios desde la otra punta del salón", "Banquete · Tu mejor cara de espía con alguien de otra mesa", "Banquete · Alguien que se sabe entera la canción que suena"];
 
@@ -1020,38 +1037,46 @@ async function tabRetos(el){
   const draft = cfg.retos.slice();
   const use = i => players.filter(p => p.missions.includes(i)).length;
   const locked = players.length > 0;
-  el.innerHTML = `<div class="section-title"><h2>Retos</h2><span class="muted">${draft.length} retos · cada invitado recibe unos distintos al registrarse</span></div>
+  const PER = 10;                                     // retos por invitado por defecto
+  const nNow = cfg.retos_por_persona || PER;
+  const sameSet = cfg.retos.length === RETOS_PROPUESTOS.length && RETOS_PROPUESTOS.every(t => cfg.retos.includes(t)) && nNow === PER;
+  el.innerHTML = `<div class="section-title"><h2>Retos</h2><span class="muted">${draft.length} retos · cada invitado recibe ${PER} distintos al registrarse</span></div>
     <div class="panel-box" style="display:flex;flex-direction:column;gap:18px">
-      ${(() => { const same = cfg.retos.length === RETOS_PROPUESTOS.length && cfg.retos.every((t, i) => t === RETOS_PROPUESTOS[i]) && cfg.retos_por_persona === 10;
-        return same ? `<p class="notice" style="margin:0">Estáis usando la lista propuesta: 40 retos, 10 por invitado (3 de ceremonia, 3 de cóctel y 4 de banquete).</p>`
+      ${sameSet ? `<p class="notice" style="margin:0">Estáis usando la lista propuesta: 40 retos, 10 por invitado (3 de ceremonia, 3 de cóctel y 4 de banquete).</p>`
         : locked ? `<p class="muted" style="margin:0;font-size:14px">Para cargar la lista propuesta de 40 retos (10 por invitado, repartidos entre ceremonia, cóctel y banquete) primero hay que borrar a los invitados registrados en la pestaña Invitados.</p>`
-        : `<div class="row-inline"><button class="ghost" id="propuesta" type="button">Cargar la lista propuesta</button><span class="muted" style="font-size:13.5px">40 retos · 10 por invitado: 3 de ceremonia, 3 de cóctel y 4 de banquete. Revisa y pulsa Guardar cambios.</span></div>`; })()}
-      <p class="muted" id="fases" style="margin:0;font-size:13.5px"></p>
-      <div class="row-inline"><label class="label" for="nper">Retos por invitado</label><input type="number" id="nper" min="1" max="10" value="${cfg.retos_por_persona}"><span class="muted" style="font-size:13.5px">Se aplica a quien se registre a partir de ahora.</span></div>
+        : `<div class="row-inline"><button class="ghost" id="propuesta" type="button">Cargar la lista propuesta</button><span class="muted" style="font-size:13.5px">40 retos · 10 por invitado: 3 de ceremonia, 3 de cóctel y 4 de banquete. Revisa y pulsa Guardar cambios.</span></div>`}
+      <div class="row-inline"><label class="label" for="nper">Retos por invitado</label><input type="number" id="nper" min="1" max="10" value="${PER}"><span class="muted" style="font-size:13.5px">${nNow !== PER ? `<b>Ahora mismo se dan ${nNow}.</b> Pulsa Guardar cambios para pasar a ${PER}. ` : ""}Se aplica a quien se registre a partir de ahora.</span></div>
       <div class="rlist" id="rl"></div>
-      <div class="row-inline"><input type="text" id="newr" maxlength="90" placeholder="Nuevo reto, por ejemplo: Alguien bailando con la abuela" style="flex:1;min-width:220px"><button class="ghost" id="add">Añadir</button></div>
-      ${locked ? `<p class="muted" style="margin:0;font-size:14px">Como ya hay invitados registrados, los retos existentes no se pueden quitar: solo corregir su texto. Los nuevos sí. Para empezar de cero, borra antes a los invitados.</p>` : ""}
+      ${locked ? `<p class="muted" style="margin:0;font-size:14px">Como ya hay invitados registrados, los retos existentes no se pueden quitar: solo corregir su texto o cambiarlos de momento. Los nuevos sí. Para empezar de cero, borra antes a los invitados.</p>` : ""}
       <div class="row-inline"><button id="save">Guardar cambios</button><span class="status" id="st"></span></div></div>`;
+  const GROUPS = [...PHASES, ["", "Sin momento"]];
+  const opts = cur => GROUPS.map(([k, l]) => `<option value="${k}" ${k === cur ? "selected" : ""}>${l}</option>`).join("");
   const draw = () => {
-    const cnt = PHASES.map(([k, l]) => [l, draft.filter(t => phaseOf(t).key === k).length]), sin = draft.filter(t => !phaseOf(t).key).length;
-    $("#fases").textContent = "Por momento: " + cnt.map(([l, n]) => `${l} ${n}`).join(" · ") + (sin ? ` · sin momento ${sin}` : "") + ". Empieza cada reto por «Ceremonia · », «Cóctel · » o «Banquete · » para que el invitado los vea agrupados.";
-    $("#rl").innerHTML = draft.map((t, i) => `<div class="rrow"><span class="n">${i + 1}</span><input type="text" value="${esc(t)}" data-i="${i}" maxlength="90" aria-label="Reto ${i + 1}">
-      <span class="use">${i < cfg.retos.length ? `en ${use(i)} ${use(i) === 1 ? "misión" : "misiones"}` : "nuevo"}</span>
-      ${locked && i < cfg.retos.length ? "<span></span>" : `<button class="danger small rm" data-i="${i}" aria-label="Quitar reto ${i + 1}">Quitar</button>`}</div>`).join("");
-    $("#rl").querySelectorAll("input").forEach(inp => inp.addEventListener("input", () => { draft[+inp.dataset.i] = inp.value; }));
+    const by = {}; draft.forEach((t, i) => (by[phaseOf(t).key] = by[phaseOf(t).key] || []).push(i));
+    $("#rl").innerHTML = GROUPS.filter(([k]) => k || (by[""] || []).length).map(([k, l]) => { const ids = by[k] || [];
+      return `<section class="rgroup"><h3>${esc(l)} <span>${ids.length} ${ids.length === 1 ? "reto" : "retos"}</span></h3>
+      ${ids.map((i, n) => `<div class="rrow"><span class="n">${n + 1}</span><input type="text" value="${esc(phaseOf(draft[i]).text)}" data-i="${i}" maxlength="78" aria-label="${esc(l)}: reto ${n + 1}">
+        <select data-i="${i}" aria-label="Momento del reto">${opts(k)}</select>
+        <span class="use">${i < cfg.retos.length ? `en ${use(i)} ${use(i) === 1 ? "misión" : "misiones"}` : "nuevo"}</span>
+        ${locked && i < cfg.retos.length ? "<span></span>" : `<button class="danger small rm" data-i="${i}" aria-label="Quitar reto">Quitar</button>`}</div>`).join("")}
+      ${k ? `<div class="radd"><span></span><input type="text" data-k="${k}" maxlength="78" placeholder="Nuevo reto de ${esc(l.toLowerCase())}"><button class="ghost small add" data-k="${k}" type="button">Añadir</button></div>` : ""}</section>`; }).join("");
+    $("#rl").querySelectorAll("input[data-i]").forEach(inp => inp.addEventListener("input", () => { const i = +inp.dataset.i; draft[i] = withPhase(phaseOf(draft[i]).key, inp.value); }));
+    $("#rl").querySelectorAll("select").forEach(sel => sel.addEventListener("change", () => { const i = +sel.dataset.i; draft[i] = withPhase(sel.value, phaseOf(draft[i]).text); draw(); }));
     $("#rl").querySelectorAll(".rm").forEach(b => b.addEventListener("click", () => { draft.splice(+b.dataset.i, 1); draw(); }));
+    $("#rl").querySelectorAll(".radd input").forEach(inp => inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addIt(inp.dataset.k); } }));
+    $("#rl").querySelectorAll(".add").forEach(b => b.addEventListener("click", () => addIt(b.dataset.k)));
   };
+  const addIt = k => { const inp = $(`#rl .radd input[data-k="${k}"]`), v = inp.value.trim(); if (!v) return; draft.push(withPhase(k, v)); draw(); $(`#rl .radd input[data-k="${k}"]`).focus(); };
   draw();
   const prop = $("#propuesta");
-  if (prop) prop.addEventListener("click", () => { draft.splice(0, draft.length, ...RETOS_PROPUESTOS); $("#nper").value = 10; draw(); $("#st").className = "status"; $("#st").textContent = "Lista cargada. Revisa los textos y pulsa Guardar cambios."; });
-  const addIt = () => { const v = $("#newr").value.trim(); if (!v) return; draft.push(v); $("#newr").value = ""; draw(); };
-  $("#add").addEventListener("click", addIt);
-  $("#newr").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addIt(); } });
+  if (prop) prop.addEventListener("click", () => { draft.splice(0, draft.length, ...RETOS_PROPUESTOS); $("#nper").value = PER; draw(); $("#st").className = "status"; $("#st").textContent = "Lista cargada. Revisa los textos y pulsa Guardar cambios."; });
   $("#save").addEventListener("click", async () => {
-    const st = $("#st"), n = Math.max(1, Math.min(10, +$("#nper").value || 5));
-    if (locked && draft.slice(0, cfg.retos.length).some(t => !t.trim())) { st.className = "status err"; st.textContent = "Hay retos vacíos. Escribe algo en ellos antes de guardar."; return; }
-    const clean = draft.map(t => t.trim()).filter(Boolean);
+    const st = $("#st"), n = Math.max(1, Math.min(10, +$("#nper").value || PER));
+    if (locked && draft.slice(0, cfg.retos.length).some(t => !plain(t).trim())) { st.className = "status err"; st.textContent = "Hay retos vacíos. Escribe algo en ellos antes de guardar."; return; }
+    let clean = draft.map(t => t.trim()).filter(t => plain(t).trim());
     if (clean.length < n) { st.className = "status err"; st.textContent = `Necesitas al menos ${n} retos.`; return; }
+    /* Sin invitados aún se puede reordenar: así cada tramo de ${n} retos lleva de ceremonia, cóctel y banquete */
+    if (!locked) clean = spreadByPhase(clean);
     $("#save").disabled = true; st.className = "status"; st.textContent = "Guardando…";
     try { await store.saveConfig(clean, n); st.className = "status ok"; st.textContent = "Guardado."; setTimeout(() => tabRetos(el), 800); }
     catch (e) { console.error(e); st.className = "status err"; st.textContent = "No se pudo guardar. Inténtalo otra vez."; $("#save").disabled = false; }
