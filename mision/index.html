@@ -256,7 +256,7 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
   .screen .stat{display:flex;align-items:baseline;gap:.5vw}
   .screen .stat b{font-size:clamp(24px,4vh,44px);display:inline}
   .screen .stat span{font-size:clamp(10px,1.1vh,12px)}
-  .screen #fs{flex:none;padding:8px 14px;font-size:13px}
+  .screen #fs,.screen #snd{flex:none;padding:8px 14px;font-size:13px}
   .screen .live-grid{flex:1;min-height:0;grid-template-columns:minmax(0,1fr) clamp(300px,23vw,440px);gap:1.4vw;align-items:stretch}
   .screen .live-grid>section{display:flex;flex-direction:column;min-height:0}
   .screen .spot{flex:1;min-height:0;aspect-ratio:auto;border-radius:28px;background:#2a1a0e}
@@ -369,6 +369,9 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .rv-shot img{width:100%;height:100%;object-fit:contain;display:block}
 .rv-shot img.in{animation:fadein .7s ease}
 .rv-shot figcaption{position:absolute;inset:auto 0 0 0;padding:70px 26px 20px;text-align:left;background:linear-gradient(transparent,rgba(20,10,3,.85));display:flex;flex-direction:column;gap:4px}
+.rv-hint{margin:0;font:600 13px var(--body);color:rgba(249,244,236,.55)}
+.rv-shot{cursor:pointer}
+.snd-on{background:var(--teal-soft)!important;border-color:transparent!important}
 .rv-ph{font:700 clamp(12px,1.3vw,16px) var(--body);letter-spacing:.22em;text-transform:uppercase;color:#EC8F6E}
 .rv-shot strong{font:700 clamp(22px,2.8vw,40px)/1.15 var(--display);letter-spacing:-.02em;color:#F9F4EC}
 .rv-nav{display:flex;align-items:center;gap:10px;max-width:100%}
@@ -606,7 +609,7 @@ const RETOS_PROPUESTOS = ["Ceremonia · El novio esperando antes de que llegue l
    navegador, no hay que volver a pegarlo).
    ========================================================= */
 const GH = { owner: "joshdejuan", repo: "boda-sara-joshua", branch: "main" };
-let demoOpen = false, peek = false, gateWanted = null;
+let demoOpen = false, peek = false, gateWanted = null, gateAuto = null;
 async function gameOpen(){
   if (PRUEBA) return true;
   if (DEMO) return demoOpen;
@@ -614,9 +617,13 @@ async function gameOpen(){
     const r = await fetch("../content.json?v=" + Date.now(), { cache: "no-store" });
     if (!r.ok) return true;                       // si no se puede leer, no bloqueamos la boda
     const j = await r.json();
-    return !!(j.mision && j.mision.show === true);
+    gateAuto = (j.mision && j.mision.autoShow) || null;
+    return misionOn(j.mision);
   } catch { return true; }
 }
+/* Abierto si los novios lo activan o, solo, desde mision.autoShow (la mañana del 21) */
+function misionOn(m){ m = m || {}; return m.show === true || (!!m.autoShow && Date.now() >= Date.parse(m.autoShow)); }
+const autoTxt = t => new Date(t).toLocaleString("es-ES", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" });
 function ghToken(){ try { return sessionStorage.getItem("sj_token") || localStorage.getItem("sj_token") || ""; } catch { return ""; } }
 function ghSave(t, keep){ try { (keep ? localStorage : sessionStorage).setItem("sj_token", t); } catch {} }
 function ghForget(){ try { sessionStorage.removeItem("sj_token"); localStorage.removeItem("sj_token"); } catch {} }
@@ -636,6 +643,8 @@ async function setGameOpen(on, token){
   const f = await gh("GET", path + "?ref=" + GH.branch, token);
   const j = JSON.parse(unb64(f.content));
   j.mision = { ...(j.mision || {}), show: !!on };
+  /* Ocultar después de la activación automática la desactiva para siempre; antes de esa fecha se mantiene */
+  if (!on && j.mision.autoShow && Date.now() >= Date.parse(j.mision.autoShow)) { delete j.mision.autoShow; gateAuto = null; }
   await gh("PUT", path, token, { message: on ? "Misión secreta: activa el juego" : "Misión secreta: oculta el juego", content: b64(JSON.stringify(j, null, 2) + "\n"), branch: GH.branch, sha: f.sha });
 }
 
@@ -667,7 +676,7 @@ async function gateBox(el){
   const draw = (msg = "", kind = "", askToken = false) => {
     el.className = "gate panel-box" + (open ? " on" : "");
     el.innerHTML = `<div class="gtxt"><strong>${open ? "El juego está abierto" : "El juego está oculto"}</strong>
-        <span>${open ? "Los invitados pueden registrarse y subir fotos. La sección se ve en la web." : "Los invitados ven un aviso de que empieza el día de la boda. La sección no aparece en la web."}</span></div>
+        <span>${open ? "Los invitados pueden registrarse y subir fotos. La sección se ve en la web." : "Los invitados ven un aviso de que empieza el día de la boda. La sección no aparece en la web."}${!open && gateAuto && Date.now() < Date.parse(gateAuto) ? ` <b>Se activará solo el ${esc(autoTxt(gateAuto))}.</b>` : ""}</span></div>
       <div class="gact">${open ? `<button class="ghost small" id="g-off" type="button">Ocultar de nuevo</button>` : `<button id="g-on" type="button">Activar el juego</button>`}${PRUEBA ? "" : `<a class="btn ghost small" href="../?prueba" target="_blank" rel="noopener">Probar sin activar</a>`}</div>
       ${askToken ? `<form id="g-tok"><input type="password" id="g-token" autocomplete="off" placeholder="Token de GitHub (github_pat_…)" aria-label="Token de GitHub" required>
         <label><input type="checkbox" id="g-keep" checked> Recordar en este navegador</label>
@@ -930,11 +939,22 @@ async function viewScreen(key){
   app.innerHTML = demoBar("pantalla") + `<main class="admin screen"><section id="tab"></section></main>`;
   let firstUsed = false, seen = first.reveal_at && (new Date(first.now) - new Date(first.reveal_at) > 60000) ? first.reveal_at : null;
   const watch = d => {
-    if (d.reveal_at && d.reveal_at !== seen) { seen = d.reveal_at; playReveal(d); }
+    if (d.reveal_at && d.reveal_at !== seen) { seen = d.reveal_at; playReveal(d, { sound: true }); }
     else if (!d.reveal_at && revealOpen) { seen = null; revealOpen.close(); }
     return d;
   };
   await liveBoard($("#tab"), async () => { if (!firstUsed) { firstUsed = true; return watch(first); } const d = await store.screen(key); if (!d) throw new Error("clave"); return watch(d); });
+  /* El navegador no deja sonar nada hasta el primer clic: botón para activar la música y el redoble del ganador */
+  const fs = $("#fs"); if (!fs) return;
+  fs.insertAdjacentHTML("beforebegin", `<button class="ghost no-print" id="snd" type="button">Activar sonido</button>`);
+  const sb = $("#snd");
+  const mark = () => { if (audioOn()) { sb.textContent = "Sonido activado"; sb.classList.add("snd-on"); } };
+  const unlock = () => { const c = audioCtx(); if (!c) return; c.resume().then(mark).catch(() => {}); };
+  sb.addEventListener("click", () => {
+    unlock();
+    const c = audioCtx(); if (c) { const o = c.createOscillator(), g = c.createGain(), t = c.currentTime; o.frequency.value = 880; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.2, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + .6); o.connect(g).connect(c.destination); o.start(t); o.stop(t + .65); }
+  });
+  addEventListener("pointerdown", unlock); addEventListener("keydown", unlock);
 }
 
 async function tabPlayers(el){
@@ -1094,24 +1114,98 @@ function ranking(d){
 const wait = ms => new Promise(r => setTimeout(r, ms));
 let revealOpen = null;
 
+/* Sonido del desvelado: un único AudioContext para toda la página. En el ordenador de la pantalla
+   el navegador solo deja sonar audio después de un clic, por eso hay un botón "Activar sonido". */
+let actx = null;
+function audioCtx(){
+  try { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume().catch(() => {}); } catch { return null; }
+  return actx;
+}
+const audioOn = () => !!actx && actx.state === "running";
+
+/* Redoble, platillo y una música original sintetizada (Re mayor, alegre) que suena mientras se ven las fotos */
 function sound(){
-  let ctx = null;
-  try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { return { roll(){}, crash(){}, stop(){} }; }
-  const noise = (dur, gain, freq) => {
+  const ctx = audioCtx();
+  const none = { roll(){}, crash(){}, boom(){}, suspense(){}, fanfare(){}, stop(){} };
+  if (!ctx) return none;
+  const master = ctx.createGain(); master.gain.value = 1; master.connect(ctx.destination);
+  const nodes = new Set();
+  const track = n => { nodes.add(n); n.onended = () => nodes.delete(n); return n; };
+  const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+  const noise = (dur, gain, freq, at = ctx.currentTime, out = master) => {
     try {
       const len = Math.floor(ctx.sampleRate * dur), buf = ctx.createBuffer(1, len, ctx.sampleRate), ch = buf.getChannelData(0);
       for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
-      const src = ctx.createBufferSource(); src.buffer = buf;
+      const src = track(ctx.createBufferSource()); src.buffer = buf;
       const f = ctx.createBiquadFilter(); f.type = freq > 3000 ? "highpass" : "bandpass"; f.frequency.value = freq;
       const g = ctx.createGain(); g.gain.value = gain;
-      src.connect(f).connect(g).connect(ctx.destination); src.start();
+      src.connect(f).connect(g).connect(out); src.start(at);
     } catch {}
   };
-  let timer = null;
+  const tone = (type, m, at, dur, vol, out, opts = {}) => {
+    const o = track(ctx.createOscillator()), g = ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(hz(m), at); if (opts.detune) o.detune.value = opts.detune;
+    const atk = opts.atk ?? .01;
+    g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(vol, at + atk);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    if (opts.lp) { const f = ctx.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = opts.lp; o.connect(f).connect(g); } else o.connect(g);
+    g.connect(out); o.start(at); o.stop(at + dur + .05);
+  };
+  const kick = (at, out) => { const o = track(ctx.createOscillator()), g = ctx.createGain(); o.frequency.setValueAtTime(130, at); o.frequency.exponentialRampToValueAtTime(42, at + .16); g.gain.setValueAtTime(.9, at); g.gain.exponentialRampToValueAtTime(.001, at + .3); o.connect(g).connect(out); o.start(at); o.stop(at + .32); };
+
+  let timer = null, pad = null, loop = null, fanT = null;
+  /* Música de fondo mientras crece la tensión: acorde de La que se va abriendo */
+  const suspense = ms => {
+    const t = ctx.currentTime, end = t + ms / 1000;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.16, end); g.connect(master);
+    const f = ctx.createBiquadFilter(); f.type = "lowpass"; f.frequency.setValueAtTime(260, t); f.frequency.exponentialRampToValueAtTime(2400, end); f.connect(g);
+    const os = [45, 52, 57, 61, 64].map((m, i) => { const o = track(ctx.createOscillator()); o.type = "sawtooth"; o.frequency.value = hz(m); o.detune.value = (i % 2 ? 7 : -7); o.connect(f); o.start(t); return o; });
+    pad = { g, os };
+  };
+  const stopPad = (at = ctx.currentTime) => { if (!pad) return; pad.g.gain.cancelScheduledValues(at); pad.g.gain.setValueAtTime(pad.g.gain.value || .16, at); pad.g.gain.exponentialRampToValueAtTime(0.0001, at + .25); pad.os.forEach(o => { try { o.stop(at + .3); } catch {} }); pad = null; };
+
+  /* Canción en bucle: 8 compases D · Bm · G · A, bajo, acordes a contratiempo, campanitas y batería suave */
+  const BPM = 116, E8 = 60 / BPM / 2;
+  const CH = [[62, 66, 69], [59, 62, 66], [59, 62, 67], [57, 61, 64]], BASS = [38, 35, 43, 45];
+  const MEL = [[74,0,78,0,76,74,69,0],[71,0,74,0,71,69,66,0],[67,71,74,0,76,74,71,0],[69,0,73,76,73,0,69,0],
+               [74,76,78,0,81,0,78,76],[74,0,71,74,78,0,76,0],[74,0,71,0,67,71,74,76],[76,0,73,0,74,0,0,0]];
+  const party = () => {
+    const out = ctx.createGain(); out.gain.setValueAtTime(.2, ctx.currentTime); out.gain.linearRampToValueAtTime(.42, ctx.currentTime + .8); out.connect(master);
+    let step = 0, next = ctx.currentTime + .05;
+    const sched = () => {
+      while (next < ctx.currentTime + .15) {
+        const bar = Math.floor(step / 8) % 8, e = step % 8, ch = CH[bar % 4], at = next;
+        if (e === 0 || e === 3 || e === 4) tone("triangle", BASS[bar % 4] + (e === 3 ? 12 : 0), at, E8 * (e === 4 ? 3.5 : 1.6), .5, out);
+        if (e % 2 === 1) ch.forEach(m => tone("sawtooth", m, at, E8 * .9, .07, out, { lp: 1800, atk: .005 }));
+        const mn = MEL[bar][e]; if (mn) { tone("sine", mn + 12, at, E8 * 3, .16, out, { atk: .004 }); tone("sine", mn + 24, at, E8 * 1.2, .04, out, { atk: .003 }); }
+        if (e === 0 || e === 4) kick(at, out);
+        if (e === 2 || e === 6) noise(.16, .22, 1800, at, out);
+        noise(.04, e % 2 ? .05 : .09, 8000, at, out);
+        step++; next += E8;
+      }
+    };
+    sched(); const iv = setInterval(sched, 25);
+    loop = { iv, out };
+  };
+  /* Fanfarria al salir el nombre y, después, la canción */
+  const fanfare = () => {
+    const t = ctx.currentTime + .05, out = ctx.createGain(); out.gain.value = .5; out.connect(master);
+    const brass = (m, at, dur, v = .16) => { tone("sawtooth", m, at, dur, v, out, { lp: 2600, atk: .03, detune: 5 }); tone("sawtooth", m, at, dur, v * .7, out, { lp: 2600, atk: .03, detune: -6 }); };
+    [[62, 0], [62, .16], [62, .32]].forEach(([m, d]) => brass(m + 12, t + d, .14));
+    [62, 66, 69, 74, 78].forEach(m => brass(m, t + .5, 2.6, .12));
+    tone("triangle", 38, t + .5, 2.2, .5, out); kick(t + .5, out); noise(1.8, .25, 6000, t + .5, out);
+    fanT = setTimeout(party, 1900);
+  };
   return {
     roll(ms){ const end = Date.now() + ms; let v = .12; timer = setInterval(() => { if (Date.now() > end) return clearInterval(timer); v = Math.min(.5, v + .01); noise(.08, v, 180); }, 55); },
-    crash(){ clearInterval(timer); noise(2.2, .5, 5000); noise(.5, .9, 90); },
-    stop(){ clearInterval(timer); try { ctx.close(); } catch {} }
+    crash(){ clearInterval(timer); stopPad(); noise(2.2, .5, 5000); noise(.5, .9, 90); },
+    boom(){ const t = ctx.currentTime; tone("sine", 33, t, .9, .7, master, { atk: .005 }); noise(.25, .35, 120, t); },
+    suspense, fanfare,
+    stop(){
+      clearInterval(timer); clearTimeout(fanT); if (loop) clearInterval(loop.iv);
+      const t = ctx.currentTime; master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0, t + 1.2);
+      setTimeout(() => { nodes.forEach(n => { try { n.stop(); } catch {} }); try { master.disconnect(); } catch {} }, 1300);
+    }
   };
 }
 
@@ -1161,14 +1255,15 @@ async function playReveal(d, opts = {}){
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   await wait(1800);
   if (!reduce) {
-    for (const n of ["3", "2", "1"]) { if (!alive) return; slot.innerHTML = `<span class="rv-count">${n}</span>`; await wait(950); }
+    snd?.suspense(950 * 3 + 3600);
+    for (const n of ["3", "2", "1"]) { if (!alive) return; snd?.boom(); slot.innerHTML = `<span class="rv-count">${n}</span>`; await wait(950); }
     const names = d.players.map(p => p.name).filter(Boolean);
     snd?.roll(3600);
     let delay = 55; const start = Date.now();
     while (alive && Date.now() - start < 3600) { slot.innerHTML = `<span class="rv-spin">${esc(names[Math.floor(Math.random() * names.length)])}</span>`; await wait(delay); delay = Math.min(420, delay * 1.09); }
   }
   if (!alive) return;
-  snd?.crash();
+  snd?.crash(); snd?.fanfare();
   slot.innerHTML = `<span class="rv-name">${esc(winner.p.name)}</span>`;
   fx.fire();
   const meta = el.querySelector(".rv-meta");
@@ -1188,9 +1283,9 @@ async function playReveal(d, opts = {}){
   el.querySelector(".rv-photos").innerHTML = "";
   const g = document.createElement("div"); g.className = "rv-gal";
   g.innerHTML = `<figure class="rv-shot"><img alt=""><figcaption><span class="rv-ph"></span><strong></strong></figcaption></figure>
-    <div class="rv-nav"><button type="button" class="rv-prev" aria-label="Reto anterior">←</button><div class="rv-thumbs">${done.map((x, i) => `<button type="button" data-i="${i}" aria-label="Reto ${i + 1}"><img src="${esc(x.ph.url)}" alt=""></button>`).join("")}</div><button type="button" class="rv-next" aria-label="Reto siguiente">→</button></div>`;
+    <div class="rv-nav"><button type="button" class="rv-prev" aria-label="Reto anterior">←</button><div class="rv-thumbs">${done.map((x, i) => `<button type="button" data-i="${i}" aria-label="Reto ${i + 1}"><img src="${esc(x.ph.url)}" alt=""></button>`).join("")}</div><button type="button" class="rv-next" aria-label="Reto siguiente">→</button></div><p class="rv-hint">Pasa las fotos con ← → o con el mando</p>`;
   el.querySelector(".rv-stage").insertBefore(g, el.querySelector(".rv-podium"));
-  let cur = -1, auto = null;
+  let cur = -1;
   const show = i => {
     cur = (i + done.length) % done.length; const x = done[cur];
     const im = g.querySelector(".rv-shot img"); im.classList.remove("in"); void im.offsetWidth; im.src = x.ph.url; im.classList.add("in");
@@ -1198,11 +1293,15 @@ async function playReveal(d, opts = {}){
     g.querySelector("figcaption strong").textContent = x.f.text;
     g.querySelectorAll(".rv-thumbs button").forEach((b, k) => b.setAttribute("aria-current", k === cur ? "true" : "false"));
   };
-  const play = () => { clearInterval(auto); auto = setInterval(() => { if (alive) show(cur + 1); else clearInterval(auto); }, 9000); };
+  /* Las fotos del ganador se pasan a mano: flechas, el mando de presentaciones (Re Pág / Av Pág), las miniaturas o un clic en la foto */
+  const play = () => {};
   g.querySelector(".rv-prev").addEventListener("click", () => { show(cur - 1); play(); });
   g.querySelector(".rv-next").addEventListener("click", () => { show(cur + 1); play(); });
   g.querySelectorAll(".rv-thumbs button").forEach(b => b.addEventListener("click", () => { show(+b.dataset.i); play(); }));
-  const key = e => { if (!alive) return removeEventListener("keydown", key); if (e.key === "ArrowRight") { show(cur + 1); play(); } if (e.key === "ArrowLeft") { show(cur - 1); play(); } };
+  g.querySelector(".rv-shot").addEventListener("click", () => show(cur + 1));
+  const key = e => { if (!alive) return removeEventListener("keydown", key);
+    if (["ArrowRight", "ArrowDown", "PageDown"].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+    if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); show(cur - 1); } };
   addEventListener("keydown", key);
   show(0); play();
   const pod = rank.slice(1, 3);

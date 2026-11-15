@@ -584,7 +584,7 @@ details.grp[open] > summary::after { content: "–"; }
     $('contact-btns').innerHTML = people.map(function (p) {
       return '<a class="btn" href="https://wa.me/' + p[1] + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.1 14.9l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0 1 12 4zm-3.1 3.6c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.8 2.9 4.5 3.9 2.2.9 2.7.7 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.6-.3l-1.9-.9c-.3-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.6.1-.3-.1-1.1-.4-2.1-1.3-.8-.7-1.3-1.5-1.4-1.8-.2-.3 0-.4.1-.5l.4-.5.3-.5v-.5l-.9-2c-.2-.5-.4-.4-.6-.4h-.5z"/></svg> WhatsApp ' + esc(p[0]) + '</a>';
     }).join('');
-    var mi = c.mision || {}, misOn = mi.show === true || PRUEBA;
+    var mi = c.mision || {}, misOn = mi.show === true || (!!mi.autoShow && Date.now() >= Date.parse(mi.autoShow)) || PRUEBA;
     $('mision').hidden = !misOn;
     var dm = document.querySelector('.dock a[data-sec="mision"]'); if (dm) dm.hidden = !misOn;
     setText('mis-title', mi.title || 'Misión secreta'); setText('mis-text', mi.text || ''); setText('mis-btn', mi.button || 'Empezar mi misión');
@@ -822,7 +822,7 @@ details.grp[open] > summary::after { content: "–"; }
   var GROUPS = [
     { id: 'mision', title: 'Misión secreta (juego)', fields: [
       ['', 'Mientras esté desactivado, el juego está oculto: la sección no aparece en la web y quien abra la página del juego ve un aviso de que empieza el día de la boda. También se puede activar desde el Panel de la misión.', 'note'],
-      ['mision.show', 'Juego activado', 'check'], ['mision.title', 'Título', 'text'], ['mision.text', 'Texto', 'area'], ['mision.button', 'Texto del botón', 'text']] },
+      ['mision.show', 'Juego activado', 'check'], ['mision.autoShow', 'Se activa solo el (fecha y hora, 2026-11-21T09:00:00+01:00)', 'text'], ['mision.title', 'Título', 'text'], ['mision.text', 'Texto', 'area'], ['mision.button', 'Texto del botón', 'text']] },
     { id: 'evento', title: 'Evento', fields: [
       ['intro', 'Frase de invitación', 'text'], ['names', 'Nombres', 'text'], ['event.date', 'Fecha', 'date'], ['event.start', 'Hora de inicio', 'time'],
       ['event.end', 'Hora de fin (calendario)', 'time'], ['event.ceremony', 'Hora de la ceremonia (cuenta atrás)', 'time']] },
