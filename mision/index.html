@@ -137,6 +137,7 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .notice{margin:0;font-size:15px;font-weight:600;color:var(--ink);background:var(--teal-soft);border:1px solid rgba(255,255,255,.6);border-radius:16px;padding:12px 16px;display:flex;gap:10px;align-items:center}
 .notice svg{flex:none;width:22px;height:22px;color:var(--teal-deep)}
 .notice.prize{background:var(--salmon-soft)}
+.reto .soon{font-size:12.5px;font-weight:700;color:var(--muted);white-space:nowrap}
 .notice.prize svg{color:var(--salmon-deep)}
 @keyframes fadein{from{opacity:0}to{opacity:1}}
 .win{background:var(--teal-soft);border-radius:16px;padding:14px 16px;font-weight:700;color:var(--teal-deep)}
@@ -629,7 +630,7 @@ const RETOS_PROPUESTOS = ["Ceremonia · El novio esperando antes de que llegue l
    navegador, no hay que volver a pegarlo).
    ========================================================= */
 const GH = { owner: "joshdejuan", repo: "boda-sara-joshua", branch: "main" };
-let demoOpen = false, peek = false, gateWanted = null, gateAuto = null;
+let demoOpen = false, peek = false, gateWanted = null, gateAuto = null, photosFrom = null;
 async function gameOpen(){
   if (PRUEBA) return true;
   if (DEMO) return demoOpen;
@@ -638,6 +639,7 @@ async function gameOpen(){
     if (!r.ok) return true;                       // si no se puede leer, no bloqueamos la boda
     const j = await r.json();
     gateAuto = (j.mision && j.mision.autoShow) || null;
+    photosFrom = (j.mision && j.mision.photosFrom) || null;   // antes de esta hora se ven los retos pero no se suben fotos
     return misionOn(j.mision);
   } catch { return true; }
 }
@@ -774,6 +776,8 @@ async function viewMission(){
   const byM = {}; d.photos.forEach(p => { byM[p.mission] = p; });
   const done = d.retos.filter(r => byM[r.i]).length, total = d.retos.length;
   const link = `${base()}#m-${d.token}`;
+  const wait = photosFrom && Date.now() < Date.parse(photosFrom) ? Date.parse(photosFrom) - Date.now() : 0;
+  const waitTxt = wait ? new Date(photosFrom).toLocaleString("es-ES", { weekday: "long", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" }).replace(",", " a las") : "";
   app.innerHTML = demoBar("mision") + backBar() + `<main class="guest">${BRANCH()}
     <header class="hero">
       ${GAMELOGO}<p class="kicker">Misión Nº ${pad(d.card)} ${HEART}</p>
@@ -783,13 +787,14 @@ async function viewMission(){
     <section class="sheet">
       <div class="progress"><div class="track"><div style="width:${total ? done / total * 100 : 0}%"></div></div>
         <span class="muted" style="font-size:14px;font-weight:700">${done} de ${total} momentos capturados</span></div>
+      ${wait ? `<p class="notice">${CAM} Podrás subir fotos a partir del ${esc(waitTxt)}. Mientras, ve leyendo tus retos y guarda tu enlace personal (abajo).</p>` : ""}
       ${total && done === total ? `<div class="win">¡Misión cumplida! Ya estás en la carrera por el premio: gana el primero que completa todos sus retos. Lo desvelaremos al final del banquete.</div>` : `<p class="notice prize">${PRIZE_ICON} Habrá un premio para el primero que complete todos sus retos.</p>`}
       <ol class="retos">${d.retos.slice().sort((a, b) => phaseRank(a.text) - phaseRank(b.text)).map((r, k, arr) => { const ph = byM[r.i], f = phaseOf(r.text);
         const head = f.label && (k === 0 || phaseOf(arr[k - 1].text).key !== f.key) ? `<li class="phase">${esc(f.label)}</li>` : "";
         return head + `<li class="reto ${ph ? "done" : ""}">
         <span class="n">${k + 1}</span><span class="t">${esc(f.text)}</span>
         <span class="side">${ph ? `<img src="${esc(ph.url)}" alt="Tu foto"><span class="alt"><label class="again">Cambiar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label></span>`
-          : `<span class="shoot"><label class="btn small">${CAM} Capturar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label><label class="again">o de la galería<input type="file" accept="image/*" data-m="${r.i}"></label></span>`}</span></li>`; }).join("")}</ol>
+          : wait ? `<span class="soon">Desde el sábado</span>` : `<span class="shoot"><label class="btn small">${CAM} Capturar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label><label class="again">o de la galería<input type="file" accept="image/*" data-m="${r.i}"></label></span>`}</span></li>`; }).join("")}</ol>
       <div class="status" id="st" aria-live="polite"></div>
       <p class="muted" style="font-size:14px;margin:0">Pulsa Capturar y se abrirá la cámara. La foto se sube sola y aparecerá en la pantalla en directo de la boda.</p>
     </section>
@@ -798,6 +803,7 @@ async function viewMission(){
       <div class="row"><input type="text" id="mylink" readonly value="${esc(link)}" aria-label="Tu enlace personal"><button class="ghost small" id="copy">Copiar</button></div>
     </section>
   </main>`;
+  if (wait && wait < 864e5 * 3) { const t = setTimeout(() => { if (location.hash === "#mision") viewMission(); }, wait + 1000); const prev = cleanup; cleanup = () => { prev(); clearTimeout(t); }; }
   $("#copy").addEventListener("click", async () => {
     const i = $("#mylink");
     try { await navigator.clipboard.writeText(i.value); $("#copy").textContent = "Copiado"; }
