@@ -306,6 +306,7 @@ details.grp[open] > summary::after { content: "–"; }
 .hint { font-size: .82rem; color: var(--muted); margin: 0; }
 @media (max-width: 520px) { .admin { top: 6px; right: 6px; bottom: 6px; width: calc(100% - 12px); } .row-i { grid-template-columns: 4.6rem minmax(0, 1fr) auto; } }
 </style>
+<script src="/gracias.js"></script>
 </head>
 <body>
 
@@ -823,6 +824,9 @@ details.grp[open] > summary::after { content: "–"; }
     { id: 'mision', title: 'Misión secreta (juego)', fields: [
       ['', 'Mientras esté desactivado, el juego está oculto: la sección no aparece en la web y quien abra la página del juego ve un aviso de que empieza el día de la boda. También se puede activar desde el Panel de la misión.', 'note'],
       ['mision.show', 'Juego activado', 'check'], ['mision.autoShow', 'Se activa solo el (fecha y hora, 2026-11-20T18:00:00+01:00)', 'text'], ['mision.photosFrom', 'Fotos a partir de (fecha y hora, 2026-11-21T12:30:00+01:00)', 'text'], ['mision.title', 'Título', 'text'], ['mision.text', 'Texto', 'area'], ['mision.button', 'Texto del botón', 'text']] },
+    { id: 'cierre', title: 'Cierre de la web (después de la boda)', fields: [
+      ['', 'A partir de esta fecha toda la web muestra solo el agradecimiento. Los paneles de administración y la pantalla en directo siguen funcionando. Para verla aunque esté cerrada, añade ?abierta a la dirección.', 'note'],
+      ['closed.at', 'Se cierra el (fecha y hora, 2026-11-21T22:00:00+01:00; vacío = nunca)', 'text'], ['closed.title', 'Título', 'text'], ['closed.text', 'Mensaje de agradecimiento', 'area']] },
     { id: 'evento', title: 'Evento', fields: [
       ['intro', 'Frase de invitación', 'text'], ['names', 'Nombres', 'text'], ['event.date', 'Fecha', 'date'], ['event.start', 'Hora de inicio', 'time'],
       ['event.end', 'Hora de fin (calendario)', 'time'], ['event.ceremony', 'Hora de la ceremonia (cuenta atrás)', 'time']] },
