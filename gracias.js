@@ -7,7 +7,7 @@
   var DEF = {
     at: '2026-11-21T22:00:00+01:00',
     title: '¡Gracias por venir!',
-    text: 'Gracias por acompañarnos en el día más especial de nuestras vidas. Ha sido un regalo compartirlo con vosotros y lo recordaremos siempre.'
+    text: 'Gracias por acompañarnos en un día tan especial en nuestras vidas. Ha sido un regalo compartirlo con vosotros y lo recordaremos siempre.'
   };
   var root = document.documentElement;
   var cfg = DEF, shown = false, timer = null;
@@ -45,7 +45,7 @@
         '<h1>' + esc(cfg.title || DEF.title) + '</h1>' +
         '<p>' + esc(cfg.text || DEF.text) + '</p>' +
         '<span class="heart" aria-hidden="true">♥</span>' +
-        '<p class="sig">Sara &amp; Joshua<small>21 · 11 · 2026 · Finca Gurugú</small></p></div>';
+        '<p class="sig">Sara &amp; Joshua<small>21 · 11 · 2026</small></p></div>';
       document.body.appendChild(d);
       root.classList.add('sj-closed'); root.classList.remove('sj-closing');
       document.title = '¡Gracias! · Sara & Joshua';
