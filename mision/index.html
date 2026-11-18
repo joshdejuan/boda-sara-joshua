@@ -398,6 +398,22 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .prz-step em{font-style:normal;font-weight:800;color:var(--salmon-deep)}
 .prz-step button{white-space:nowrap}
 .prz-box .status:empty{display:none}
+.admin.remote{max-width:640px;display:flex;flex-direction:column;gap:14px}
+.rm-head{display:flex;align-items:center;gap:14px}
+.rm-head h1{margin:0;font:800 34px var(--display);letter-spacing:-.02em}
+.rm-head .kicker{margin:0}
+#rm{display:flex;flex-direction:column;gap:12px}
+#rm .status:empty{display:none}
+.rm-conn{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 16px;border-radius:18px;background:var(--salmon-soft)}
+.rm-conn.ok{background:var(--teal-soft)}
+.rm-conn i{width:12px;height:12px;border-radius:50%;background:var(--salmon)}
+.rm-conn.ok i{background:var(--teal)}
+.rm-conn strong{display:block;font:700 16px var(--display)}
+.rm-conn span{font-size:13.5px;color:var(--muted)}
+.rm-pics.off{opacity:.55}
+.rm-pics img{width:84px;height:64px;object-fit:cover;border-radius:10px}
+.rm-nav{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rm-nav button{padding:22px 10px;font-size:20px;border-radius:18px}
 .prz-tok{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .prz-tok input[type=password]{flex:1 1 220px}
 #prz svg{width:16px;height:16px;vertical-align:-3px;margin-right:4px}
@@ -781,7 +797,7 @@ async function gateBox(el){
 function demoBar(cur){
   if (!store.demo) return "";
   const l = (h, t) => `<a href="#${h}" ${cur === h ? 'aria-current="page"' : ""}>${t}</a>`;
-  return `<div class="demo-bar"><span>${PRUEBA ? `<b>Modo prueba</b> · datos de ejemplo, no se guarda nada · <a href="?prueba=0#inicio" style="box-shadow:none;padding:0;text-decoration:underline">Salir</a>` : `<b>Vista previa</b> con datos de ejemplo`}</span><nav>${l("inicio", "Invitado: registro")}${l("mision", "Invitado: su misión")}${l("admin", "Panel Admin")}${l("pantalla", "Pantalla en directo")}</nav></div>`;
+  return `<div class="demo-bar"><span>${PRUEBA ? `<b>Modo prueba</b> · datos de ejemplo, no se guarda nada · <a href="?prueba=0#inicio" style="box-shadow:none;padding:0;text-decoration:underline">Salir</a>` : `<b>Vista previa</b> con datos de ejemplo`}</span><nav>${l("inicio", "Invitado: registro")}${l("mision", "Invitado: su misión")}${l("admin", "Panel Admin")}${l("pantalla", "Pantalla en directo")}${l("mando", "Mando")}</nav></div>`;
 }
 
 function viewHome(){
@@ -1014,7 +1030,7 @@ async function viewScreen(key){
   let firstUsed = false, seen = first.reveal_at && (new Date(first.now) - new Date(first.reveal_at) > 60000) ? first.reveal_at : null;
   const watch = d => {
     if (d.reveal_at && d.reveal_at !== seen) { seen = d.reveal_at; playReveal(d, { sound: true }); }
-    else if (!d.reveal_at && revealOpen) { seen = null; revealOpen.close(); }
+    else if (!d.reveal_at && seen && revealOpen) { seen = null; revealOpen.close(); }   // solo cierra lo que se lanzó desde el panel
     return d;
   };
   await liveBoard($("#tab"), async () => { if (!firstUsed) { firstUsed = true; return watch(first); } const d = await store.screen(key); if (!d) throw new Error("clave"); return watch(d); });
@@ -1030,6 +1046,80 @@ async function viewScreen(key){
   });
   addEventListener("pointerdown", unlock); addEventListener("keydown", unlock);
   prizeMenu(key, fs);
+  /* Mando: otra ventana de este mismo navegador (la del portátil) manda órdenes a esta (la de la tele) */
+  if ("BroadcastChannel" in window) {
+    const ch = new BroadcastChannel("sj-mando-" + key); let st = { phase: "cerrado" };
+    document.addEventListener("sj-reveal", e => { st = e.detail; ch.postMessage({ type: "state", st }); });
+    ch.onmessage = async ({ data: m }) => {
+      if (!m || !m.cmd) return;
+      if (m.cmd === "ping") ch.postMessage({ type: "pong", st, sound: audioOn() });
+      if (m.cmd === "reveal") { let d = null; try { d = await store.screen(key); } catch {} if (d) playReveal(d, { sound: true }); }
+      if (m.cmd === "step") revealOpen?.step?.(m.n);
+      if (m.cmd === "go") revealOpen?.go?.(m.i);
+      if (m.cmd === "close") revealOpen?.close();
+    };
+  }
+}
+
+/* Mando del portátil (#mando-<clave>): con el portátil en modo «Extender», la tele muestra la pantalla en directo
+   y desde aquí se cierra el juego, se desvela al ganador y se pasan sus fotos sin tocar la ventana de la tele. */
+async function viewRemote(key){
+  const first = await store.screen(key);
+  if (!first) { app.innerHTML = `<main class="login">${BRANCH()}<h1>Enlace no válido</h1><p>Este enlace ya no funciona. Pide a los novios el nuevo.</p></main>`; return; }
+  const screenUrl = `${base()}#pantalla-${key}`;
+  const ch = "BroadcastChannel" in window ? new BroadcastChannel("sj-mando-" + key) : null;
+  let lastPong = 0, sound = false, st = { phase: "cerrado" }, ended = false, waitUntil = 0, needToken = false, msg = "", kind = "";
+  try { await gameOpen(); ended = gameEnded; } catch {}
+  app.innerHTML = demoBar("mando") + `<main class="admin remote"><header class="rm-head">${GAMELOGO}<div><p class="kicker">Mando de la pantalla</p><h1>El premio</h1></div></header><div id="rm"></div></main>`;
+  const left = () => Math.max(0, Math.ceil((waitUntil - Date.now()) / 1000));
+  const draw = () => {
+    const on = Date.now() - lastPong < 4000, l = left(), foto = st.phase === "fotos";
+    $("#rm").innerHTML = `
+      <div class="rm-conn ${on ? "ok" : ""}"><i></i><div><strong>${on ? "Pantalla de la tele conectada" : "Buscando la pantalla de la tele…"}</strong>
+        <span>${on ? (sound ? "Sonido activado." : "⚠️ En la tele, pulsa «Activar sonido».") : "Ábrela con el botón y llévala a la tele (Windows + Mayús + →)."}</span></div>
+        <button class="ghost small" id="rm-open" type="button">Abrir la pantalla</button></div>
+      <div class="prz-step ${ended ? "ok" : ""}"><b>1</b><div><strong>Cerrar el juego</strong><span>${ended ? "Hecho: los invitados ya no pueden subir fotos." : "Los invitados dejan de poder subir fotos."}</span></div>
+        ${ended ? `<button class="ghost small" id="rm-re" type="button">Reabrir</button>` : `<button id="rm-end" type="button">Cerrar el juego</button>`}</div>
+      ${needToken ? `<form class="prz-tok" id="rm-tok"><input type="password" id="rm-token" autocomplete="off" placeholder="Token de GitHub (github_pat_…)" aria-label="Token de GitHub" required><label><input type="checkbox" id="rm-keep" checked> Recordar</label><button class="small" type="submit">Continuar</button></form>` : ""}
+      <div class="prz-step"><b>2</b><div><strong>Desvelar al ganador</strong><span>${l ? `Espera <em>${Math.floor(l / 60)}:${String(l % 60).padStart(2, "0")}</em> a que se actualicen los móviles.` : st.phase === "cuenta" ? "En marcha en la tele…" : st.phase === "ganador" ? `¡${esc(st.name)}! En un momento salen sus fotos.` : foto ? `Ganador: <b>${esc(st.name)}</b>` : on ? "Sale en la tele con cuenta atrás, tambores, música y confeti." : "Primero conecta la pantalla de la tele."}</span></div>
+        <button id="rm-go" type="button" ${l || !on || st.phase !== "cerrado" ? "disabled" : ""}>Desvelar</button></div>
+      <div class="prz-step rm-pics ${foto ? "" : "off"}"><b>3</b><div><strong>Pasar las fotos</strong>
+        <span>${foto ? `${esc(st.label ? st.label + " · " : "")}reto ${st.i + 1} de ${st.n}: ${esc(st.text)}` : "Cuando salgan las fotos del ganador, pásalas desde aquí (o con las flechas ← → de este teclado)."}</span></div>
+        ${foto ? `<img src="${esc(st.url)}" alt="">` : ""}</div>
+      <div class="rm-nav"><button id="rm-prev" type="button" ${foto ? "" : "disabled"}>← Anterior</button><button id="rm-next" type="button" ${foto ? "" : "disabled"}>Siguiente →</button></div>
+      ${st.phase !== "cerrado" ? `<button class="ghost" id="rm-close" type="button">Terminar y volver a la pantalla normal</button>` : ""}
+      <p class="status ${kind}" aria-live="polite">${esc(msg)}</p>`;
+    const b = id => $(id), click = (id, f) => { const x = b(id); if (x) x.onclick = f; };
+    click("#rm-open", () => window.open(screenUrl, "sj-tele", "popup,width=1280,height=720"));
+    click("#rm-end", () => setEnded(true)); click("#rm-re", () => setEnded(false));
+    click("#rm-go", () => { msg = ""; send({ cmd: "reveal" }); st = { phase: "cuenta" }; draw(); });
+    click("#rm-prev", () => send({ cmd: "step", n: -1 })); click("#rm-next", () => send({ cmd: "step", n: 1 }));
+    click("#rm-close", () => send({ cmd: "close" }));
+    const tf = b("#rm-tok"); if (tf) tf.onsubmit = e => { e.preventDefault(); const v = b("#rm-token").value.trim(); if (!v) return; ghSave(v, b("#rm-keep").checked); needToken = false; setEnded(!ended); };
+  };
+  const send = m => ch?.postMessage(m);
+  const setEnded = async want => {
+    const t = store.demo ? "vista-previa" : ghToken();
+    if (!t) { needToken = true; msg = "Falta el token de GitHub en este ordenador. Pídeselo a Sara o Joshua."; kind = "err"; return draw(); }
+    msg = want ? "Cerrando…" : "Reabriendo…"; kind = ""; draw(); document.querySelectorAll("#rm button").forEach(x => x.disabled = true);
+    try { await setGameEnded(want, t); ended = want; msg = ""; waitUntil = want ? Date.now() + (store.demo ? 5000 : 120000) : 0; }
+    catch (e) { console.error(e); if (e.status === 401 || e.status === 403 || e.status === 404) { ghForget(); needToken = true; msg = "El token no es válido. Pega uno nuevo."; } else msg = "No se pudo. Comprueba la conexión e inténtalo otra vez."; kind = "err"; }
+    draw();
+  };
+  if (ch) ch.onmessage = ({ data: m }) => {
+    if (!m) return;
+    if (m.type === "pong") { const was = Date.now() - lastPong < 4000; lastPong = Date.now(); sound = !!m.sound; if (!was || JSON.stringify(m.st) !== JSON.stringify(st)) { st = m.st; draw(); } }
+    if (m.type === "state") { st = m.st; draw(); }
+  };
+  const ping = setInterval(() => { send({ cmd: "ping" }); }, 1500);
+  let lastL = -1; const tick = setInterval(() => { const l = left(); if (l || l !== lastL || Date.now() - lastPong > 4000) { lastL = l; draw(); } }, 1000);
+  const key2 = e => { if (st.phase !== "fotos" || e.target.closest?.("input")) return;
+    if (["ArrowRight", "PageDown"].includes(e.key)) { e.preventDefault(); send({ cmd: "step", n: 1 }); }
+    if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); send({ cmd: "step", n: -1 }); } };
+  addEventListener("keydown", key2);
+  cleanup = () => { clearInterval(ping); clearInterval(tick); removeEventListener("keydown", key2); ch?.close(); };
+  send({ cmd: "ping" }); draw();
+  if (!ch) { msg = "Este navegador no permite el mando. Usa Chrome o Edge."; kind = "err"; draw(); }
 }
 
 /* Botón «Premio» de la pantalla: quien maneja el ordenador del proyector cierra el juego y desvela al ganador
@@ -1223,6 +1313,8 @@ async function tabAccess(el){
       <h3 style="font:800 20px var(--body);color:var(--brown)">Pantalla en directo</h3>
       <p style="margin:0">Abre este enlace en el ordenador del proyector o en la tele. Muestra las fotos y la clasificación sin pedir contraseña. No lo compartáis con los invitados.</p>
       <div class="row-inline"><input type="text" id="sl" readonly value="${esc(screenUrl)}" aria-label="Enlace de la pantalla" style="flex:1;min-width:240px;font-size:14px"><button class="ghost small" id="cp">Copiar</button><a class="btn small" href="${esc(screenUrl)}" target="_blank" rel="noopener">Abrir</a></div>
+      <p style="margin:0">Con el portátil conectado a la tele en modo <b>Extender</b>, abre en el portátil el <b>mando</b>: desde él se abre la pantalla para llevarla a la tele, y se cierra el juego, se desvela al ganador y se pasan sus fotos sin tocar la tele.</p>
+      <div class="row-inline"><input type="text" id="ml" readonly value="${esc(`${base()}#mando-${key}`)}" aria-label="Enlace del mando" style="flex:1;min-width:240px;font-size:14px"><button class="ghost small" id="cpm">Copiar</button></div>
       <div class="row-inline"><button class="danger small" id="nk">Cambiar el enlace</button><span class="muted" style="font-size:13.5px">El enlace anterior dejará de funcionar.</span></div>
     </div>
     <form class="panel-box" id="pf" style="display:flex;flex-direction:column;gap:12px">
@@ -1232,6 +1324,7 @@ async function tabAccess(el){
       <div class="row-inline"><button type="submit">Guardar contraseña</button><span class="status" id="pst"></span></div>
     </form></div>`;
   $("#cp").addEventListener("click", async () => { const i = $("#sl"); try { await navigator.clipboard.writeText(i.value); $("#cp").textContent = "Copiado"; } catch { i.select(); $("#cp").textContent = "Selecciónalo y copia"; } });
+  $("#cpm").addEventListener("click", async () => { const i = $("#ml"); try { await navigator.clipboard.writeText(i.value); $("#cpm").textContent = "Copiado"; } catch { i.select(); $("#cpm").textContent = "Selecciónalo y copia"; } });
   armed($("#nk"), async () => { await store.newScreenKey(); await tabAccess(el); });
   $("#pf").addEventListener("submit", async e => {
     e.preventDefault(); const st = $("#pst"), a = $("#np").value, b = $("#np2").value;
@@ -1372,6 +1465,8 @@ function confetti(canvas){
   };
 }
 
+/* Avisa del estado del desvelado (lo escucha la pantalla para contárselo al mando del portátil) */
+const rvEmit = st => document.dispatchEvent(new CustomEvent("sj-reveal", { detail: st }));
 async function playReveal(d, opts = {}){
   if (revealOpen) revealOpen.close();
   const rank = ranking(d), winner = rank[0];
@@ -1385,8 +1480,9 @@ async function playReveal(d, opts = {}){
   document.body.appendChild(el);
   let alive = true;
   const fx = confetti(el.querySelector("canvas")), snd = opts.sound ? sound() : null;
-  const close = () => { if (!alive) return; alive = false; fx.stop(); snd?.stop(); el.style.transition = "opacity .5s"; el.style.opacity = "0"; setTimeout(() => el.remove(), 500); revealOpen = null; };
+  const close = () => { if (!alive) return; alive = false; fx.stop(); snd?.stop(); el.style.transition = "opacity .5s"; el.style.opacity = "0"; setTimeout(() => el.remove(), 500); revealOpen = null; rvEmit({ phase: "cerrado" }); };
   revealOpen = { close };
+  rvEmit({ phase: "cuenta" });
   el.querySelector(".rv-close").addEventListener("click", () => { close(); opts.onClose?.(); });
   if (!winner) return;
   const slot = el.querySelector(".rv-slot");
@@ -1402,6 +1498,7 @@ async function playReveal(d, opts = {}){
   }
   if (!alive) return;
   snd?.crash(); snd?.fanfare();
+  rvEmit({ phase: "ganador", name: winner.p.name });
   slot.innerHTML = `<span class="rv-name">${esc(winner.p.name)}</span>`;
   fx.fire();
   const meta = el.querySelector(".rv-meta");
@@ -1430,7 +1527,9 @@ async function playReveal(d, opts = {}){
     g.querySelector(".rv-ph").textContent = (x.f.label ? x.f.label + " · " : "") + `reto ${cur + 1} de ${done.length}`;
     g.querySelector("figcaption strong").textContent = x.f.text;
     g.querySelectorAll(".rv-thumbs button").forEach((b, k) => b.setAttribute("aria-current", k === cur ? "true" : "false"));
+    rvEmit({ phase: "fotos", name: winner.p.name, i: cur, n: done.length, label: x.f.label || "", text: x.f.text, url: x.ph.url });
   };
+  if (revealOpen) { revealOpen.step = n => show(cur + n); revealOpen.go = i => show(i); }
   /* Las fotos del ganador se pasan a mano: flechas, el mando de presentaciones (Re Pág / Av Pág), las miniaturas o un clic en la foto */
   const play = () => {};
   g.querySelector(".rv-prev").addEventListener("click", () => { show(cur - 1); play(); });
@@ -1497,12 +1596,14 @@ async function route(){
   window.scrollTo(0, 0);
   try {
     const path = location.hash.replace(/^#/, "").split("?")[0];
-    const forGuests = !(path === "admin" || path.startsWith("admin/") || path.startsWith("pantalla"));
+    const forGuests = !(path === "admin" || path.startsWith("admin/") || path.startsWith("pantalla") || path.startsWith("mando"));
     if (forGuests && !peek && !(await gameOpen())) return viewLocked();
     if (path === "mision") await viewMission();
     else if (path === "admin" || path.startsWith("admin/")) await viewAdmin(path.split("/")[1]);
     else if (path === "pantalla" && store.demo) await viewScreen("ejemplo");
     else if (path.startsWith("pantalla-")) await viewScreen(path.slice(9));
+    else if (path === "mando" && store.demo) await viewRemote("ejemplo");
+    else if (path.startsWith("mando-")) await viewRemote(path.slice(6));
     else viewHome();
   } catch (e) {
     console.error(e);
