@@ -413,6 +413,19 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .rm-pics.off{opacity:.55}
 .rm-pics img{width:84px;height:64px;object-fit:cover;border-radius:10px}
 .rm-nav{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rm-check{display:flex;flex-direction:column;gap:12px;padding:14px 16px;border-radius:18px;background:rgba(137,81,41,.07);border:2px solid var(--salmon-soft)}
+.rm-check-h{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:14px;align-items:center}
+.rm-check-h>b{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--salmon);color:#fff;font:800 19px var(--display)}
+.rm-check-h strong{display:block;font:700 18px var(--display)}
+.rm-check-h span{font-size:14px;color:var(--muted)}
+.rm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.rm-grid figure{margin:0;display:flex;flex-direction:column;gap:5px}
+.rm-grid img,.rm-grid figure.miss>div{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block;background:rgba(137,81,41,.08)}
+.rm-grid figure.miss>div{display:grid;place-items:center;font-size:13px;color:var(--muted)}
+.rm-grid figcaption{font-size:12.5px;line-height:1.3;color:var(--ink)}
+.rm-grid figcaption small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--salmon-deep)}
+.rm-verdict{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rm-verdict button{padding:16px 10px;font-size:16px;border-radius:16px}
 .rm-nav button{padding:22px 10px;font-size:20px;border-radius:18px}
 .prz-tok{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .prz-tok input[type=password]{flex:1 1 220px}
@@ -1053,7 +1066,7 @@ async function viewScreen(key){
     ch.onmessage = async ({ data: m }) => {
       if (!m || !m.cmd) return;
       if (m.cmd === "ping") ch.postMessage({ type: "pong", st, sound: audioOn() });
-      if (m.cmd === "reveal") { let d = null; try { d = await store.screen(key); } catch {} if (d) playReveal(d, { sound: true }); }
+      if (m.cmd === "reveal") { let d = null; try { d = await store.screen(key); } catch {} if (d) playReveal(d, { sound: true, skip: m.skip || [], pick: m.pick || null }); }
       if (m.cmd === "step") revealOpen?.step?.(m.n);
       if (m.cmd === "go") revealOpen?.go?.(m.i);
       if (m.cmd === "close") revealOpen?.close();
@@ -1069,9 +1082,32 @@ async function viewRemote(key){
   const screenUrl = `${base()}#pantalla-${key}`;
   const ch = "BroadcastChannel" in window ? new BroadcastChannel("sj-mando-" + key) : null;
   let lastPong = 0, sound = false, st = { phase: "cerrado" }, ended = false, waitUntil = 0, needToken = false, msg = "", kind = "";
+  /* Comprobación: se revisan en el portátil las fotos del candidato antes de desvelar; si no valen, se pasa al siguiente */
+  let data = null, skip = [], ok = null, checking = false;
+  const cands = () => data ? ranking(data).filter(r => !skip.includes(r.p.id)) : [];
+  const load = async () => { checking = true; draw(); try { data = await store.screen(key); } catch { msg = "No se pudieron cargar las fotos. Inténtalo otra vez."; kind = "err"; } checking = false; draw(); };
   try { await gameOpen(); ended = gameEnded; } catch {}
   app.innerHTML = demoBar("mando") + `<main class="admin remote"><header class="rm-head">${GAMELOGO}<div><p class="kicker">Mando de la pantalla</p><h1>El premio</h1></div></header><div id="rm"></div></main>`;
   const left = () => Math.max(0, Math.ceil((waitUntil - Date.now()) / 1000));
+  const checkHtml = l => {
+    const head = `<div><strong>Comprobar al ganador</strong><span>`;
+    if (!data) return `<div class="prz-step"><b>2</b>${head}${l ? "Cuando acabe la espera, revisa aquí sus fotos (solo se ven en este portátil)." : "Revisa en este portátil las fotos del ganador antes de que salga en la tele."}</span></div>
+      <button id="rm-check" type="button" ${l || checking ? "disabled" : ""}>${checking ? "Cargando…" : "Ver sus fotos"}</button></div>`;
+    const list = cands(), c = list[0];
+    if (!c) return `<div class="prz-step"><b>2</b>${head}No queda nadie con retos cumplidos.</span></div><button class="ghost small" id="rm-undo" type="button">Empezar de nuevo</button></div>`;
+    if (ok === c.p.id) return `<div class="prz-step ok"><b>2</b>${head}Comprobado: <b>${esc(c.p.name)}</b>. Ya puedes desvelar.</span></div><button class="ghost small" id="rm-change" type="button">Revisar otra vez</button></div>`;
+    const retosTxt = data.config.retos || [], last = {};
+    data.photos.forEach(p => { if (p.player_id === c.p.id && c.p.missions.includes(p.mission)) last[p.mission] = p; });
+    const pos = skip.length + 1, hora = c.last ? new Date(c.last).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" }) : "";
+    return `<div class="rm-check"><div class="rm-check-h"><b>2</b><div><strong>Comprobar al ganador</strong>
+        <span>${pos > 1 ? `Candidato nº ${pos} · ` : "Va primero · "}<b>${esc(c.p.name)}</b> · ${c.set.size} de ${c.p.missions.length} retos${hora ? ` · último a las ${hora}` : ""}</span></div>
+        <button class="ghost small" id="rm-reload" type="button">Actualizar</button></div>
+      <p class="muted" style="margin:0;font-size:13.5px">¿Cada foto corresponde a su reto? Solo se ven en este portátil, no en la tele.</p>
+      <div class="rm-grid">${c.p.missions.map(m => { const ph = last[m], f = phaseOf(ph?.mission_text || retosTxt[m] || "");
+        return `<figure class="${ph ? "" : "miss"}">${ph ? `<a href="${esc(ph.url)}" target="_blank" rel="noopener"><img src="${esc(ph.url)}" alt="" loading="lazy"></a>` : "<div>Sin foto</div>"}<figcaption>${f.label ? `<small>${esc(f.label)}</small>` : ""}${esc(f.text)}</figcaption></figure>`; }).join("")}</div>
+      <div class="rm-verdict"><button id="rm-yes" type="button">✓ Las fotos están bien</button><button class="danger" id="rm-no" type="button">✗ No vale, ver el siguiente${list[1] ? ` (${esc(list[1].p.name)})` : ""}</button></div>
+      ${skip.length ? `<button class="ghost small" id="rm-undo" type="button" style="align-self:flex-start">Volver al primero</button>` : ""}</div>`;
+  };
   const draw = () => {
     const on = Date.now() - lastPong < 4000, l = left(), foto = st.phase === "fotos";
     $("#rm").innerHTML = `
@@ -1081,9 +1117,10 @@ async function viewRemote(key){
       <div class="prz-step ${ended ? "ok" : ""}"><b>1</b><div><strong>Cerrar el juego</strong><span>${ended ? "Hecho: los invitados ya no pueden subir fotos." : "Los invitados dejan de poder subir fotos."}</span></div>
         ${ended ? `<button class="ghost small" id="rm-re" type="button">Reabrir</button>` : `<button id="rm-end" type="button">Cerrar el juego</button>`}</div>
       ${needToken ? `<form class="prz-tok" id="rm-tok"><input type="password" id="rm-token" autocomplete="off" placeholder="Token de GitHub (github_pat_…)" aria-label="Token de GitHub" required><label><input type="checkbox" id="rm-keep" checked> Recordar</label><button class="small" type="submit">Continuar</button></form>` : ""}
-      <div class="prz-step"><b>2</b><div><strong>Desvelar al ganador</strong><span>${l ? `Espera <em>${Math.floor(l / 60)}:${String(l % 60).padStart(2, "0")}</em> a que se actualicen los móviles.` : st.phase === "cuenta" ? "En marcha en la tele…" : st.phase === "ganador" ? `¡${esc(st.name)}! En un momento salen sus fotos.` : foto ? `Ganador: <b>${esc(st.name)}</b>` : on ? "Sale en la tele con cuenta atrás, tambores, música y confeti." : "Primero conecta la pantalla de la tele."}</span></div>
-        <button id="rm-go" type="button" ${l || !on || st.phase !== "cerrado" ? "disabled" : ""}>Desvelar</button></div>
-      <div class="prz-step rm-pics ${foto ? "" : "off"}"><b>3</b><div><strong>Pasar las fotos</strong>
+      ${checkHtml(l)}
+      <div class="prz-step"><b>3</b><div><strong>Desvelar al ganador</strong><span>${l ? `Espera <em>${Math.floor(l / 60)}:${String(l % 60).padStart(2, "0")}</em> a que se actualicen los móviles.` : st.phase === "cuenta" ? "En marcha en la tele…" : st.phase === "ganador" ? `¡${esc(st.name)}! En un momento salen sus fotos.` : foto ? `Ganador: <b>${esc(st.name)}</b>` : on ? "Sale en la tele con cuenta atrás, tambores, música y confeti." : "Primero conecta la pantalla de la tele."}</span></div>
+        <button id="rm-go" type="button" ${l || !on || !ok || st.phase !== "cerrado" ? "disabled" : ""}>Desvelar</button></div>
+      <div class="prz-step rm-pics ${foto ? "" : "off"}"><b>4</b><div><strong>Pasar las fotos</strong>
         <span>${foto ? `${esc(st.label ? st.label + " · " : "")}reto ${st.i + 1} de ${st.n}: ${esc(st.text)}` : "Cuando salgan las fotos del ganador, pásalas desde aquí (o con las flechas ← → de este teclado)."}</span></div>
         ${foto ? `<img src="${esc(st.url)}" alt="">` : ""}</div>
       <div class="rm-nav"><button id="rm-prev" type="button" ${foto ? "" : "disabled"}>← Anterior</button><button id="rm-next" type="button" ${foto ? "" : "disabled"}>Siguiente →</button></div>
@@ -1092,7 +1129,12 @@ async function viewRemote(key){
     const b = id => $(id), click = (id, f) => { const x = b(id); if (x) x.onclick = f; };
     click("#rm-open", () => window.open(screenUrl, "sj-tele", "popup,width=1280,height=720"));
     click("#rm-end", () => setEnded(true)); click("#rm-re", () => setEnded(false));
-    click("#rm-go", () => { msg = ""; send({ cmd: "reveal" }); st = { phase: "cuenta" }; draw(); });
+    click("#rm-go", () => { msg = ""; send({ cmd: "reveal", skip, pick: ok }); st = { phase: "cuenta" }; draw(); });
+    click("#rm-check", load); click("#rm-reload", load);
+    click("#rm-yes", () => { ok = cands()[0]?.p.id || null; draw(); });
+    click("#rm-no", () => { const c = cands()[0]; if (c) skip.push(c.p.id); ok = null; draw(); });
+    click("#rm-undo", () => { skip = []; ok = null; draw(); });
+    click("#rm-change", () => { ok = null; draw(); });
     click("#rm-prev", () => send({ cmd: "step", n: -1 })); click("#rm-next", () => send({ cmd: "step", n: 1 }));
     click("#rm-close", () => send({ cmd: "close" }));
     const tf = b("#rm-tok"); if (tf) tf.onsubmit = e => { e.preventDefault(); const v = b("#rm-token").value.trim(); if (!v) return; ghSave(v, b("#rm-keep").checked); needToken = false; setEnded(!ended); };
@@ -1469,7 +1511,10 @@ function confetti(canvas){
 const rvEmit = st => document.dispatchEvent(new CustomEvent("sj-reveal", { detail: st }));
 async function playReveal(d, opts = {}){
   if (revealOpen) revealOpen.close();
-  const rank = ranking(d), winner = rank[0];
+  /* opts.skip: candidatos descartados al comprobar sus fotos · opts.pick: el ganador comprobado */
+  const rank = ranking(d).filter(r => !(opts.skip || []).includes(r.p.id));
+  if (opts.pick) { const i = rank.findIndex(r => r.p.id === opts.pick); if (i > 0) rank.unshift(...rank.splice(i, 1)); }
+  const winner = rank[0];
   const el = document.createElement("div");
   el.className = "reveal"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Ganador de la misión secreta");
   el.innerHTML = `<canvas></canvas><img class="rv-branch l" src="../images/eucalipto.webp" alt=""><img class="rv-branch r" src="../images/eucalipto.webp" alt="">
