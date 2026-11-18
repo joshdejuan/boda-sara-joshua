@@ -1392,7 +1392,12 @@ async function tabWinner(el){
       ${rank.length ? `<ol class="win-list">${rank.slice(0, 5).map((s, i) => `<li><b>${i + 1}º</b><span>${esc(s.p.name)}</span><span class="muted" style="margin-left:auto">${s.set.size}/${s.p.missions.length} retos · ${s.count} fotos</span></li>`).join("")}</ol>` : `<p class="muted">Todavía nadie ha cumplido ningún reto.</p>`}
     </details></div>`;
   const st = $("#rv-st");
-  $("#rv-here").addEventListener("click", () => playReveal(d, { sound: true }));
+  /* Datos frescos al pulsar: si la pestaña lleva rato abierta, cuentan también las últimas fotos */
+  $("#rv-here").addEventListener("click", async () => {
+    const snd = audioCtx();   // desbloquea el sonido con este clic
+    let fresh = d; try { const [players, photos, config] = await Promise.all([store.players(), store.photos(), store.config()]); fresh = { players, photos, config }; } catch {}
+    playReveal(fresh, { sound: !!snd });
+  });
   $("#rv-screen").addEventListener("click", async () => {
     st.className = "status"; st.textContent = "Enviando a la pantalla…";
     try { await store.reveal(true); st.className = "status ok"; st.textContent = "¡En marcha! La pantalla lo mostrará en unos segundos."; }
