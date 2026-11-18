@@ -155,6 +155,7 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .gate strong{display:flex;align-items:center;gap:10px;font:700 19px var(--display);letter-spacing:-.01em}
 .gate strong::before{content:"";width:12px;height:12px;border-radius:50%;flex:none;background:rgba(137,81,41,.35)}
 .gate.on strong::before{background:var(--teal);box-shadow:0 0 0 4px var(--teal-soft)}
+.gate.ended strong::before{background:var(--salmon);box-shadow:0 0 0 4px var(--salmon-soft)}
 .gate span{font-size:14px;color:var(--muted)}
 .gate .gact{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .gate form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex-basis:100%}
@@ -631,16 +632,17 @@ const RETOS_PROPUESTOS = ["Ceremonia · El novio esperando antes de que llegue l
    navegador, no hay que volver a pegarlo).
    ========================================================= */
 const GH = { owner: "joshdejuan", repo: "boda-sara-joshua", branch: "main" };
-let demoOpen = false, peek = false, gateWanted = null, gateAuto = null, photosFrom = null;
+let demoOpen = false, peek = false, gateWanted = null, gateAuto = null, photosFrom = null, gameEnded = false, demoEnded = false;
 async function gameOpen(){
-  if (PRUEBA) return true;
-  if (DEMO) return demoOpen;
+  if (PRUEBA) { gameEnded = demoEnded; return true; }
+  if (DEMO) { gameEnded = demoEnded; return demoOpen; }
   try {
     const r = await fetch("../content.json?v=" + Date.now(), { cache: "no-store" });
     if (!r.ok) return true;                       // si no se puede leer, no bloqueamos la boda
     const j = await r.json();
     gateAuto = (j.mision && j.mision.autoShow) || null;
-    photosFrom = (j.mision && j.mision.photosFrom) || null;   // antes de esta hora se ven los retos pero no se suben fotos
+    photosFrom = (j.mision && j.mision.photosFrom) || null;
+    gameEnded = !!(j.mision && j.mision.ended === true);       // cerrado por los novios antes de dar el premio   // antes de esta hora se ven los retos pero no se suben fotos
     return misionOn(j.mision);
   } catch { return true; }
 }
@@ -671,6 +673,18 @@ async function setGameOpen(on, token){
   await gh("PUT", path, token, { message: on ? "Misión secreta: activa el juego" : "Misión secreta: oculta el juego", content: b64(JSON.stringify(j, null, 2) + "\n"), branch: GH.branch, sha: f.sha });
 }
 
+/* Cerrar el juego a todos (antes de dar el premio): se ve la misión pero ya no se puede apuntar nadie ni subir fotos */
+async function setGameEnded(on, token){
+  if (DEMO) { demoEnded = on; gameEnded = on; return; }
+  const path = `/repos/${GH.owner}/${GH.repo}/contents/content.json`;
+  const f = await gh("GET", path + "?ref=" + GH.branch, token);
+  const j = JSON.parse(unb64(f.content));
+  j.mision = { ...(j.mision || {}) };
+  if (on) j.mision.ended = true; else delete j.mision.ended;
+  gameEnded = on;
+  await gh("PUT", path, token, { message: on ? "Misión secreta: cierra el juego" : "Misión secreta: reabre el juego", content: b64(JSON.stringify(j, null, 2) + "\n"), branch: GH.branch, sha: f.sha });
+}
+
 /* Aviso para invitados mientras el juego está oculto */
 function viewLocked(){
   app.innerHTML = demoBar("inicio") + backBar() + `<main class="guest">${BRANCH()}
@@ -696,39 +710,54 @@ function viewLocked(){
 /* Interruptor en el panel de los novios */
 async function gateBox(el){
   let open = gateWanted !== null ? gateWanted : await gameOpen();
-  const draw = (msg = "", kind = "", askToken = false) => {
-    el.className = "gate panel-box" + (open ? " on" : "");
-    el.innerHTML = `<div class="gtxt"><strong>${open ? "El juego está abierto" : "El juego está oculto"}</strong>
-        <span>${open ? "Los invitados pueden registrarse y subir fotos. La sección se ve en la web." : "Los invitados ven un aviso de que empieza el día de la boda. La sección no aparece en la web."}${!open && gateAuto && Date.now() < Date.parse(gateAuto) ? ` <b>Se activará solo el ${esc(autoTxt(gateAuto))}.</b>` : ""}</span></div>
-      <div class="gact">${open ? `<button class="ghost small" id="g-off" type="button">Ocultar de nuevo</button>` : `<button id="g-on" type="button">Activar el juego</button>`}${PRUEBA ? "" : `<a class="btn ghost small" href="../?prueba" target="_blank" rel="noopener">Probar sin activar</a>`}</div>
+  let ended = gameEnded, confirmEnd = false;
+  const draw = (msg = "", kind = "", askToken = null) => {
+    el.className = "gate panel-box" + (open ? " on" : "") + (open && ended ? " ended" : "");
+    const title = !open ? "El juego está oculto" : ended ? "El juego está cerrado" : "El juego está abierto";
+    const txt = !open ? `Los invitados ven un aviso de que empieza el día de la boda. La sección no aparece en la web.${gateAuto && Date.now() < Date.parse(gateAuto) ? ` <b>Se activará solo el ${esc(autoTxt(gateAuto))}.</b>` : ""}`
+      : ended ? "Los invitados ven su misión y sus fotos, pero ya no pueden apuntarse ni subir más. Es el momento de desvelar al ganador."
+      : "Los invitados pueden registrarse y subir fotos. La sección se ve en la web.";
+    const acts = !open ? `<button id="g-on" type="button">Activar el juego</button>`
+      : ended ? `<button class="ghost small" id="g-reopen" type="button">Reabrir el juego</button>`
+      : `<button class="${confirmEnd ? "danger" : "ghost"} small" id="g-end" type="button">${confirmEnd ? "Sí, cerrar para todos" : "Cerrar el juego"}</button>${confirmEnd ? `<button class="ghost small" id="g-cancel" type="button">No</button>` : `<button class="ghost small" id="g-off" type="button">Ocultar de nuevo</button>`}`;
+    el.innerHTML = `<div class="gtxt"><strong>${title}</strong><span>${txt}</span></div>
+      <div class="gact">${acts}${PRUEBA || open ? "" : `<a class="btn ghost small" href="../?prueba" target="_blank" rel="noopener">Probar sin activar</a>`}</div>
       ${askToken ? `<form id="g-tok"><input type="password" id="g-token" autocomplete="off" placeholder="Token de GitHub (github_pat_…)" aria-label="Token de GitHub" required>
         <label><input type="checkbox" id="g-keep" checked> Recordar en este navegador</label>
-        <button class="small" type="submit">${open ? "Ocultar" : "Activar"}</button></form>` : ""}
+        <button class="small" type="submit">Continuar</button></form>` : ""}
       <p class="status ${kind}" id="g-st" aria-live="polite">${esc(msg)}</p>`;
-    const go = async (want, token) => {
-      const st = $("#g-st"); st.className = "status"; st.textContent = want ? "Activando…" : "Ocultando…";
+    /* act: ["open", true|false] activa/oculta · ["end", true|false] cierra/reabre */
+    const go = async (act, token) => {
+      const [k, want] = act, st = $("#g-st"); st.className = "status";
+      st.textContent = k === "open" ? (want ? "Activando…" : "Ocultando…") : (want ? "Cerrando…" : "Reabriendo…");
       el.querySelectorAll("button").forEach(b => b.disabled = true);
       try {
-        await setGameOpen(want, token);
-        open = want; gateWanted = want;
-        draw(store.demo ? "Hecho (vista previa: solo cambia aquí)." : want ? "Activado. La web tarda uno o dos minutos en actualizarse; las páginas que los invitados tengan abiertas se abren solas." : "Oculto. En uno o dos minutos desaparece de la web.", "ok");
+        if (k === "open") { await setGameOpen(want, token); open = want; gateWanted = want; }
+        else { await setGameEnded(want, token); ended = want; }
+        confirmEnd = false;
+        const msgs = { "open1": "Activado. La web tarda uno o dos minutos en actualizarse; las páginas que los invitados tengan abiertas se abren solas.", "open0": "Oculto. En uno o dos minutos desaparece de la web.",
+          "end1": "Cerrado. En uno o dos minutos los móviles de los invitados dejan de permitir subir fotos (se actualizan solos). Espera a que pase antes de desvelar al ganador.", "end0": "Reabierto. En uno o dos minutos se puede volver a subir fotos." };
+        draw(store.demo ? "Hecho (vista previa: solo cambia aquí)." : msgs[k + (want ? 1 : 0)], "ok");
       } catch (e) {
-        console.error(e);
-        if (e.status === 401 || e.status === 403 || e.status === 404) { ghForget(); draw("El token no es válido o no tiene permiso de escritura en " + GH.repo + ". Pega uno nuevo.", "err", true); }
-        else draw("No se pudo guardar. Comprueba la conexión e inténtalo otra vez.", "err", !ghToken());
+        console.error(e); confirmEnd = false;
+        if (e.status === 401 || e.status === 403 || e.status === 404) { ghForget(); draw("El token no es válido o no tiene permiso de escritura en " + GH.repo + ". Pega uno nuevo.", "err", act); }
+        else draw("No se pudo guardar. Comprueba la conexión e inténtalo otra vez.", "err", ghToken() ? null : act);
       }
     };
-    const ask = want => {
+    const ask = act => {
       const t = store.demo ? "vista-previa" : ghToken();
-      if (t) return go(want, t);
-      draw("Pega el token de GitHub de Administración. Solo se pide una vez por navegador.", "", true);
+      if (t) return go(act, t);
+      draw("Pega el token de GitHub de Administración. Solo se pide una vez por navegador.", "", act);
       $("#g-token").focus();
     };
-    const on = $("#g-on"), off = $("#g-off");
-    if (on) on.addEventListener("click", () => ask(true));
-    if (off) off.addEventListener("click", () => ask(false));
+    const on = (id, f) => { const b = $(id); if (b) b.addEventListener("click", f); };
+    on("#g-on", () => ask(["open", true]));
+    on("#g-off", () => ask(["open", false]));
+    on("#g-end", () => { if (!confirmEnd) { confirmEnd = true; return draw(); } ask(["end", true]); });
+    on("#g-cancel", () => { confirmEnd = false; draw(); });
+    on("#g-reopen", () => ask(["end", false]));
     const tf = $("#g-tok");
-    if (tf) tf.addEventListener("submit", e => { e.preventDefault(); const v = $("#g-token").value.trim(); if (!v) return; ghSave(v, $("#g-keep").checked); go(!open, v); });
+    if (tf) tf.addEventListener("submit", e => { e.preventDefault(); const v = $("#g-token").value.trim(); if (!v) return; ghSave(v, $("#g-keep").checked); go(askToken, v); });
   };
   draw();
 }
@@ -751,14 +780,14 @@ function viewHome(){
     <p class="notice prize"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/></svg> Habrá un premio para el primero que complete todos sus retos.</p>
     <p class="notice">${CAM} Las fotos que subas aparecerán en la pantalla en directo de la boda.</p>
     ${m ? `<a class="resume" href="#mision">${LOGO}<strong>Seguir como ${esc(m.name)}</strong><small>Tu misión Nº ${pad(m.card)}</small><i>→</i></a>` : ""}
-    <form class="sheet form" id="reg">
+    ${gameEnded ? `<div class="sheet"><p class="notice prize">${PRIZE_ICON} La misión ha terminado y ya no se puede participar. ¡Atentos a la pantalla, que vamos a desvelar al ganador!</p></div>` : `<form class="sheet form" id="reg">
       <label class="label" for="nombre">${m ? "¿Eres otra persona?" : "Tu nombre"}</label>
       <input id="nombre" type="text" maxlength="40" autocomplete="given-name" placeholder="Por ejemplo, Lucía" required>
       <button type="submit">Recibir mi misión</button>
       <div class="status" id="st" aria-live="polite"></div>
-    </form>
+    </form>`}
   </main>`;
-  $("#reg").addEventListener("submit", async e => {
+  if ($("#reg")) $("#reg").addEventListener("submit", async e => {
     e.preventDefault();
     const name = $("#nombre").value.trim(); if (!name) return;
     const b = e.submitter; if (b) b.disabled = true;
@@ -788,16 +817,17 @@ async function viewMission(){
     <section class="sheet">
       <div class="progress"><div class="track"><div style="width:${total ? done / total * 100 : 0}%"></div></div>
         <span class="muted" style="font-size:14px;font-weight:700">${done} de ${total} momentos capturados</span></div>
-      ${wait ? `<p class="notice">${CAM} Podrás subir fotos a partir del ${esc(waitTxt)}. Mientras, ve leyendo tus retos y guarda tu enlace personal (abajo).</p>` : ""}
-      ${total && done === total ? `<div class="win">¡Misión cumplida! Ya estás en la carrera por el premio: gana el primero que completa todos sus retos. Lo desvelaremos al final del banquete.</div>` : `<p class="notice prize">${PRIZE_ICON} Habrá un premio para el primero que complete todos sus retos.</p>`}
+      ${gameEnded ? `<p class="notice prize">${PRIZE_ICON} ¡Se acabó! La misión ha terminado y ya no se pueden subir fotos. Atentos a la pantalla: vamos a desvelar al ganador.</p>` : ""}
+      ${!gameEnded && wait ? `<p class="notice">${CAM} Podrás subir fotos a partir del ${esc(waitTxt)}. Mientras, ve leyendo tus retos y guarda tu enlace personal (abajo).</p>` : ""}
+      ${gameEnded ? "" : total && done === total ? `<div class="win">¡Misión cumplida! Ya estás en la carrera por el premio: gana el primero que completa todos sus retos. Lo desvelaremos al final del banquete.</div>` : `<p class="notice prize">${PRIZE_ICON} Habrá un premio para el primero que complete todos sus retos.</p>`}
       <ol class="retos">${d.retos.slice().sort((a, b) => phaseRank(a.text) - phaseRank(b.text)).map((r, k, arr) => { const ph = byM[r.i], f = phaseOf(r.text);
         const head = f.label && (k === 0 || phaseOf(arr[k - 1].text).key !== f.key) ? `<li class="phase">${esc(f.label)}</li>` : "";
         return head + `<li class="reto ${ph ? "done" : ""}">
         <span class="n">${k + 1}</span><span class="t">${esc(f.text)}</span>
-        <span class="side">${ph ? `<img src="${esc(ph.url)}" alt="Tu foto"><span class="alt"><label class="again">Cambiar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label></span>`
-          : wait ? `<span class="soon">Desde el sábado</span>` : `<span class="shoot"><label class="btn small">${CAM} Capturar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label><label class="again">o de la galería<input type="file" accept="image/*" data-m="${r.i}"></label></span>`}</span></li>`; }).join("")}</ol>
+        <span class="side">${ph ? `<img src="${esc(ph.url)}" alt="Tu foto">${gameEnded ? "" : `<span class="alt"><label class="again">Cambiar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label></span>`}`
+          : gameEnded ? `<span class="soon">Sin foto</span>` : wait ? `<span class="soon">Desde el sábado</span>` : `<span class="shoot"><label class="btn small">${CAM} Capturar<input type="file" accept="image/*" capture="environment" data-m="${r.i}"></label><label class="again">o de la galería<input type="file" accept="image/*" data-m="${r.i}"></label></span>`}</span></li>`; }).join("")}</ol>
       <div class="status" id="st" aria-live="polite"></div>
-      <p class="muted" style="font-size:14px;margin:0">Pulsa Capturar y se abrirá la cámara. La foto se sube sola y aparecerá en la pantalla en directo de la boda.</p>
+      <p class="muted" style="font-size:14px;margin:0"${gameEnded || wait ? " hidden" : ""}>Pulsa Capturar y se abrirá la cámara. La foto se sube sola y aparecerá en la pantalla en directo de la boda.</p>
     </section>
     <section class="keep"><span class="label">Tu enlace personal</span>
       <span>Guárdalo para abrir tu misión en otro móvil.</span>
@@ -1407,6 +1437,13 @@ async function route(){
   catch (e) { app.innerHTML = `<main class="guest"><div class="sheet"><h1 class="names" style="font-size:40px">Sin conexión</h1><p>Comprueba la cobertura y recarga la página.</p></div></main>`; return; }
   window.addEventListener("hashchange", route);
   route();
+  /* Si los novios cierran (o reabren) el juego, las páginas abiertas de los invitados se actualizan solas */
+  setInterval(async () => {
+    if (document.hidden || peek) return;
+    const h = location.hash.replace(/^#/, "");
+    if (!(h === "" || h === "inicio" || h === "mision")) return;
+    const was = gameEnded; await gameOpen(); if (gameEnded !== was) route();
+  }, store.demo ? 3000 : 20000);
 })();
 </script>
 </body>
