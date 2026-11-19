@@ -11,7 +11,7 @@
   };
   var root = document.documentElement;
   var cfg = DEF, shown = false, timer = null;
-  var excluded = function () { return /^#(admin|pantalla|mando)/.test(location.hash) || /[?&]abierta\b/.test(location.search); };
+  var excluded = function () { return /^#(admin|pantalla|mando|galeria)/.test(location.hash) || /[?&]abierta\b/.test(location.search); };
   var isClosed = function () { return !!cfg.at && Date.now() >= Date.parse(cfg.at); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
 
