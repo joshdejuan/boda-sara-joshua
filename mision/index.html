@@ -430,6 +430,7 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .prz-tok{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .prz-tok input[type=password]{flex:1 1 220px}
 #prz svg{width:16px;height:16px;vertical-align:-3px;margin-right:4px}
+.demo-bar.ensayo{background:#FFE9DF;border-color:var(--salmon)}
 .snd-on{background:var(--teal-soft)!important;border-color:transparent!important}
 .rv-ph{font:700 clamp(12px,1.3vw,16px) var(--body);letter-spacing:.22em;text-transform:uppercase;color:#EC8F6E}
 .rv-shot strong{font:700 clamp(22px,2.8vw,40px)/1.15 var(--display);letter-spacing:-.02em;color:#F9F4EC}
@@ -678,7 +679,9 @@ const RETOS_PROPUESTOS = ["Ceremonia · El novio esperando antes de que llegue l
    navegador, no hay que volver a pegarlo).
    ========================================================= */
 const GH = { owner: "joshdejuan", repo: "boda-sara-joshua", branch: "main" };
-let demoOpen = false, peek = false, gateWanted = null, gateAuto = null, photosFrom = null, gameEnded = false, demoEnded = false;
+/* Ensayo real: los novios prueban el registro y la subida de fotos contra Supabase aunque el juego esté oculto */
+const ENSAYO = (() => { try { return sessionStorage.getItem("sj-ensayo") === "1"; } catch { return false; } })();
+let demoOpen = false, peek = ENSAYO, gateWanted = null, gateAuto = null, photosFrom = null, gameEnded = false, demoEnded = false;
 async function gameOpen(){
   if (PRUEBA) { gameEnded = demoEnded; return true; }
   if (DEMO) { gameEnded = demoEnded; return demoOpen; }
@@ -808,7 +811,7 @@ async function gateBox(el){
   draw();
 }
 function demoBar(cur){
-  if (!store.demo) return "";
+  if (!store.demo) return peek && ENSAYO && cur !== "admin" ? `<div class="demo-bar ensayo"><span><b>Ensayo real</b> · se guarda de verdad en Supabase. Al acabar, borra al invitado de prueba en el panel.</span><nav><a href="#inicio" ${cur === "inicio" ? 'aria-current="page"' : ""}>Registro</a><a href="#mision" ${cur === "mision" ? 'aria-current="page"' : ""}>Su misión</a><a href="#" id="ensayo-fin">Terminar el ensayo</a></nav></div>` : "";
   const l = (h, t) => `<a href="#${h}" ${cur === h ? 'aria-current="page"' : ""}>${t}</a>`;
   return `<div class="demo-bar"><span>${PRUEBA ? `<b>Modo prueba</b> · datos de ejemplo, no se guarda nada · <a href="?prueba=0#inicio" style="box-shadow:none;padding:0;text-decoration:underline">Salir</a>` : `<b>Vista previa</b> con datos de ejemplo`}</span><nav>${l("inicio", "Invitado: registro")}${l("mision", "Invitado: su misión")}${l("admin", "Panel Admin")}${l("pantalla", "Pantalla en directo")}${l("mando", "Mando")}</nav></div>`;
 }
@@ -907,11 +910,15 @@ async function viewAdmin(tab){
   tab = tabs.some(t => t[0] === tab) ? tab : "directo";
   app.innerHTML = demoBar("admin") + backBar(false) + `<main class="admin">
     <header class="a-top"><div class="a-brand">${LOGO}<div><h1>Panel Admin</h1><p>Juego de la misión secreta · ${esc(CONFIG.fecha)}</p></div></div>
-      <div class="a-user"><button class="ghost small" id="out">Cerrar sesión</button></div></header>
+      <div class="a-user">${store.demo ? "" : `<button class="ghost small" id="ensayo" type="button" title="Regístrate y sube fotos de verdad aunque el juego esté oculto">Ensayar como invitado</button>`}<button class="ghost small" id="out">Cerrar sesión</button></div></header>
     <div class="gate panel-box" id="gate"><div class="gtxt"><strong>Comprobando el estado del juego…</strong></div></div>
     <nav class="tabs">${tabs.map(([k, t]) => `<a href="#admin/${k}" ${k === tab ? 'aria-current="page"' : ""}>${t}</a>`).join("")}</nav>
     <section id="tab"></section></main>`;
   $("#out").addEventListener("click", async () => { cleanup(); cleanup = () => {}; await store.logout(); viewLogin(); });
+  const en = $("#ensayo"); if (en) en.addEventListener("click", () => {
+    try { sessionStorage.setItem("sj-ensayo", "1"); } catch {}
+    peek = true; photosFrom = null; gameEnded = false; location.hash = "inicio";
+  });
   gateBox($("#gate")).catch(console.error);
   const el = $("#tab");
   try { await ({ directo: tabLive, invitados: tabPlayers, fotos: tabPhotos, retos: tabRetos, cartel: tabPoster, ganador: tabWinner, acceso: tabAccess })[tab](el); }
@@ -1660,6 +1667,12 @@ async function route(){
   try { store = DEMO ? demoStore() : await liveStore(); }
   catch (e) { app.innerHTML = `<main class="guest"><div class="sheet"><h1 class="names" style="font-size:40px">Sin conexión</h1><p>Comprueba la cobertura y recarga la página.</p></div></main>`; return; }
   window.addEventListener("hashchange", route);
+  document.addEventListener("click", e => {
+    if (!e.target.closest || !e.target.closest("#ensayo-fin")) return;
+    e.preventDefault();
+    try { sessionStorage.removeItem("sj-ensayo"); } catch {}
+    remember(null); peek = false; location.hash = "admin/invitados"; location.reload();
+  });
   route();
   /* Si los novios cierran (o reabren) el juego, las páginas abiertas de los invitados se actualizan solas */
   setInterval(async () => {
