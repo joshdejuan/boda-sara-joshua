@@ -462,6 +462,14 @@ label.again{font:700 12.5px var(--body);color:var(--muted);text-decoration:under
 .gal-grid a{position:relative;display:block;border-radius:14px;overflow:hidden;box-shadow:none;padding:0;background:rgba(137,81,41,.08)}
 .gal-grid img{width:100%;aspect-ratio:1;object-fit:cover;display:block;transition:transform .4s}
 .gal-grid a:hover img{transform:scale(1.04)}
+.gal-item{position:relative;margin:0}
+.gal-toggle{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px}
+.pill{font:800 12px var(--body);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+.pill.on{background:var(--teal-soft);color:var(--teal-deep)}
+.pill.off{background:var(--salmon-soft);color:var(--salmon-deep)}
+.gal-grid a.gal-dl{position:absolute;top:6px;right:6px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,253,248,.92);color:#6F3E1E;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.gal-grid a.gal-dl svg{width:18px;height:18px}
+.gal-grid a.gal-dl:hover{background:#fff}
 .gal-grid span{position:absolute;left:0;right:0;bottom:0;padding:18px 8px 6px;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.6))}
 .snd-on{background:var(--teal-soft)!important;border-color:transparent!important}
 .rv-ph{font:700 clamp(12px,1.3vw,16px) var(--body);letter-spacing:.22em;text-transform:uppercase;color:#EC8F6E}
@@ -577,6 +585,7 @@ async function liveStore(){
   const pub = p => sb.storage.from("fotos").getPublicUrl(p).data.publicUrl;
   const E = r => { if (r.error) throw r.error; return r.data; };
   const withUrls = d => ({ ...d, photos: (d.photos || []).map(p => ({ ...p, url: pub(p.path) })) });
+  const dlUrl = (p, i) => sb.storage.from("fotos").getPublicUrl(p.path, { download: galFile(p, i) }).data.publicUrl;
   let cache = null, cacheAt = 0;
   const admin = async (fn, args = {}) => {
     const d = E(await sb.rpc(fn, { p_pass: getPass(), ...args }));
@@ -620,7 +629,15 @@ async function liveStore(){
     async setPassword(nw){ await admin("admin_set_password", { p_new: nw }); setPass(nw); },
     async newScreenKey(){ return (await admin("admin_new_screen_key")).screen_key; },
     async reveal(on){ await admin("admin_reveal", { p_on: !!on }); },
-    async screen(key){ const d = E(await sb.rpc("screen_data", { p_key: key })); return d ? withUrls(d) : null; }
+    async screen(key){ const d = E(await sb.rpc("screen_data", { p_key: key })); return d ? withUrls(d) : null; },
+    async gallery(key){
+      let d;
+      if (key) { d = E(await sb.rpc("screen_data", { p_key: key })); if (!d) return null; }
+      else { d = E(await sb.rpc("gallery_data")); if (!d || !d.open) return null; d = { players: [], photos: d.photos || [], config: { retos: [] } }; }
+      d = withUrls(d); d.photos = d.photos.map((p, i) => ({ ...p, dl: dlUrl(p, i) })); return d;
+    },
+    async galleryOpen(){ return !!(await data()).gallery_open; },
+    async setGallery(open){ await admin("admin_set_gallery", { p_open: !!open }); }
   };
 }
 
@@ -638,7 +655,7 @@ function demoStore(){
     g.fillStyle = "rgba(255,255,255,.92)"; g.font = "700 20px Nunito, sans-serif"; g.fillText("foto de ejemplo", 22, 452);
     return c.toDataURL("image/jpeg", .8);
   };
-  const players = [], photos = []; let demoReveal = null;
+  const players = [], photos = []; let demoGallery = true, demoReveal = null;
   const names = ["Lucía","Marcos","Tía Carmen","Pablo","Irene","Abuelo Paco","Nerea","Diego","Alba","Hugo"];
   const t0 = Date.now() - 70 * 60000; let seed = 1;
   names.forEach((n, i) => players.push({ id: "p" + i, token: "t" + i, card: i + 1, name: n, missions: pick(i + 1), created_at: new Date(t0 + i * 90000).toISOString() }));
@@ -655,6 +672,8 @@ function demoStore(){
     async screenKey(){ return "ejemplo"; }, async newScreenKey(){ return "ejemplo"; }, async setPassword(){},
     async reveal(on){ demoReveal = on ? new Date().toISOString() : null; },
     async screen(){ return { players: players.map(p => ({ ...p })), photos: photos.slice(), config: { retos: cfg.retos.slice(), retos_por_persona: cfg.retos_por_persona }, reveal_at: demoReveal, now: new Date().toISOString() }; },
+    async gallery(){ if (!demoGallery) return null; return { players: players.map(p => ({ ...p })), photos: photos.map(p => ({ ...p, dl: p.url })), config: { retos: cfg.retos.slice() } }; },
+    async galleryOpen(){ return demoGallery; }, async setGallery(o){ demoGallery = !!o; },
     async players(){ return players.map(p => ({ ...p })); },
     async photos(){ return photos.slice(); },
     async config(){ return { retos: cfg.retos.slice(), retos_por_persona: cfg.retos_por_persona }; },
@@ -1176,34 +1195,47 @@ async function viewScreen(key){
   }
 }
 
-/* Galería para después de la boda (#galeria-<clave>): todas las fotos por momentos, para ver y descargar */
+/* Galería para después de la boda: #galeria (la abren los novios desde el panel) o #galeria-<clave>.
+   Todas las fotos por momentos, para ver y descargar. */
+const galSlug = s => String(s || "invitado").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase().slice(0, 30) || "invitado";
+const galFile = (p, i) => `sara-y-joshua-${String(i + 1).padStart(3, "0")}-${galSlug(p.name)}.jpg`;
+const GAL_PART = 50;
+const DL_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>`;
 async function viewGallery(key){
-  const d = await store.screen(key);
-  if (!d) { app.innerHTML = `<main class="login">${BRANCH()}<h1>Enlace no válido</h1><p>Este enlace ya no funciona. Pide a los novios el nuevo.</p></main>`; return; }
+  const d = await store.gallery(key);
+  if (!d) {
+    app.innerHTML = `<main class="guest">${BRANCH()}<header class="hero">${GAMELOGO}<p class="kicker">Misión secreta · las fotos ${HEART}</p>${WORDMARK("h1")}</header>
+      <div class="sheet"><p style="margin:0">${key ? "Este enlace ya no funciona. Pide a los novios el nuevo." : "La galería todavía no está abierta. Los novios la abrirán muy pronto: vuelve a este enlace en unos días."}</p></div></main>`;
+    return;
+  }
   document.title = "Las fotos de la misión · Sara & Joshua";
   const byId = Object.fromEntries(d.players.map(p => [p.id, p])), rt = d.config.retos || [];
   const txt = p => p.mission_text || rt[p.mission] || "";
+  const who = p => byId[p.player_id]?.name || p.name || "";
   const photos = d.photos.slice().sort((a, b) => phaseRank(txt(a)) - phaseRank(txt(b)) || String(a.created_at || "").localeCompare(String(b.created_at || "")));
+  photos.forEach((p, i) => { p._i = i; if (!p.name) p.name = who(p); });
   const groups = []; photos.forEach(p => { const f = phaseOf(txt(p)), g = groups[groups.length - 1]; if (g && g.key === f.key) g.items.push(p); else groups.push({ key: f.key, label: f.label || "Más fotos", items: [p] }); });
+  const parts = []; for (let i = 0; i < photos.length; i += GAL_PART) parts.push([i, photos.slice(i, i + GAL_PART)]);
   app.innerHTML = demoBar("galeria") + `<main class="guest gal">${BRANCH()}
     <header class="hero">${GAMELOGO}<p class="kicker">Misión secreta · las fotos ${HEART}</p>${WORDMARK("h1")}<p class="date">${esc(CONFIG.fecha)}</p></header>
-    <p class="intro">Gracias por ser nuestros fotógrafos encubiertos. Aquí están las ${photos.length} fotos de la misión: toca una para verla en grande y guardarla.</p>
-    ${photos.length ? `<div class="gal-tools"><button id="gzip" type="button" ${store.demo ? 'disabled title="Disponible en tu web"' : ""}>Descargar todas (ZIP)</button><span class="status" id="gst" aria-live="polite"></span></div>` : ""}
-    ${groups.map(g => `<section class="gal-sec"><h2>${esc(g.label)} <span>${g.items.length}</span></h2><div class="gal-grid">${g.items.map(p => `<a href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(phaseOf(txt(p)).text)}"><img src="${esc(p.url)}" alt="${esc(phaseOf(txt(p)).text)}" loading="lazy"><span>${esc(byId[p.player_id]?.name || "")}</span></a>`).join("")}</div></section>`).join("")}
+    <p class="intro">Gracias por ser nuestros fotógrafos encubiertos. Aquí están las ${photos.length} fotos de la misión: toca una para verla en grande o pulsa la flecha para descargarla.</p>
+    ${photos.length ? `<div class="gal-tools">${parts.map(([st, l], k) => `<button class="${k ? "ghost " : ""}small" type="button" data-k="${k}" ${store.demo ? 'disabled title="Disponible en tu web"' : ""}>${parts.length > 1 ? `Descargar parte ${k + 1} · fotos ${st + 1}–${st + l.length}` : `Descargar todas (ZIP)`}</button>`).join("")}<span class="status" id="gst" aria-live="polite" style="flex-basis:100%;text-align:center"></span></div>` : ""}
+    ${groups.map(g => `<section class="gal-sec"><h2>${esc(g.label)} <span>${g.items.length}</span></h2><div class="gal-grid">${g.items.map(p => `<figure class="gal-item"><a href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(phaseOf(txt(p)).text)}"><img src="${esc(p.url)}" alt="${esc(phaseOf(txt(p)).text)}" loading="lazy"><span>${esc(p.name)}</span></a><a class="gal-dl" href="${esc(p.dl)}" download="${esc(galFile(p, p._i))}" aria-label="Descargar foto de ${esc(p.name || "un invitado")}" title="Descargar">${DL_ICON}</a></figure>`).join("")}</div></section>`).join("")}
   </main>`;
-  const z = $("#gzip"); if (z) z.addEventListener("click", async () => {
-    const st = $("#gst"); z.disabled = true; st.className = "status"; st.textContent = "Preparando…";
+  app.querySelectorAll(".gal-tools button").forEach(z => z.addEventListener("click", async () => {
+    const [start, list] = parts[+z.dataset.k], label = parts.length > 1 ? `Parte ${+z.dataset.k + 1}` : "Fotos";
+    const st = $("#gst"); z.disabled = true; st.className = "status"; st.textContent = `${label}: preparando…`;
     try {
       await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
-      const zip = new JSZip(), safe = s => String(s || "").replace(/[^\p{L}\p{N} ]/gu, "").trim().slice(0, 40);
-      for (let i = 0; i < photos.length; i++) { const p = photos[i]; st.textContent = `Descargando ${i + 1} de ${photos.length}…`;
-        zip.file(`${pad(i + 1)} - ${safe(phaseOf(txt(p)).label)} - ${safe(byId[p.player_id]?.name)} - ${safe(phaseOf(txt(p)).text)}.jpg`, await (await fetch(p.url)).blob()); }
-      st.textContent = "Comprimiendo…";
-      const a = document.createElement("a"); a.href = URL.createObjectURL(await zip.generateAsync({ type: "blob" })); a.download = "fotos-mision-sara-joshua.zip"; a.click();
-      st.className = "status ok"; st.textContent = "Listo.";
-    } catch (e) { console.error(e); st.className = "status err"; st.textContent = "No se pudo. Mejor desde un ordenador con buena conexión."; }
+      const zip = new JSZip();
+      for (let i = 0; i < list.length; i++) { st.textContent = `${label}: descargando ${i + 1} de ${list.length}…`; zip.file(galFile(list[i], start + i), await (await fetch(list[i].url)).blob()); }
+      st.textContent = `${label}: comprimiendo…`;
+      const a = document.createElement("a"); a.href = URL.createObjectURL(await zip.generateAsync({ type: "blob" })); a.download = `fotos-mision-sara-joshua${parts.length > 1 ? `-parte-${+z.dataset.k + 1}` : ""}.zip`;
+      document.body.appendChild(a); a.click(); a.remove();
+      st.className = "status ok"; st.textContent = `${label} lista. Revisa tus descargas.`;
+    } catch (e) { console.error(e); st.className = "status err"; st.textContent = "No se pudo. Prueba con buena conexión o descarga las fotos de una en una."; }
     z.disabled = false;
-  });
+  }));
 }
 
 /* Mando del portátil (#mando-<clave>): con el portátil en modo «Extender», la tele muestra la pantalla en directo
@@ -1382,7 +1414,18 @@ async function tabPhotos(el){
   el.innerHTML = `<div class="section-title"><h2>Todas las fotos</h2><div class="tools">
       <select id="flt" aria-label="Filtrar por invitado" style="width:auto;padding:10px 14px;font-size:14.5px"><option value="">Todos los invitados</option>${players.map(p => `<option value="${esc(p.id)}" ${p.id === filter ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
       <button id="zip" ${store.demo ? 'disabled title="Disponible en tu web"' : ""}>Descargar todas (ZIP)</button></div></div>
+    <div class="panel-box gal-toggle" id="gt"></div>
     <div class="status" id="st"></div><div class="pgrid" id="grid"></div>`;
+  const galUrl = `${base()}#galeria`;
+  const drawToggle = open => {
+    $("#gt").innerHTML = `<strong>Galería para invitados</strong><span class="pill ${open ? "on" : "off"}">${open ? "Abierta" : "Cerrada"}</span>
+      <span class="muted" style="font-size:14px;flex:1;min-width:220px">${open ? "Cualquiera con el enlace puede ver y descargar todas las fotos." : "Cuando la abras, los invitados verán y podrán descargar todas las fotos."}</span>
+      <button class="${open ? "ghost " : ""}small" id="gt-b">${open ? "Cerrar galería" : "Abrir galería"}</button>
+      ${open ? `<input type="text" readonly value="${esc(galUrl)}" aria-label="Enlace de la galería" style="flex-basis:100%;font-size:14px;padding:9px 12px"><button class="ghost small" id="gt-c">Copiar enlace</button><a class="ghost btn small" href="#galeria" target="_blank" rel="noopener">Ver galería</a>` : ""}`;
+    $("#gt-b").addEventListener("click", async () => { $("#gt-b").disabled = true; try { await store.setGallery(!open); drawToggle(!open); } catch { $("#gt-b").disabled = false; $("#st").className = "status err"; $("#st").textContent = "No se pudo cambiar la galería. Inténtalo otra vez."; } });
+    $("#gt-c")?.addEventListener("click", async () => { try { await navigator.clipboard.writeText(galUrl); $("#gt-c").textContent = "Copiado"; } catch { $("#gt input").select(); } });
+  };
+  drawToggle(await store.galleryOpen());
   const draw = () => {
     const list = photos.filter(p => !filter || p.player_id === filter).slice().reverse();
     $("#grid").innerHTML = list.length ? list.map(p => `<article class="pcard" data-id="${esc(p.id)}"><img src="${esc(p.url)}" alt="" loading="lazy">
@@ -1489,8 +1532,8 @@ async function tabAccess(el){
       <div class="row-inline"><input type="text" id="sl" readonly value="${esc(screenUrl)}" aria-label="Enlace de la pantalla" style="flex:1;min-width:240px;font-size:14px"><button class="ghost small" id="cp">Copiar</button><a class="btn small" href="${esc(screenUrl)}" target="_blank" rel="noopener">Abrir</a></div>
       <p style="margin:0">Con el portátil conectado a la tele en modo <b>Extender</b>, abre en el portátil el <b>mando</b>: desde él se abre la pantalla para llevarla a la tele, y se cierra el juego, se desvela al ganador y se pasan sus fotos sin tocar la tele.</p>
       <div class="row-inline"><input type="text" id="ml" readonly value="${esc(`${base()}#mando-${key}`)}" aria-label="Enlace del mando" style="flex:1;min-width:240px;font-size:14px"><button class="ghost small" id="cpm">Copiar</button></div>
-      <p style="margin:0"><b>Después de la boda:</b> comparte la galería con todas las fotos de la misión, ordenadas por momentos y descargables. Funciona aunque la web esté cerrada.</p>
-      <div class="row-inline"><input type="text" id="gl" readonly value="${esc(`${base()}#galeria-${key}`)}" aria-label="Enlace de la galería" style="flex:1;min-width:240px;font-size:14px"><button class="ghost small" id="cpg">Copiar</button></div>
+      <p style="margin:0"><b>Después de la boda:</b> comparte la galería con todas las fotos de la misión, ordenadas por momentos y descargables. Funciona aunque la web esté cerrada. Se abre y se cierra desde la pestaña Fotos.</p>
+      <div class="row-inline"><input type="text" id="gl" readonly value="${esc(`${base()}#galeria`)}" aria-label="Enlace de la galería" style="flex:1;min-width:240px;font-size:14px"><button class="ghost small" id="cpg">Copiar</button></div>
       <div class="row-inline"><button class="danger small" id="nk">Cambiar el enlace</button><span class="muted" style="font-size:13.5px">El enlace anterior dejará de funcionar.</span></div>
     </div>
     <form class="panel-box" id="pf" style="display:flex;flex-direction:column;gap:12px">
@@ -1783,7 +1826,7 @@ async function route(){
     else if (path === "pantalla" && store.demo) await viewScreen("ejemplo");
     else if (path.startsWith("pantalla-")) await viewScreen(path.slice(9));
     else if (path === "mando" && store.demo) await viewRemote("ejemplo");
-    else if (path === "galeria" && store.demo) await viewGallery("ejemplo");
+    else if (path === "galeria") await viewGallery(null);
     else if (path.startsWith("galeria-")) await viewGallery(path.slice(8));
     else if (path.startsWith("mando-")) await viewRemote(path.slice(6));
     else viewHome();

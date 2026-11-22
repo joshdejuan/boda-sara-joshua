@@ -397,6 +397,7 @@ details.grp[open] > summary::after { content: "–"; }
         <div class="btns">
           <a class="btn" id="mis-go" href="mision/"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span id="mis-btn">Empezar mi misión</span></a>
           <a class="btn line" id="mis-resume" href="mision/#mision" hidden></a>
+          <a class="btn line" id="mis-fotos" href="mision/#galeria">Ver las fotos de la misión</a>
         </div>
       </div>
       <div class="glass panel rv" style="--d:120ms">
@@ -718,7 +719,7 @@ details.grp[open] > summary::after { content: "–"; }
 
   /* ---------- Misión secreta: enlaces y «seguir como…» ---------- */
   var LIVE = /github\.io$|sarajoshua\.love$/.test(location.hostname), MIS = LIVE ? 'mision/' : 'mision/index.html';
-  $('mis-go').href = MIS; $('mis-admin').href = MIS + '#admin';
+  $('mis-go').href = MIS; $('mis-admin').href = MIS + '#admin'; $('mis-fotos').href = MIS + '#galeria';
   try {
     var yo = JSON.parse(localStorage.getItem(MKEY) || 'null');
     if (yo && yo.name) { var rs = $('mis-resume'); rs.textContent = 'Seguir como ' + yo.name + ' · Nº ' + pad2(yo.card); rs.href = MIS + '#mision'; rs.hidden = false; }
